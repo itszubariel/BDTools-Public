@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+<script>
+    (function() {
+      const darkMode = localStorage.getItem('darkMode');
+      if (darkMode === 'enabled') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = { darkMode: 'class' };
+</script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BDTools | Terms & Privacy</title>
+<link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" type="image/x-icon" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body class="bg-gray-100 dark:bg-[#1e1e2f] text-gray-800 dark:text-gray-100 min-h-screen transition-colors duration-300">
+
+<style>
+.toggle-btn {
+  transition: all 0.3s ease;
+}
+.toggle-btn.active {
+  background-color: #4f46e5;
+  color: white;
+}
+.bdtools-fade-out { opacity: 0; transition: opacity 0.5s ease; }
+</style>
+
+<!-- Loader -->
+<div id="bdtools-loader" class="bdtools-loader fixed inset-0 flex items-center justify-center bg-white dark:bg-[#1e1e2f] z-50">
+  <div class="text-center">
+    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" class="h-16 w-16 mx-auto mb-4 rounded-full animate-bounce" />
+    <p class="text-gray-700 dark:text-gray-300 font-semibold text-lg">
+      Loading<span id="bdtools-dots"></span>
+    </p>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="flex justify-between items-center px-6 py-4 bg-gray-100 dark:bg-[#1e1e2f]">
+  <a href="/" class="flex items-center gap-2">
+    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" class="h-10 w-10 rounded-full" />
+    <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">BDTools</span>
+  </a>
+  <button id="dark-mode-toggle" class="bg-gray-200 hover:bg-gray-300 dark:bg-[#2e3246] dark:hover:bg-[#3b3f54] text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full transition-colors duration-300 flex items-center space-x-2">
+    <i class="fas fa-moon"></i>
+    <span class="toggle-text">Dark Mode</span>
+  </button>
+</header>
+
+<!-- Section Title -->
+<section class="text-center mb-10 mt-5">
+  <h1 class="text-4xl font-bold text-indigo-700 dark:text-indigo-400 mb-2">Terms & Privacy</h1>
+  <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+    Read our Terms of Service and Privacy Policy.
+  </p>
+</section>
+
+<!-- Toggle Buttons -->
+<div class="flex justify-center gap-4 mb-8">
+  <button id="privacy-btn" class="toggle-btn px-4 py-2 bg-indigo-600 text-white rounded-full shadow-md active">
+    Privacy Policy
+  </button>
+  <button id="tos-btn" class="toggle-btn px-4 py-2 bg-gray-200 dark:bg-[#2e3246] text-gray-800 dark:text-gray-200 rounded-full shadow-md">
+    Terms of Service
+  </button>
+</div>
+
+<main class="container mx-auto px-4 sm:px-6 max-w-4xl">
+  <!-- Terms of Service -->
+<div id="tos-section" class="bg-white dark:bg-[#26293a] rounded-2xl shadow-2xl p-8 mb-5 hidden">
+  <div class="flex items-center gap-3 mb-2">
+    <i class="fas fa-gavel text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+    <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Acceptance of Terms</h2>
+  </div>
+  <p class="text-gray-700 dark:text-gray-300 mb-6">
+    By using BDTools, you agree to these Terms of Service and any modifications made in the future.
+  </p>
+
+  <div class="flex items-center gap-3 mb-2">
+    <i class="fas fa-user-shield text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+    <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">User Responsibilities</h2>
+  </div>
+  <p class="text-gray-700 dark:text-gray-300 mb-6">
+    You agree not to misuse the tools or attempt to exploit BDTools or its services.
+  </p>
+
+  <div class="flex items-center gap-3 mb-2">
+    <i class="fas fa-key text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+    <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">API & Security</h2>
+  </div>
+  <p class="text-gray-700 dark:text-gray-300 mb-6">
+    API keys must be kept private. BDTools is not responsible for misuse of keys.
+  </p>
+
+  <div class="flex items-center gap-3 mb-2">
+    <i class="fas fa-sync-alt text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+    <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Changes</h2>
+  </div>
+  <p class="text-gray-700 dark:text-gray-300">
+    We may update these terms. Continued usage implies acceptance of new terms.
+  </p>
+  <p class="mt-6 text-center text-sm italic text-gray-500 dark:text-gray-400">
+    Note: This is a community-made tool and is not affiliated with BDFD directly.
+  </p>
+</div>
+<!-- Privacy Policy -->
+<div id="privacy-section" class="bg-white dark:bg-[#26293a] rounded-2xl shadow-2xl p-8 mb-5">
+  <div class="flex items-center gap-3 mb-2">
+    <i class="fas fa-database text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+    <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Data Collection</h2>
+  </div>
+  <p class="text-gray-700 dark:text-gray-300 mb-6">
+   BDTools collects minimal data necessary for service functionality, like API requests and tool usage.
+  </p>
+
+  <div class="flex items-center gap-3 mb-2">
+    <i class="fas fa-cookie-bite text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+    <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Cookies & Storage</h2>
+  </div>
+  <p class="text-gray-700 dark:text-gray-300 mb-6">
+    We may store preferences (e.g., dark mode) locally in your browser. No tracking cookies are used.
+  </p>
+
+  <div class="flex items-center gap-3 mb-2">
+    <i class="fas fa-chart-line text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+    <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Data Usage</h2>
+  </div>
+  <p class="text-gray-700 dark:text-gray-300 mb-6">
+    Collected data is only used for analytics and improvements, not shared with third parties.
+  </p>
+
+  <div class="flex items-center gap-3 mb-2">
+    <i class="fas fa-sync text-indigo-600 dark:text-indigo-400 text-2xl"></i>
+    <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Updates</h2>
+  </div>
+  <p class="text-gray-700 dark:text-gray-300">
+    Privacy policies may change, and continued usage of BDTools implies acceptance.
+  </p>
+  <p class="mt-6 text-center text-sm italic text-gray-500 dark:text-gray-400">
+    Note: This is a community-made tool and is not affiliated with BDFD directly.
+  </p>
+</div>
+</main>
+  <footer class="text-center mt-6 text-gray-500 dark:text-gray-400 text-sm">
+  &copy; 2026 BDTools. All rights reserved.
+</footer>
+<script>
+// Loader dots
+const bdtoolsDots = document.getElementById("bdtools-dots");
+let dotCount = 0, bdtoolsDotInterval;
+function showNextDot() { dotCount = (dotCount + 1) % 4; bdtoolsDots.textContent = ".".repeat(dotCount); }
+setTimeout(() => { showNextDot(); bdtoolsDotInterval = setInterval(showNextDot, 350); }, 80);
+window.addEventListener("load", () => { setTimeout(() => { const loader = document.getElementById("bdtools-loader"); loader.classList.add("bdtools-fade-out"); setTimeout(() => loader.style.display = "none", 500); clearInterval(bdtoolsDotInterval); }, 1200); });
+
+// Dark Mode Toggle
+document.addEventListener('DOMContentLoaded', () => {
+  const html = document.documentElement;
+  const toggleBtn = document.getElementById('dark-mode-toggle');
+  const icon = toggleBtn.querySelector('i');
+  const textSpan = toggleBtn.querySelector('.toggle-text');
+  function updateButton() {
+    if (html.classList.contains('dark')) { icon.className = 'fas fa-sun'; textSpan.textContent = 'Light Mode'; }
+    else { icon.className = 'fas fa-moon'; textSpan.textContent = 'Dark Mode'; }
+  }
+  updateButton();
+  toggleBtn.addEventListener('click', () => {
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+    updateButton();
+  });
+
+  // TOS/Privacy Toggle
+  const tosBtn = document.getElementById('tos-btn');
+  const privacyBtn = document.getElementById('privacy-btn');
+  const tosSection = document.getElementById('tos-section');
+  const privacySection = document.getElementById('privacy-section');
+
+  tosBtn.addEventListener('click', () => {
+    tosSection.classList.remove('hidden');
+    privacySection.classList.add('hidden');
+    tosBtn.classList.add('active', 'bg-indigo-600', 'text-white');
+    privacyBtn.classList.remove('active', 'bg-indigo-600', 'text-white');
+    privacyBtn.classList.add('bg-gray-200', 'dark:bg-[#2e3246]');
+  });
+
+  privacyBtn.addEventListener('click', () => {
+    privacySection.classList.remove('hidden');
+    tosSection.classList.add('hidden');
+    privacyBtn.classList.add('active', 'bg-indigo-600', 'text-white');
+    tosBtn.classList.remove('active', 'bg-indigo-600', 'text-white');
+    tosBtn.classList.add('bg-gray-200', 'dark:bg-[#2e3246]');
+  });
+});
+</script>
+</body>
+</html>

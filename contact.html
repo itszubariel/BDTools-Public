@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+<script>
+    (function() {
+      const darkMode = localStorage.getItem('darkMode');
+      if (darkMode === 'enabled') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = { darkMode: 'class' };
+</script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BDTools | Contact</title>
+<link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" type="image/x-icon" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body class="bg-gray-100 dark:bg-[#1e1e2f] text-gray-800 dark:text-gray-100 min-h-screen transition-colors duration-300">
+<style>
+      .glass-tooltip {
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(101, 100, 100, 0.3);
+  white-space: nowrap;
+  max-width: calc(100vw - 80px);
+}
+
+.dark .glass-tooltip {
+  background: rgba(255 255 255 / 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255 255 255 / 0.3);
+}
+
+  @media (max-width: 640px) {
+    .glass-tooltip {
+      white-space: normal; 
+      min-width: 160px;
+      max-width: calc(100vw - 40px);
+    }
+  }
+
+  .tooltip-text {
+    transform: translateX(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .tooltip-container.active .tooltip-text {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: translateX(0);
+  }
+  #toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 250px;
+  max-width: 350px;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: white;
+  animation: slideIn 0.4s ease, fadeOut 0.4s ease 4.6s forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.toast.success {
+  background: linear-gradient(135deg, #4ade80, #16a34a);
+}
+
+.toast.error {
+  background: linear-gradient(135deg, #f87171, #dc2626);
+}
+
+.toast::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.4);
+  animation: progressBar 4.6s linear forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+@keyframes progressBar {
+  to {
+    width: 0%;
+  }
+}
+</style>
+<!-- Loader -->
+<div id="bdtools-loader" class="bdtools-loader fixed inset-0 flex items-center justify-center bg-white dark:bg-[#1e1e2f] z-50">
+  <div class="text-center">
+    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" class="h-16 w-16 mx-auto mb-4 rounded-full animate-bounce" />
+    <p class="text-gray-700 dark:text-gray-300 font-semibold text-lg">
+      Loading<span id="bdtools-dots"></span>
+    </p>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- Header -->
+<header class="flex justify-between items-center px-6 py-4 bg-gray-100 dark:bg-[#1e1e2f]">
+  <a href="/" class="flex items-center gap-2">
+    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" class="h-10 w-10 rounded-full" />
+    <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">BDTools</span>
+  </a>
+  <button id="dark-mode-toggle" class="bg-gray-200 hover:bg-gray-300 dark:bg-[#2e3246] dark:hover:bg-[#3b3f54] text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full transition-colors duration-300 flex items-center space-x-2">
+    <i class="fas fa-moon"></i>
+    <span class="toggle-text">Dark Mode</span>
+  </button>
+</header>
+
+<!-- Section Title -->
+<section class="text-center mb-10 mt-5">
+  <h1 class="text-4xl font-bold text-indigo-700 dark:text-indigo-400 mb-2">Contact Us</h1>
+  <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+    Fill out the form below to send us a message via Discord.
+  </p>
+</section>
+
+<div class="px-4 sm:px-0">
+<div class="flex-1 bg-white dark:bg-[#26293a] rounded-xl shadow-lg overflow-hidden max-w-4xl mx-auto w-full ">
+  <!-- Header -->
+  <div class="bg-indigo-600 dark:bg-indigo-700 px-4 py-3 flex justify-between items-center">
+    <span class="text-white font-semibold text-lg">
+      <i class="fas fa-envelope mr-2"></i> Contact Us
+    </span>
+    <button id="reset-form" class="text-white hover:text-indigo-200">
+      <i class="fas fa-trash-alt"></i>
+    </button>
+  </div>
+
+  <!-- Body -->
+<form id="contact-form" class="p-4 space-y-6">
+    <!-- Discord Name and Username -->
+    <div class="space-y-1">
+      <div class="flex items-center gap-2 font-medium text-gray-800 dark:text-gray-200">
+        Discord Info
+        <div class="relative inline-block tooltip-container">
+          <button type="button" aria-label="Info" class="info-icon text-gray-500 hover:text-indigo-500 focus:outline-none">
+            <i class="fas fa-info-circle"></i>
+          </button>
+          <div class="tooltip-text absolute left-full ml-3 top-1/2 -translate-y-1/2 glass-tooltip text-white text-sm rounded px-4 py-2 z-50">
+            Your Discord display name and username for visualization.
+          </div>
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-3">
+        <input id="displayName" placeholder="Display Name" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 w-full" />
+        <input id="username" placeholder="Username" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 w-full" />
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="space-y-1">
+      <div class="flex items-center gap-2 font-medium text-gray-800 dark:text-gray-200">
+        Email
+                <div class="relative inline-block tooltip-container">
+          <button type="button" aria-label="Info" class="info-icon text-gray-500 hover:text-indigo-500 focus:outline-none">
+            <i class="fas fa-info-circle"></i>
+          </button>
+          <div class="tooltip-text absolute left-full ml-3 top-1/2 -translate-y-1/2 glass-tooltip text-white text-sm rounded px-4 py-2 z-50">
+            The email you want the reply to this message to go to.
+          </div>
+        </div>
+      </div>
+      <input id="email" type="email" placeholder="your@email.com" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 w-full" />
+    </div>
+
+    <!-- Topic -->
+    <div class="space-y-1">
+      <div class="flex items-center gap-2 font-medium text-gray-800 dark:text-gray-200">
+        Topic
+                <div class="relative inline-block tooltip-container">
+          <button type="button" aria-label="Info" class="info-icon text-gray-500 hover:text-indigo-500 focus:outline-none">
+            <i class="fas fa-info-circle"></i>
+          </button>
+          <div class="tooltip-text absolute left-full ml-3 top-1/2 -translate-y-1/2 glass-tooltip text-white text-sm rounded px-4 py-2 z-50">
+            Topic of the message.
+          </div>
+        </div>
+      </div>
+      <select id="topic" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 w-full">
+        <option value="">Select topic</option>
+        <option value="question">Question</option>
+        <option value="bug">Bug Report</option>
+        <option value="suggestion">Suggestion</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <!-- Subject -->
+    <div class="space-y-1">
+      <div class="flex items-center gap-2 font-medium text-gray-800 dark:text-gray-200">
+        Subject
+                <div class="relative inline-block tooltip-container">
+          <button type="button" aria-label="Info" class="info-icon text-gray-500 hover:text-indigo-500 focus:outline-none">
+            <i class="fas fa-info-circle"></i>
+          </button>
+          <div class="tooltip-text absolute left-full ml-3 top-1/2 -translate-y-1/2 glass-tooltip text-white text-sm rounded px-4 py-2 z-50">
+            Subject of the message.
+          </div>
+        </div>
+      </div>
+      <input id="subject" placeholder="Message Subject" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 w-full" />
+    </div>
+
+    <!-- Message -->
+    <div class="space-y-1">
+      <div class="flex items-center gap-2 font-medium text-gray-800 dark:text-gray-200">
+        Message
+                <div class="relative inline-block tooltip-container">
+          <button type="button" aria-label="Info" class="info-icon text-gray-500 hover:text-indigo-500 focus:outline-none">
+            <i class="fas fa-info-circle"></i>
+          </button>
+          <div class="tooltip-text absolute left-full ml-3 top-1/2 -translate-y-1/2 glass-tooltip text-white text-sm rounded px-4 py-2 z-50">
+            The message you want us to receive.
+          </div>
+        </div>
+      </div>
+      <textarea id="message" placeholder="Write your message here..." class="w-full p-3 resize-y h-32 sm:h-40 md:h-48 border rounded-lg dark:bg-[#2e3246] dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"></textarea>
+    </div>
+
+    <!-- Submit -->
+    <div class="mt-6 space-y-4 text-center">
+      <button id="send-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg">
+        <i class="fas fa-paper-plane mr-2"></i> Send Message
+      </button>
+      <p id="status" class="text-sm mt-2"></p>
+    </div>
+     <p class="mt-6 text-center text-sm italic text-gray-500 dark:text-gray-400">
+    Note: This is a community-made tool and is not affiliated with BDFD directly.
+  </p>
+</form> 
+</div>
+</div>
+
+<footer class="text-center py-6 text-gray-500 dark:text-gray-400 text-sm">
+  &copy; 2026 BDTools. All rights reserved.
+</footer>
+<script>
+  document.querySelectorAll('.tooltip-container').forEach(container => {
+    const icon = container.querySelector('.info-icon');
+    icon.addEventListener('click', e => {
+      e.stopPropagation();
+      const isActive = container.classList.contains('active');
+      document.querySelectorAll('.tooltip-container').forEach(c => c.classList.remove('active'));
+      if (!isActive) container.classList.add('active');
+    });
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.tooltip-container').forEach(c => c.classList.remove('active'));
+  });
+</script>
+<script>
+
+const bdtoolsDots = document.getElementById("bdtools-dots");
+let dotCount = 0, bdtoolsDotInterval;
+function showNextDot() { dotCount = (dotCount + 1) % 4; bdtoolsDots.textContent = ".".repeat(dotCount); }
+setTimeout(() => { showNextDot(); bdtoolsDotInterval = setInterval(showNextDot, 350); }, 80);
+window.addEventListener("load", () => { setTimeout(() => { const loader = document.getElementById("bdtools-loader"); loader.classList.add("bdtools-fade-out"); setTimeout(() => loader.style.display = "none", 500); clearInterval(bdtoolsDotInterval); }, 1200); });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const html = document.documentElement;
+  const toggleBtn = document.getElementById('dark-mode-toggle');
+  const icon = toggleBtn.querySelector('i');
+  const textSpan = toggleBtn.querySelector('.toggle-text');
+  function updateButton() {
+    if (html.classList.contains('dark')) { icon.className = 'fas fa-sun'; textSpan.textContent = 'Light Mode'; }
+    else { icon.className = 'fas fa-moon'; textSpan.textContent = 'Dark Mode'; }
+  }
+  updateButton();
+  toggleBtn.addEventListener('click', () => {
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+    updateButton();
+  });
+});
+
+document.getElementById("reset-form").addEventListener("click", () => {
+  document.querySelectorAll("#displayName, #username, #email, #topic, #subject, #message")
+    .forEach(field => field.value = "");
+   showToast('Cleared All Inputs', 'success');
+});
+
+  document.getElementById('send-btn').addEventListener('click', async (e) => {
+      e.preventDefault();
+  const displayName = document.getElementById('displayName').value.trim();
+  const username = document.getElementById('username').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const topic = document.getElementById('topic').value.trim();
+  const subject = document.getElementById('subject').value.trim();
+  const message = document.getElementById('message').value.trim();
+
+  // Validators
+  if (!displayName || !username || !email || !topic || !subject || !message) {
+    showToast('All fields must be filled.', 'error');
+    return;
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('Enter a valid email address.', 'error');
+    return;
+  }
+
+  if (message.length < 50) {
+    showToast('Message must be at least 50 characters long.', 'error');
+    return;
+  }
+
+  try {
+    const res = await fetch('/.netlify/functions/send-message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ displayName, username, email, topic, subject, message })
+    });
+
+    if (res.ok) {
+      showToast('Message sent successfully!', 'success');
+        document.getElementById('contact-form').reset();
+
+    } else {
+      throw new Error("Failed to send message.");
+    }
+  } catch (err) {
+    showToast('Error sending message.', 'error');
+  }
+});
+
+  function showToast(message, type = 'success') {
+    const toastContainer = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.classList.add('toast', type);
+    toast.innerText = message;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
+  }
+</script>
+</body>
+</html>

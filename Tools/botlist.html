@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+  <script>
+    (function() {
+      const darkMode = localStorage.getItem('darkMode');
+      if (darkMode === 'enabled') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BDTools | Bot Guild List</title>
+  <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+ #toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 250px;
+  max-width: 350px;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: white;
+  animation: slideIn 0.4s ease, fadeOut 0.4s ease 4.6s forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.toast.success {
+  background: linear-gradient(135deg, #4ade80, #16a34a);
+}
+
+.toast.error {
+  background: linear-gradient(135deg, #f87171, #dc2626);
+}
+
+.toast::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.4);
+  animation: progressBar 4.6s linear forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+@keyframes progressBar {
+  to {
+    width: 0%;
+  }
+}
+    .loading-placeholder {
+      background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+      background-size: 400% 100%;
+      animation: shimmer 1.2s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+    .bdtools-fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.glass-tooltip {
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(101, 100, 100, 0.3);
+  white-space: nowrap;
+  max-width: calc(100vw - 80px);
+}
+
+.dark .glass-tooltip {
+  background: rgba(255 255 255 / 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255 255 255 / 0.3);
+}
+
+@media (max-width: 640px) {
+  .glass-tooltip {
+    white-space: normal;
+    min-width: 160px;
+    max-width: calc(100vw - 40px);
+  }
+}
+
+.tooltip-text {
+  transform: translateX(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.tooltip-container.active .tooltip-text {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: translateX(0);
+}
+  </style>
+</head>
+<body class="bg-gray-100 dark:bg-[#1e1e2f] text-gray-800 dark:text-gray-100 min-h-screen transition-colors duration-300">
+
+  <div id="bdtools-loader" class="bdtools-loader fixed inset-0 flex items-center justify-center bg-white dark:bg-[#1e1e2f] z-50">
+  <div class="text-center">
+    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" 
+         alt="BDTools Logo" 
+         class="h-16 w-16 mx-auto mb-4 rounded-full animate-bounce" />
+    <p class="text-gray-700 dark:text-gray-300 font-semibold text-lg">
+      Loading<span id="bdtools-dots"></span>
+    </p>
+  </div>
+</div>
+
+  <div id="toast-container"></div>
+
+  <!-- HEADER -->
+  <header class="flex justify-between items-center px-6 py-4 bg-gray-100 dark:bg-[#1e1e2f]">
+    <a href="/" class="flex items-center gap-2">
+      <img src="https://bdtools.netlify.app/images/bdfd_logo.png" class="h-10 w-10 rounded-full" alt="Logo" />
+      <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">BDTools</span>
+    </a>
+    <div class="flex items-center gap-4">
+      <button id="dark-mode-toggle"
+        class="bg-gray-200 hover:bg-gray-300 dark:bg-[#2e3246] dark:hover:bg-[#3b3f54]
+               text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full
+               transition-colors duration-300 flex items-center space-x-2">
+        <i class="fas fa-moon"></i>
+        <span class="toggle-text">Dark Mode</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Header Section -->
+  <section class="text-center mb-10 mt-5">
+    <h1 class="text-4xl font-bold text-indigo-700 dark:text-indigo-400 mb-2">Bot Guild List
+    </h1>
+    <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+      Discover and manage your bot guilds easily, Use the API Key to fetch your servers and explore them with powerful search and filter options.
+    </p>
+  </section>
+
+  <!-- API Key Section -->
+<section class="max-w-lg mx-auto mb-6 text-center px-4">
+    <input id="apiKeyInput" type="text" placeholder="Enter your API Key"
+      class="w-full max-w-sm mx-auto px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700
+             bg-white dark:bg-[#2e3246] focus:ring-2 focus:ring-indigo-500
+             text-gray-800 dark:text-gray-100 mb-4" />
+             <br>
+                   <div class="relative inline-block tooltip-container">
+        <button type="button" aria-label="Info" class="info-icon text-gray-500 hover:text-indigo-500 focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-4m0-4h.01" />
+          </svg>
+        </button>
+        <div
+          class="tooltip-text absolute top-full ml-3 top-1/2 -translate-y-1/2
+                 glass-tooltip text-white text-sm rounded px-4 py-2
+                 opacity-0 invisible pointer-events-none z-50"
+        >
+              To get your API Key, go to 
+    <a href="https://bdtools.netlify.app/api" target="_blank" class="text-indigo-400 hover:underline">
+      BDTools API Docs
+    </a> 
+    and login. <br> The key will be available in the settings.
+        </div>
+      </div>
+      <br>
+    <button id="showServersBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg mt-2">
+      <i class="fas fa-server mr-2"></i> Show Servers
+    </button>
+  </section>
+
+  <!-- Search & Filter Controls -->
+  <section class="max-w-4xl mx-auto mb-6 px-4 flex flex-col sm:flex-row gap-4 justify-between items-center">
+    <input id="searchInput" type="text" placeholder="Search servers..."
+      class="w-full sm:w-auto flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700
+             bg-white dark:bg-[#2e3246] text-gray-800 dark:text-gray-100" />
+    <select id="filterSelect"
+      class="w-full sm:w-auto px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700
+             bg-white dark:bg-[#2e3246] text-gray-800 dark:text-gray-100">
+      <option value="none">Filter: None</option>
+      <option value="az">Sort: A-Z</option>
+      <option value="members">Sort: Members Count</option>
+    </select>
+  </section>
+
+  <!-- Server List -->
+  <section class="container mx-auto px-4 pb-10">
+    <div id="server-list" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="loading-placeholder h-32 rounded-lg"></div>
+      <div class="loading-placeholder h-32 rounded-lg"></div>
+      <div class="loading-placeholder h-32 rounded-lg"></div>
+    </div>
+    <div id="pagination" class="flex justify-center items-center gap-2 mt-6"></div>
+  </section>
+  
+  <div class="container mx-auto px-4">
+<div class="mt-12 bg-white dark:bg-[#26293a] rounded-2xl shadow-2xl p-8 max-w-4xl mx-auto">
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6">
+    <i class="fas fa-rocket text-indigo-600 dark:text-indigo-400 mr-2"></i> Before You Begin
+  </h3>
+  <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+    To make the most of the <strong class="text-indigo-600 dark:text-indigo-400">BDTools Bot Guild List</strong>, follow these steps:
+  </p>
+  <ol class="list-decimal list-inside text-gray-700 dark:text-gray-300 ml-1 space-y-2">
+    <li>
+      <strong>Get your API key:</strong> You need a unique API key generated from our <a href="/api" class="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">API Documentation</a> to submit your bot’s server data securely.
+    </li>
+    <li>
+      <strong>Integrate the API:</strong> Copy the code from the Example Field in the documentation and run it with the desired number of servers via your BDFD bot, Note: you <strong>need</strong> to use that code nothing else will work.
+    </li>
+    <li>
+      <strong>Verify data submission:</strong> After submitting, check the website with your API key to see your servers listed. If a server doesn’t show up, either wait for a few more minutes or <a href="/contact" class="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">Contact Us</a>.
+    </li>
+    <li>
+      <strong>Keep your API key secure:</strong> Treat your API key like a password, don’t share it publicly to protect your bot’s data privacy.
+    </li>
+  </ol>
+</div>
+
+<div class="mt-12 bg-white dark:bg-[#26293a] rounded-2xl shadow-2xl p-8 max-w-4xl mx-auto">
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6">
+    <i class="fas fa-info-circle text-indigo-600 dark:text-indigo-400 mr-2"></i> Bot Guild List Information
+  </h3>
+
+  <!-- Toggle Buttons -->
+  <div class="flex mb-6">
+    <button 
+      id="basic-tab" 
+      class="tab-btn bg-indigo-600 text-white px-4 py-2 rounded-l-md focus:outline-none transition-colors"
+      onclick="showTab('basic')">
+      Basic
+    </button>
+    <button 
+      id="advanced-tab" 
+      class="tab-btn bg-gray-200 dark:bg-[#1f2233] text-gray-800 dark:text-gray-300 px-4 py-2 rounded-r-md focus:outline-none transition-colors"
+      onclick="showTab('advanced')">
+      Advanced
+    </button>
+  </div>
+
+  <!-- BASIC INFO -->
+  <div id="basic-info" class="tab-content">
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      Welcome to the <strong class="text-indigo-600 dark:text-indigo-400">BDTools Bot Guild List</strong>.  
+      This is the simple way to see where your bot is and what’s going on. Enter your API key, and you’ll instantly see your bot’s servers.
+    </p>
+
+    <!-- How We Get the Data -->
+    <div class="mt-8">
+      <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+        <i class="fas fa-database text-indigo-600 dark:text-indigo-400 mr-2"></i> How It Works
+      </h4>
+      <p class="text-gray-700 dark:text-gray-300 mb-2">
+        Your bot sends us its server list using our secure API endpont <code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-1 rounded">/submit-server</code>, we enrich the data with server icons, member counts, and presence counts, and then you can view it here. 
+      </p>
+    </div>
+
+    <!-- Using the Website -->
+    <div class="mt-8">
+      <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+        <i class="fas fa-play-circle text-indigo-600 dark:text-indigo-400 mr-2"></i> Quick Start
+      </h4>
+      <p class="text-gray-700 dark:text-gray-300 mb-4">
+        Paste your API key above and you’ll get your full server list instantly.  
+        It’s simple: search, sort, and see stats like <strong>member counts, icons and description</strong>.
+      </p>
+      <p class="text-gray-700 dark:text-gray-300">
+        If you don’t see a new server, just resubmit your bot’s data.
+      </p>
+    </div>
+  </div>
+
+  <!-- ADVANCED INFO -->
+  <div id="advanced-info" class="tab-content hidden">
+    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+      The <strong class="text-indigo-600 dark:text-indigo-400">BDTools Bot Guild List</strong> is designed for developers who want complete insight into their bot’s servers, with detailed stats and advanced data enrichment.
+    </p>
+
+    <!-- How We Get the Data -->
+    <div class="mt-8">
+      <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+        <i class="fas fa-database text-indigo-600 dark:text-indigo-400 mr-2"></i> How We Get the Data
+      </h4>
+      <p class="text-gray-700 dark:text-gray-300 mb-2">
+        Your bot sends its server list via our <code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-1 rounded">/submit-server</code> endpoint.  
+        We then enhance this data using the Discord API to fetch additional details like member counts, server icons, and descriptions.
+      </p>
+      <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 ml-4 space-y-1">
+        <li>Server data includes: name, ID, owner ID, and invite link.</li>
+        <li>If no invite link is provided, some stats (like member count) may remain empty.</li>
+      </ul>
+    </div>
+
+    <!-- Security -->
+    <div class="mt-8">
+      <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+        <i class="fas fa-lock text-indigo-600 dark:text-indigo-400 mr-2"></i> Security
+      </h4>
+      <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 ml-4 space-y-1">
+        <li>Each user gets a unique JWT-based API key.</li>
+        <li>All requests are validated using <code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-1 rounded">Authorization</code> headers and strict CORS.</li>
+        <li>Your data is private—no one can see your server list but you.</li>
+      </ul>
+    </div>
+
+    <!-- Using the Website -->
+    <div class="mt-8">
+      <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+        <i class="fas fa-play-circle text-indigo-600 dark:text-indigo-400 mr-2"></i> Using This Page
+      </h4>
+      <p class="text-gray-700 dark:text-gray-300 mb-4">
+        With your API key, you can fetch your bot’s full server list, filter servers, and view enriched data.  
+        If data is missing (like server icons), we fill it with placeholders for a clean UI.
+      </p>
+    </div>
+  </div>
+
+  <!-- Tips Section -->
+<div class="mt-8 max-w-4xl mx-auto">
+  <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3 flex items-center">
+    <i class="fas fa-lightbulb text-indigo-600 dark:text-indigo-400 mr-2"></i> Tips
+  </h4>
+  <p class="text-gray-700 dark:text-gray-300 mb-6">You can use these data for specific tasks:</p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Owner ID Use -->
+    <div class="bg-[#2e3246] dark:bg-[#2e3246] rounded-lg p-4 overflow-x-auto text-sm font-mono text-gray-800 dark:text-gray-200 shadow-inner" id="bdscript-example">
+      <h5 class="font-semibold mb-2 flex items-center text-indigo-400 dark:text-indigo-400">
+        <i class="fas fa-user-circle mr-2"></i> Owner ID Usage (DM Server Owner)
+      </h5><pre><code class="bdscript-example">$nomention
+$var[UserID;OWNER_ID]        
+$dm[$var[UserID]]
+$displayName, thank you for using my bot in your server &lt;3.</code></pre></div>
+
+    <!-- Server ID Use -->
+    <div class="bg-[#2e3246] dark:bg-[#2e3246] rounded-lg p-4 overflow-x-auto text-sm font-mono text-gray-800 dark:text-gray-200 shadow-inner" id="output-text">
+      <h5 class="font-semibold mb-2 flex items-center text-indigo-400 dark:text-indigo-400">
+        <i class="fas fa-server mr-2"></i> Server ID Usage (Leave a Server)
+      </h5><pre><code class="output-text">$nomention
+$var[GuildID;SERVER_ID]
+$sendMessage[I left out `$serverName[$var[GuildID]]` server.]
+$botLeave[$var[GuildID]]</code></pre></div>
+  </div>
+</div>
+  <p class="mt-6 text-center text-sm italic text-gray-500 dark:text-gray-400">
+    Note: This is a community-made tool and is not affiliated with BDFD directly.
+  </p>
+</div>
+
+<script>
+  function showTab(tab) {
+    // Toggle content
+    document.getElementById('basic-info').classList.toggle('hidden', tab !== 'basic');
+    document.getElementById('advanced-info').classList.toggle('hidden', tab !== 'advanced');
+    
+    // Toggle button colors
+    const basicBtn = document.getElementById('basic-tab');
+    const advBtn = document.getElementById('advanced-tab');
+    
+    if (tab === 'basic') {
+      basicBtn.classList.add('bg-indigo-600', 'text-white');
+      basicBtn.classList.remove('bg-gray-200', 'dark:bg-[#1f2233]', 'text-gray-800', 'dark:text-gray-300');
+      advBtn.classList.add('bg-gray-200', 'dark:bg-[#1f2233]', 'text-gray-800', 'dark:text-gray-300');
+      advBtn.classList.remove('bg-indigo-600', 'text-white');
+    } else {
+      advBtn.classList.add('bg-indigo-600', 'text-white');
+      advBtn.classList.remove('bg-gray-200', 'dark:bg-[#1f2233]', 'text-gray-800', 'dark:text-gray-300');
+      basicBtn.classList.add('bg-gray-200', 'dark:bg-[#1f2233]', 'text-gray-800', 'dark:text-gray-300');
+      basicBtn.classList.remove('bg-indigo-600', 'text-white');
+    }
+  }
+</script>
+  <footer class="text-center mt-6 text-gray-500 dark:text-gray-400 text-sm">
+  &copy; 2026 BDTools. All rights reserved.
+</footer>
+  <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6 mb-10 text-center text-sm text-gray-600 dark:text-gray-400 space-x-4">
+    <a href="/tos" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fas fa-gavel"></i> Terms of Service
+    </a>
+    <span>|</span>
+    <a href="/privacy" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fas fa-user-shield"></i> Privacy Policy
+    </a>
+    <span>|</span>
+    <a href="/contact" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fas fa-envelope"></i> Contact Us
+    </a>
+  </div>
+  <script>
+
+const myTheme = {
+  defaultTextHighlight: { color: 4288341353, style: 0 },
+  fallbackHighlight: { color: 4285791231, style: 0 },
+  bracketHighlight: { color: 4294921292, style: 1 },
+  semicolonHighlight: { color: 4294920266, style: 1 },
+  functionsHighlights: {
+    "$nomention": { color: 4294932473, style: 0 },
+    "$catch":     { color: 4288905212, style: 0 },
+    "$else":      { color: 4288905212, style: 0 },
+    "$elseif":    { color: 4288905212, style: 0 },
+    "$endif":     { color: 4288905212, style: 0 },
+    "$endtry":    { color: 4288905212, style: 0 },
+    "$error":     { color: 4288905212, style: 0 },
+    "$if":        { color: 4288905212, style: 0 },
+    "$try":       { color: 4288905212, style: 0 }
+  }
+};
+
+const BDScriptHighlighter = (function () {
+  function intToRgba(intColor) {
+    if (typeof intColor !== 'number' || isNaN(intColor)) return 'rgba(228, 228, 231, 1)';
+    const r = (intColor >> 16) & 0xFF;
+    const g = (intColor >> 8) & 0xFF;
+    const b = intColor & 0xFF;
+    let a = ((intColor >> 24) & 0xFF);
+    a = (isNaN(a) || a < 0 || a > 255) ? 255 : a;
+    return `rgba(${r}, ${g}, ${b}, ${a / 255})`;
+  }
+
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function safeGet(obj, path, defaultValue) {
+    const keys = path.split('.');
+    let current = obj;
+    for (const key of keys) {
+      if (current === null || typeof current !== 'object' || !(key in current)) return defaultValue;
+      current = current[key];
+    }
+    return current === undefined ? defaultValue : current;
+  }
+
+  function getStyleCss(colorInt, styleInt) {
+    const color = intToRgba(colorInt);
+    let fontWeight = 'normal';
+    let fontStyle = 'normal';
+    if (styleInt === 1 || styleInt === 3) fontWeight = 'bold';
+    if (styleInt === 2 || styleInt === 3) fontStyle = 'italic';
+    return `color: ${color}; font-weight: ${fontWeight}; font-style: ${fontStyle};`;
+  }
+
+  function processTextSegment(text, defaultStyleCss, bracketStyleCss, semicolonStyleCss) {
+    let html = '';
+    let buffer = '';
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      if (char === '[' || char === ']') {
+        if (buffer) {
+          html += `<span style="${defaultStyleCss}">${escapeHtml(buffer)}</span>`;
+          buffer = '';
+        }
+        html += `<span style="${bracketStyleCss}">${escapeHtml(char)}</span>`;
+      } else if (char === ';') {
+        if (buffer) {
+          html += `<span style="${defaultStyleCss}">${escapeHtml(buffer)}</span>`;
+          buffer = '';
+        }
+        html += `<span style="${semicolonStyleCss}">${escapeHtml(char)}</span>`;
+      } else {
+        buffer += char;
+      }
+    }
+    if (buffer) {
+      html += `<span style="${defaultStyleCss}">${escapeHtml(buffer)}</span>`;
+    }
+    return html;
+  }
+
+  function highlight(code, themeConfig) {
+    if (typeof code !== 'string') return '';
+    if (typeof themeConfig !== 'object' || themeConfig === null) themeConfig = {};
+
+    const defaultStyleCss = getStyleCss(safeGet(themeConfig, 'defaultTextHighlight.color'), safeGet(themeConfig, 'defaultTextHighlight.style'));
+    const fallbackStyleCss = getStyleCss(safeGet(themeConfig, 'fallbackHighlight.color'), safeGet(themeConfig, 'fallbackHighlight.style'));
+    const bracketStyleCss = getStyleCss(safeGet(themeConfig, 'bracketHighlight.color'), safeGet(themeConfig, 'bracketHighlight.style'));
+    const semicolonStyleCss = getStyleCss(safeGet(themeConfig, 'semicolonHighlight.color'), safeGet(themeConfig, 'semicolonHighlight.style'));
+
+    const functionsHighlights = safeGet(themeConfig, 'functionsHighlights', {});
+    const functionMap = new Map();
+    for (const funcName in functionsHighlights) {
+      if (funcName.startsWith('$')) {
+        functionMap.set(funcName, getStyleCss(functionsHighlights[funcName].color, functionsHighlights[funcName].style));
+      }
+    }
+
+    let resultHtml = '';
+    const functionRegex = /(\$[a-zA-Z0-9_]+)/g;
+    let lastIndex = 0;
+
+    code.replace(functionRegex, (match, funcName, offset) => {
+      if (offset > lastIndex) {
+        resultHtml += processTextSegment(code.substring(lastIndex, offset), defaultStyleCss, bracketStyleCss, semicolonStyleCss);
+      }
+      const funcStyleCss = functionMap.get(funcName) || fallbackStyleCss;
+      resultHtml += `<span style="${funcStyleCss}">${escapeHtml(funcName)}</span>`;
+      lastIndex = offset + funcName.length;
+      return match;
+    });
+
+    if (lastIndex < code.length) {
+      resultHtml += processTextSegment(code.substring(lastIndex), defaultStyleCss, bracketStyleCss, semicolonStyleCss);
+    }
+
+    return resultHtml;
+  }
+
+  return { highlight };
+})();
+
+function applyHighlighting(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const codeElement = container.querySelector('code');
+  if (!codeElement) return;
+
+  const rawCode = codeElement.textContent || '';
+  const highlighted = BDScriptHighlighter.highlight(rawCode, myTheme);
+  codeElement.innerHTML = highlighted;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  applyHighlighting('bdscript-example'); 
+  applyHighlighting('output-text'); 
+});
+</script>
+  <script>
+   document.querySelectorAll('.tooltip-container').forEach(container => {
+    const icon = container.querySelector('.info-icon');
+
+    icon.addEventListener('click', e => {
+      e.stopPropagation();
+      const isActive = container.classList.contains('active');
+
+      document.querySelectorAll('.tooltip-container').forEach(c => c.classList.remove('active'));
+      if (!isActive) container.classList.add('active');
+    });
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.tooltip-container').forEach(c => c.classList.remove('active'));
+  });
+</script>
+<script>
+const bdtoolsDots = document.getElementById("bdtools-dots");
+let dotCount = 0;
+let bdtoolsDotInterval;
+
+function showNextDot() {
+  dotCount = (dotCount + 1) % 4;
+  bdtoolsDots.textContent = ".".repeat(dotCount);
+}
+
+// First dot shows quickly (80ms)
+setTimeout(() => {
+  showNextDot();
+  bdtoolsDotInterval = setInterval(showNextDot, 350); 
+}, 80);
+
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    const loader = document.getElementById("bdtools-loader");
+    loader.classList.add("bdtools-fade-out");
+    setTimeout(() => loader.style.display = "none", 500);
+    clearInterval(bdtoolsDotInterval);
+  }, 1200);
+});
+</script>
+<script>
+    // Dark Mode Toggle
+document.addEventListener('DOMContentLoaded', () => {
+  const html = document.documentElement;
+  const toggleBtn = document.getElementById('dark-mode-toggle');
+  const icon = toggleBtn.querySelector('i');
+  const textSpan = toggleBtn.querySelector('.toggle-text');
+
+  function updateButton() {
+    if (html.classList.contains('dark')) {
+      icon.className = 'fas fa-sun';
+      textSpan.textContent = 'Light Mode';
+    } else {
+      icon.className = 'fas fa-moon';
+      textSpan.textContent = 'Dark Mode';
+    }
+  }
+  updateButton();
+
+  toggleBtn.addEventListener('click', () => {
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+    updateButton();
+  });
+});
+
+// Toast
+function showToast(message, type = 'success') {
+  const toastContainer = document.getElementById('toast-container');
+  if (!toastContainer) return;
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  toastContainer.appendChild(toast);
+  setTimeout(() => toast.remove(), 5000);
+}
+
+let serversData = [];
+let currentPage = 1;
+let serversPerPage = window.innerWidth < 640 ? 10 : 18;
+
+let lastFilter = 'none';
+let lastSearch = '';
+let lastFilterValue = 'none';
+
+// Handle resize without resetting pagination
+window.addEventListener('resize', () => {
+  serversPerPage = window.innerWidth < 640 ? 10 : 30;
+  renderServers(getFilteredServers());
+});
+
+// Fetch Servers
+async function fetchServers(apiKey) {
+  const container = document.getElementById('server-list');
+  container.innerHTML = `
+    <div class="loading-placeholder h-32 rounded-lg"></div>
+    <div class="loading-placeholder h-32 rounded-lg"></div>
+    <div class="loading-placeholder h-32 rounded-lg"></div>
+  `;
+
+  try {
+    const response = await fetch('https://api-bdtools.netlify.app/get-servers', {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${apiKey}` }
+    });
+
+    if (!response.ok) {
+      const msg = response.status === 401
+        ? 'Invalid API Key'
+        : response.status === 404
+          ? 'No servers found for this API Key'
+          : 'Something went wrong';
+      showToast(msg, 'error');
+      container.innerHTML = `<p class="text-center text-red-500">${msg}</p>`;
+      return;
+    }
+
+    const data = await response.json();
+    serversData = data.servers || [];
+    currentPage = 1;
+    renderServers(getFilteredServers());
+    localStorage.setItem('apiKey', apiKey);
+
+    showToast(`Fetched ${serversData.length} servers.`, 'success');
+  } catch (e) {
+    console.error(e);
+    container.innerHTML = `<p class="text-center text-red-500">Failed to load servers.</p>`;
+    showToast('Failed to load servers.', 'error');
+  }
+}
+
+// Get filtered & sorted servers
+function getFilteredServers() {
+  const searchValue = document.getElementById('searchInput').value.toLowerCase();
+  const filter = document.getElementById('filterSelect').value;
+
+  let filtered = serversData.filter(s => s.name.toLowerCase().includes(searchValue));
+  if (filter === 'az') filtered.sort((a, b) => a.name.localeCompare(b.name));
+  if (filter === 'members') filtered.sort((a, b) => (b.memberCount || 0) - (a.memberCount || 0));
+
+  return filtered;
+}
+
+// Render Server Cards with Pagination
+function renderServers(servers) {
+  const container = document.getElementById('server-list');
+  container.innerHTML = '';
+
+  if (!servers || servers.length === 0) {
+    container.innerHTML = `
+      <p class="text-center col-span-full text-gray-500 dark:text-gray-400">
+        Can't find a server with that name.
+      </p>`;
+    return;
+  }
+
+  const totalPages = Math.ceil(servers.length / serversPerPage);
+  if (currentPage > totalPages) currentPage = totalPages; // Avoid overflow pages
+
+  const start = (currentPage - 1) * serversPerPage;
+  const end = start + serversPerPage;
+  const paginatedServers = servers.slice(start, end);
+
+  // Render server cards
+  paginatedServers.forEach(server => {
+    const card = document.createElement('div');
+    card.className = 'bg-white dark:bg-[#26293a] rounded-md shadow-lg hover:shadow-md p-4 flex flex-col items-center text-center hover:scale-105 transition-transform duration-200';
+
+    card.innerHTML = `
+      <img src="${server.icon || 'https://bdtools.netlify.app/images/bdfd_logo.png'}" 
+           class="h-16 w-16 rounded-full mb-3" alt="${server.name}" />
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">${server.name}</h3>
+      <p class="text-gray-500 dark:text-gray-400 text-sm mb-2">${server.description || 'No description'}</p>
+      <div class="flex items-center gap-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
+        <span class="flex items-center gap-1">
+          <i class="fas fa-users"></i> ${server.memberCount || "null"}
+        </span>
+        <span class="flex items-center gap-1 text-green-500">
+          <i class="fas fa-circle"></i> ${server.presenceCount || "null"}
+        </span>
+      </div>
+      <div class="flex gap-2 mt-3">
+        <button class="server-id-btn px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition text-xs">
+          Server ID: ${server.id || 'Unknown'} <i class="fas fa-copy ml-1"></i>
+        </button>
+        <button class="owner-id-btn px-3 py-1 bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-indigo-200 rounded-md hover:bg-indigo-200 dark:hover:bg-indigo-700 transition text-xs">
+          Owner ID: ${server.ownerId || 'Unknown'} <i class="fas fa-copy ml-1"></i>
+        </button>
+      </div>
+    `;
+
+    container.appendChild(card);
+
+    // Add copy listeners
+    card.querySelector('.server-id-btn').addEventListener('click', () => copyToClipboard(server.id, 'Server ID'));
+    card.querySelector('.owner-id-btn').addEventListener('click', () => copyToClipboard(server.ownerId, 'Owner ID'));
+  });
+
+  renderPagination(totalPages, servers);
+}
+
+// Copy to clipboard
+function copyToClipboard(text, label) {
+  if (!text || text === 'Unknown') {
+    showToast(`${label} not available`, 'error');
+    return;
+  }
+  navigator.clipboard.writeText(text)
+    .then(() => showToast(`${label} copied to clipboard!`, 'success'))
+    .catch(() => showToast(`Failed to copy ${label}`, 'error'));
+}
+
+// Pagination
+function renderPagination(totalPages, servers) {
+  let paginationContainer = document.getElementById('pagination-container');
+  if (!paginationContainer) {
+    paginationContainer = document.createElement('div');
+    paginationContainer.id = 'pagination-container';
+    paginationContainer.className = 'flex justify-center items-center gap-2 mt-8 flex-wrap';
+    document.querySelector('#pagination').appendChild(paginationContainer);
+  }
+  paginationContainer.innerHTML = '';
+
+  if (totalPages > 1) {
+    const createBtn = (text, onClick, isActive = false) => {
+      const btn = document.createElement('button');
+      btn.textContent = text;
+      btn.className = `px-3 py-1 rounded-md text-sm ${isActive ? 'bg-indigo-600 text-white' : 'bg-gray-200 dark:bg-[#2e3246] text-gray-800 dark:text-gray-100'}`;
+      btn.addEventListener('click', () => { onClick(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+      return btn;
+    };
+
+    if (currentPage > 1) {
+      paginationContainer.appendChild(createBtn('First', () => { currentPage = 1; renderServers(servers); }));
+      paginationContainer.appendChild(createBtn('Prev', () => { currentPage--; renderServers(servers); }));
+    }
+
+    for (let i = 1; i <= totalPages; i++) {
+      paginationContainer.appendChild(createBtn(i, () => { currentPage = i; renderServers(servers); }, i === currentPage));
+    }
+
+    if (currentPage < totalPages) {
+      paginationContainer.appendChild(createBtn('Next', () => { currentPage++; renderServers(servers); }));
+      paginationContainer.appendChild(createBtn('Last', () => { currentPage = totalPages; renderServers(servers); }));
+    }
+  }
+}
+
+// Filter with prevention of false resets
+function handleFilterChange() {
+  const filterSelect = document.getElementById('filterSelect');
+  if (filterSelect.value === lastFilterValue) return; // Ignore false triggers
+  lastFilterValue = filterSelect.value;
+  currentPage = 1;
+  renderServers(getFilteredServers());
+}
+
+// Search Input
+document.getElementById('searchInput').addEventListener('input', () => {
+  currentPage = 1;
+  renderServers(getFilteredServers());
+});
+
+// Filter Select
+document.getElementById('filterSelect').addEventListener('change', handleFilterChange);
+
+// Show Servers
+document.getElementById('showServersBtn').addEventListener('click', () => {
+  const apiKey = document.getElementById('apiKeyInput').value.trim();
+  if (!apiKey) {
+    showToast('Please enter your API Key', 'error');
+    return;
+  }
+  fetchServers(apiKey);
+});
+
+// Auto-load API Key
+window.addEventListener('DOMContentLoaded', () => {
+  const savedKey = localStorage.getItem('apiKey');
+  if (savedKey) {
+    document.getElementById('apiKeyInput').value = savedKey;
+    fetchServers(savedKey);
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+<script>
+    (function() {
+      const darkMode = localStorage.getItem('darkMode');
+      if (darkMode === 'enabled') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BDTools | HQ</title>
+  <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body class="bg-gray-100 dark:bg-[#1e1e2f] text-gray-800 dark:text-gray-100 min-h-screen transition-colors duration-300">
+    <style>
+    .text-area {
+      min-height: 300px;
+      transition: all 0.3s ease;
+    }
+    .text-area:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+    }
+    .copy-btn {
+      transition: all 0.2s ease;
+    }
+    .copy-btn:hover {
+      transform: scale(1.05);
+    }
+    .copy-btn:active {
+      transform: scale(0.95);
+    }
+    .replace-btn {
+      transition: all 0.3s ease;
+    }
+    .replace-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    .replace-btn:active {
+      transform: translateY(0);
+    }
+    .project-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.project-card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+ #toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 250px;
+  max-width: 350px;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: white;
+  animation: slideIn 0.4s ease, fadeOut 0.4s ease 4.6s forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.toast.success {
+  background: linear-gradient(135deg, #4ade80, #16a34a);
+}
+
+.toast.error {
+  background: linear-gradient(135deg, #f87171, #dc2626);
+}
+
+.toast::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.4);
+  animation: progressBar 4.6s linear forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+@keyframes progressBar {
+  to {
+    width: 0%;
+  }
+}
+.bdtools-fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+</style>
+
+  <div id="bdtools-loader" class="bdtools-loader fixed inset-0 flex items-center justify-center bg-white dark:bg-[#1e1e2f] z-50">
+  <div class="text-center">
+    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" 
+         alt="BDTools Logo" 
+         class="h-16 w-16 mx-auto mb-4 rounded-full animate-bounce" />
+    <p class="text-gray-700 dark:text-gray-300 font-semibold text-lg">
+      Loading<span id="bdtools-dots"></span>
+    </p>
+  </div>
+</div>
+
+  <div id="toast-container"></div>
+
+        <header class="flex justify-between items-center px-6 py-4 bg-gray-100 dark:bg-[#1e1e2f]">
+  <a href="/" class="flex items-center gap-2">
+    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" class="h-10 w-10 rounded-full" alt="Logo" />
+    <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">BDTools</span>
+  </a>
+  <div class="flex items-center gap-4">
+<button id="dark-mode-toggle"
+  class="bg-gray-200 hover:bg-gray-300 dark:bg-[#2e3246] dark:hover:bg-[#3b3f54]
+         text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full
+         transition-colors duration-300 flex items-center space-x-2">
+  <i class="fas fa-moon"></i>
+  <span class="toggle-text">Dark Mode</span>
+</button>
+  </div>
+</header>
+
+    <!-- Header -->
+    <section class="text-center mb-10 mt-5">
+      <h1 class="text-4xl font-bold text-indigo-700 dark:text-indigo-400 mb-2">BDTools HQ</h1>
+      <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+        Collection of random Bot Designer for Discord Tools
+      </p>
+    </section>
+
+    <div class="container mx-auto mt-0 px-4 sm:px-6">
+
+      <main class="px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <!-- Project Card -->
+    <div class="project-card bg-white dark:bg-[#26293a] rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
+      <!-- Light mode image -->
+      <img src="https://bdtools.netlify.app/images/light-bot-guild-list.png" 
+           alt="Light mode preview" 
+           class="w-full h-40 object-cover block dark:hidden border border-gray-300 shadow-sm rounded-t-xl" />
+      <!-- Dark mode image -->
+      <img src="https://bdtools.netlify.app/images/dark-bot-guild-list.png" 
+           alt="Dark mode preview" 
+           class="w-full h-40 object-cover hidden dark:block border border-gray-700 shadow-md rounded-t-xl" />
+      <div class="p-6 flex flex-col flex-1">
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-1">Bot Guild List</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Web Based Application</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300 flex-1">This application helps you manage and monitor your bot's guild list.</p>
+
+             <!-- Tech tags -->
+             <div class="mt-4 text-xs font-mono space-x-2">
+          <span class="text-yellow-400"><i class="fa-brands fa-js"></i> JavaScript,</span>
+          <span class="text-orange-500"><i class="fa-brands fa-html5"></i> HTML,</span> 
+          <span class="text-blue-500"><i class="fa-brands fa-css3-alt"></i> Tailwind CSS</span>
+             </div>
+
+        <!-- Button -->
+        <a href="/bot-guild-list" class="inline-block mt-4 text-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition text-sm">
+          View App <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="project-card bg-white dark:bg-[#26293a] rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
+      <!-- Light mode image -->
+      <img src="https://bdtools.netlify.app/images/light-escaper.png" 
+           alt="Light mode preview" 
+           class="w-full h-40 object-cover block dark:hidden border border-gray-300 shadow-sm rounded-t-xl" />
+      <!-- Dark mode image -->
+      <img src="https://bdtools.netlify.app/images/dark-escaper.png" 
+           alt="Dark mode preview" 
+           class="w-full h-40 object-cover hidden dark:block border border-gray-700 shadow-md rounded-t-xl" />
+      <div class="p-6 flex flex-col flex-1">
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-1">Character Escaper</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Web Based Tool</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300 flex-1">This tool helps you escape special characters in BDFD scripts easily.</p>
+
+        <!-- Tech tags -->
+        <div class="mt-4 text-xs font-mono space-x-2">
+          <span class="text-yellow-400"><i class="fa-brands fa-js"></i> JavaScript,</span>
+          <span class="text-orange-500"><i class="fa-brands fa-html5"></i> HTML,</span> 
+          <span class="text-blue-500"><i class="fa-brands fa-css3-alt"></i> Tailwind CSS</span>
+        </div>
+
+        <!-- Button -->
+        <a href="/escaper" class="inline-block mt-4 text-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition text-sm">
+          View Tool <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Project Card -->
+    <div class="project-card bg-white dark:bg-[#26293a] rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
+      <img src="https://bdtools.netlify.app/images/light-indenter.png" 
+           alt="Light mode preview" 
+           class="w-full h-40 object-cover block dark:hidden border border-gray-300 shadow-sm rounded-t-xl" />
+      <img src="https://bdtools.netlify.app/images/dark-indenter.png" 
+           alt="Dark mode preview" 
+           class="w-full h-40 object-cover hidden dark:block border border-gray-700 shadow-md rounded-t-xl" />
+      <div class="p-6 flex flex-col flex-1">
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-1">Code Indenter</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Web Based Tool</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300 flex-1">This tool helps you indent your scripts in BDFD easily.</p>
+
+        <div class="mt-4 text-xs font-mono space-x-2">
+          <span class="text-yellow-400"><i class="fa-brands fa-js"></i> JavaScript,</span>
+          <span class="text-orange-500"><i class="fa-brands fa-html5"></i> HTML,</span> 
+          <span class="text-blue-500"><i class="fa-brands fa-css3-alt"></i> Tailwind CSS</span>
+        </div>
+
+        <a href="/indenter" class="inline-block mt-4 text-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition text-sm">
+          View Tool <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="project-card bg-white dark:bg-[#26293a] rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
+      <img src="https://bdtools.netlify.app/images/light-highlighter.png" 
+           alt="Light mode preview" 
+           class="w-full h-40 object-cover block dark:hidden border border-gray-300 shadow-sm rounded-t-xl" />
+      <img src="https://bdtools.netlify.app/images/dark-highlighter.png" 
+           alt="Dark mode preview" 
+           class="w-full h-40 object-cover hidden dark:block border border-gray-700 shadow-md rounded-t-xl" />
+      <div class="p-6 flex flex-col flex-1">
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-1">Code Highlighter</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Web Based Tool</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300 flex-1">This tool helps you make custom highlight scheme easily.</p>
+
+        <div class="mt-4 text-xs font-mono space-x-2">
+          <span class="text-yellow-400"><i class="fa-brands fa-js"></i> JavaScript,</span>
+          <span class="text-orange-500"><i class="fa-brands fa-html5"></i> HTML,</span> 
+          <span class="text-blue-500"><i class="fa-brands fa-css3-alt"></i> Tailwind CSS</span>
+        </div>
+
+        <a href="/highlighter" class="inline-block mt-4 text-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition text-sm">
+          View Tool <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Project Card -->
+    <div class="project-card bg-white dark:bg-[#26293a] rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
+      <img src="https://bdtools.netlify.app/images/light-embed-builder.png" 
+           alt="Light mode preview" 
+           class="w-full h-40 object-cover block dark:hidden border border-gray-300 shadow-sm rounded-t-xl" />
+      <img src="https://bdtools.netlify.app/images/dark-embed-builder.png" 
+           alt="Dark mode preview" 
+           class="w-full h-40 object-cover hidden dark:block border border-gray-700 shadow-md rounded-t-xl" />
+      <div class="p-6 flex flex-col flex-1">
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-1">Embed Builder</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Web Based Tool</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300 flex-1">This tool helps you make embeds easily.</p>
+
+        <div class="mt-4 text-xs font-mono space-x-2">
+          <span class="text-yellow-400"><i class="fa-brands fa-js"></i> JavaScript,</span>
+          <span class="text-orange-500"><i class="fa-brands fa-html5"></i> HTML,</span> 
+          <span class="text-blue-500"><i class="fa-brands fa-css3-alt"></i> Tailwind CSS</span>
+        </div>
+
+        <a href="/embed-builder" class="inline-block mt-4 text-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition text-sm">
+          View Tool <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Project Card -->
+    <div class="project-card bg-white dark:bg-[#26293a] rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
+      <img src="https://bdtools.netlify.app/images/light-send-embed-builder.png" 
+           alt="Light mode preview" 
+           class="w-full h-40 object-cover block dark:hidden border border-gray-300 shadow-sm rounded-t-xl" />
+      <img src="https://bdtools.netlify.app/images/dark-send-embed-builder.png" 
+           alt="Dark mode preview" 
+           class="w-full h-40 object-cover hidden dark:block border border-gray-700 shadow-md rounded-t-xl" />
+      <div class="p-6 flex flex-col flex-1">
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-1">Send Embed Message Builder</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Web Based Tool</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300 flex-1">This tool helps you make sendEmbedMessage embeds easily.</p>
+
+        <div class="mt-4 text-xs font-mono space-x-2">
+          <span class="text-yellow-400"><i class="fa-brands fa-js"></i> JavaScript,</span>
+          <span class="text-orange-500"><i class="fa-brands fa-html5"></i> HTML,</span> 
+          <span class="text-blue-500"><i class="fa-brands fa-css3-alt"></i> Tailwind CSS</span>
+        </div>
+
+        <a href="/send-embed-builder" class="inline-block mt-4 text-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition text-sm">
+          View Tool <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-1"></i>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<div class="mt-12 bg-white dark:bg-[#26293a] rounded-2xl shadow-2xl p-8 max-w-4xl mx-auto">
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6">
+    <i class="fas fa-info-circle text-indigo-600 dark:text-indigo-400 mr-2"></i> About BDTools
+  </h3>
+
+  <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+    Welcome to the <strong class="text-indigo-600 dark:text-indigo-400">BDTools Suite</strong> — a collection of browser-based utilities crafted for the <strong>Bot Designer for Discord (BDFD)</strong> community. No installs, no bots — just fast and efficient tools at your fingertips.
+  </p>
+
+  <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-2">
+    Whether you're an experienced scripter or just getting started, BDTools helps you:
+  </p>
+  <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 ml-4 space-y-1 mb-6">
+    <li><strong>Format</strong> and clean up messy command blocks</li>
+    <li><strong>Escape tricky characters</strong> like 
+      <code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-1 rounded">;</code>, 
+      <code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-1 rounded">$</code>, 
+      <code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-1 rounded">]</code>, 
+      <code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-1 rounded">\</code>
+    </li>
+    <li><strong>Generate templates</strong> for commands and event logic</li>
+    <li><strong>Preview outputs</strong> before deploying them live</li>
+  </ul>
+
+  <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+    New features like <span class="text-indigo-600 dark:text-indigo-400 font-medium">Embed Builders</span>, <span class="text-indigo-600 dark:text-indigo-400 font-medium">Performance Profilers</span>, and more are added frequently to save you time and effort.
+  </p>
+
+  <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-1">
+    <strong>Have feedback or ideas?</strong> <a href="/contact" class="text-indigo-600 dark:text-indigo-400 hover:underline">Contact us</a> and help shape future updates.
+  </p>
+</div>
+
+
+<div class="mt-12 bg-white dark:bg-[#26293a] rounded-2xl shadow-2xl p-8 max-w-4xl mx-auto">
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6">
+    <i class="fas fa-info-circle text-indigo-600 dark:text-indigo-400 mr-2"></i> About The API
+  </h3>
+<p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+    The <span class="font-semibold text-indigo-600 dark:text-indigo-400">BDTools API</span> is a secure and developer-friendly interface 
+    designed to let you connect your projects with our services. Whether you need to submit data, 
+    fetch server details, or manage integrations, this API is built to scale as we add more features and endpoints.
+  </p>
+  <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+    Authentication is done through unique API keys generated in your dashboard. Keep your key <span class="font-semibold">confidential</span>, 
+    as it grants full access to your account's endpoints.
+  </p>
+  <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+    Our endpoints currently support server data submission and retrieval, but we have plans to add more functionalities soon.
+    For detailed usage examples, rate limits, and upcoming updates, visit the 
+    <a href="/api" class="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">API Documentation</a>.
+  </p>
+<div class="mt-4 text-xs font-mono space-x-2">
+  <span class="text-yellow-400"><i class="fa-brands fa-js"></i> JavaScript,</span>
+  <span class="text-orange-500"><i class="fa-brands fa-html5"></i> HTML,</span>
+  <span class="text-blue-500"><i class="fa-brands fa-css3-alt"></i> Tailwind CSS,</span>
+  <span class="text-green-500"><i class="fa-brands fa-node-js"></i> Node.js,</span>
+  <span class="text-cyan-500"><i class="fas fa-bolt"></i> Netlify Functions,</span>
+  <span class="text-gray-600"><i class="fa-brands fa-git-alt"></i> Git,</span>
+  <span class="text-gray-800 dark:text-gray-200"><i class="fa-brands fa-github"></i> GitHub Actions,</span>
+    <span class="text-gray-500"><i class="fa-solid fa-file-code"></i> YAML,</span>
+  <span class="text-emerald-500"><i class="fas fa-leaf"></i> MongoDB,</span>
+  <span class="text-yellow-500"><i class="fa-solid fa-key"></i> JWT,</span>
+  <span class="text-indigo-500"><i class="fa-brands fa-discord"></i> Discord API</span>
+</div>
+</div>
+
+<!-- Stats Section -->
+<section class="mt-12 bg-white dark:bg-[#26293a] p-8 rounded-2xl shadow-2xl max-w-4xl mx-auto">
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6">
+    <i class="fas fa-chart-bar text-indigo-600 dark:text-indigo-400 mr-2"></i> Platform Statistics
+  </h3>
+
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center mb-8">
+    <div class="bg-gray-100 dark:bg-[#2e3246] p-4 rounded-xl">
+      <p class="text-sm text-gray-500 dark:text-gray-400">Tools</p>
+      <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">6</p>
+    </div>
+    <div class="bg-gray-100 dark:bg-[#2e3246] p-4 rounded-xl">
+      <p class="text-sm text-gray-500 dark:text-gray-400">Users</p>
+      <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">~</p>
+    </div>
+    <div class="bg-gray-100 dark:bg-[#2e3246] p-4 rounded-xl">
+      <p class="text-sm text-gray-500 dark:text-gray-400">Contributions</p>
+      <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">12</p>
+    </div>
+    <div class="bg-gray-100 dark:bg-[#2e3246] p-4 rounded-xl">
+      <p class="text-sm text-gray-500 dark:text-gray-400">Contributors</p>
+      <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">1</p>
+    </div>
+  </div>
+
+  <!-- Contributors -->
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6">
+    <i class="fas fa-users text-indigo-600 dark:text-indigo-400 mr-2"></i> Contributors
+  </h3>
+
+  <div class="space-y-5">
+  <div class="bg-gray-50 dark:bg-[#2e3246] p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+    <p class="font-semibold text-gray-800 dark:text-gray-100 text-lg">
+      <a href="https://zubariel.is-a.dev/" target="_blank" class="hover:underline text-indigo-600 dark:text-indigo-400">Zubariel</a>
+    </p>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
+      Contributions: 12 | Lead developer & maintainer of the BDTools Platform.
+    </p>
+  </div>
+  </div>
+  <br>
+
+<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6">
+  <i class="fas fa-info-circle text-indigo-600 dark:text-indigo-400 mr-3"></i> Credits
+</h3>
+
+<div class="space-y-5">
+  <!-- Credit Card 1 (https://discordapp.com/users/985626439179194428)-->
+  <div class="bg-gray-50 dark:bg-[#2e3246] p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+    <p class="font-semibold text-gray-800 dark:text-gray-100 text-lg">
+      <a href="" target="_blank" class="hover:underline text-indigo-600 dark:text-indigo-400">Catearo</a>
+    </p>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
+      Credit: Provided the BDFD example Code for the 
+      <code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-1 rounded">/submit-server</code> endpoint. Check out the 
+      <a href="/api" class="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">API Documentation</a>.
+    </p>
+  </div>
+
+  <!-- Credit Card 2 ()-->
+  <div class="bg-gray-50 dark:bg-[#2e3246] p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+    <p class="font-semibold text-gray-800 dark:text-gray-100 text-lg">
+      <a href="https://discordapp.com/users/385878366600822788" target="_blank" class="hover:underline text-indigo-600 dark:text-indigo-400">Luka</a>
+    </p>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
+      Credit: Tested API endpoints and Tools, found bugs, and provided great improvement suggestions.
+    </p>
+  </div>
+</div>
+
+  <p class="mt-6 text-center text-sm italic text-gray-500 dark:text-gray-400">
+    Note: This is a community-made tool and is not affiliated with BDFD directly.
+  </p>
+</section>
+</main>
+  <footer class="text-center mt-6 text-gray-500 dark:text-gray-400 text-sm">
+  &copy; 2026 BDTools. All rights reserved.
+</footer>
+  <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6 mb-10 text-center text-sm text-gray-600 dark:text-gray-400 space-x-4">
+    <a href="/tos" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fas fa-gavel"></i> Terms of Service
+    </a>
+    <span>|</span>
+    <a href="/privacy" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fas fa-user-shield"></i> Privacy Policy
+    </a>
+    <span>|</span>
+    <a href="/contact" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fas fa-envelope"></i> Contact Us
+    </a>
+  </div>
+<script>
+const bdtoolsDots = document.getElementById("bdtools-dots");
+let dotCount = 0;
+let bdtoolsDotInterval;
+
+function showNextDot() {
+  dotCount = (dotCount + 1) % 4; // cycle 0 -> 1 -> 2 -> 3 -> 0
+  bdtoolsDots.textContent = ".".repeat(dotCount);
+}
+
+// First dot shows quickly (80ms)
+setTimeout(() => {
+  showNextDot();
+  bdtoolsDotInterval = setInterval(showNextDot, 350); // Smooth pace
+}, 80);
+
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    const loader = document.getElementById("bdtools-loader");
+    loader.classList.add("bdtools-fade-out");
+    setTimeout(() => loader.style.display = "none", 500);
+    clearInterval(bdtoolsDotInterval);
+  }, 1200); // Ensure at least one cycle of . .. ...
+});
+</script>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const html = document.documentElement;
+  const toggleBtn = document.getElementById('dark-mode-toggle');
+  const icon = toggleBtn.querySelector('i');
+  const textSpan = toggleBtn.querySelector('.toggle-text');
+
+  function updateButton() {
+    if (html.classList.contains('dark')) {
+      icon.className = 'fas fa-sun';
+      textSpan.textContent = 'Light Mode';
+    } else {
+      icon.className = 'fas fa-moon';
+      textSpan.textContent = 'Dark Mode';
+    }
+  }
+
+  // Update button on page load to match current mode
+  updateButton();
+
+  toggleBtn.addEventListener('click', () => {
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+    updateButton();
+  });
+});
+
+    // Toast function, you already have this, just a reference here
+    function showToast(message, type = 'success') {
+      const toastContainer = document.getElementById('toast-container');
+      if (!toastContainer) return;
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      toastContainer.appendChild(toast);
+      setTimeout(() => toast.remove(), 5000);
+    }
+  </script>
+</body>
+</html>

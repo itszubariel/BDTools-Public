@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+  <script>
+    (function() {
+      const darkMode = localStorage.getItem('darkMode');
+      if (darkMode === 'enabled') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BDTools | Send Embed Message Builder</title>
+  <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .text-area {
+      min-height: 300px;
+      transition: all 0.3s ease;
+    }
+    .text-area:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+    }
+    .copy-btn {
+      transition: all 0.2s ease;
+    }
+    .copy-btn:hover {
+      transform: scale(1.05);
+    }
+    .copy-btn:active {
+      transform: scale(0.95);
+    }
+    .replace-btn {
+      transition: all 0.3s ease;
+    }
+    .replace-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    .replace-btn:active {
+      transform: translateY(0);
+    }
+
+    #toast-container {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-width: 250px;
+      max-width: 350px;
+      padding: 1rem 1.25rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: white;
+      animation: slideIn 0.4s ease, fadeOut 0.4s ease 4.6s forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .toast.success {
+      background: linear-gradient(135deg, #4ade80, #16a34a);
+    }
+
+    .toast.error {
+      background: linear-gradient(135deg, #f87171, #dc2626);
+    }
+
+    .toast::before {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 4px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.4);
+      animation: progressBar 4.6s linear forwards;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0%);
+      }
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: translateX(120%);
+      }
+    }
+
+    @keyframes progressBar {
+      to {
+        width: 0%;
+      }
+    }
+    input[type="checkbox"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 1.2rem;
+      height: 1.2rem;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      display: inline-block;
+      position: relative; 
+      box-sizing: border-box;
+    }
+
+    input[type="checkbox"] {
+      background-color: #f3f4f6;
+      border: 2px solid #4b5563;
+    }
+
+    input[type="checkbox"]:checked {
+      background-color: #1f2937;
+      border-color: #374151;
+    }
+
+    input[type="checkbox"]:checked::after {
+      content: "✓";
+      color: #ffffff; 
+      font-size: 0.85rem;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+      font-weight: bold;
+      pointer-events: none;
+    }
+
+    .dark input[type="checkbox"] {
+      background-color: #f3f4f6;
+      border: 2px solid #444e5f;
+    }
+
+    .dark input[type="checkbox"]:checked {
+      background-color: #1f2937;
+      border-color: #444e5f;
+    }
+
+    .dark input[type="checkbox"]:checked::after {
+      color: #ffffff;
+    }
+
+    input[type="checkbox"]:hover {
+      filter: brightness(0.95);
+    }
+
+    .dark input[type="checkbox"]:hover {
+      filter: brightness(1.1);
+    }
+
+    .preview-embed-border {
+      border-left: 4px solid #ffffff;
+    }
+
+    .preview-description {
+      white-space: pre-line;
+    }
+
+    .preview-field-name {
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .preview-field-value {
+      color: #dcddde;
+      font-size: 0.75rem;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeOutComponent {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.4s forwards;
+    }
+
+    .fade-out {
+      animation: fadeOutComponent 0.4s forwards;
+    }
+.bdscript-example,
+.bdscript-example pre,
+.bdscript-example code {
+  margin: 0 !important;
+  padding: 0 !important;
+  margin-bottom: 0 !important;
+  line-height: 1.1 !important;
+  font-family: monospace !important;
+  white-space: pre-wrap !important;
+}
+/* Scrollbar for light mode */
+.bdscript-scroll-container::-webkit-scrollbar {
+  height: 8px;
+  background: transparent;
+}
+
+.bdscript-scroll-container::-webkit-scrollbar-track {
+  background-color: #f3f4f6; /* light grey track */
+}
+
+.bdscript-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #f3f4f6; /* medium grey thumb */
+  border-radius: 10px;
+}
+
+/* Scrollbar for dark mode */
+.dark .bdscript-scroll-container::-webkit-scrollbar-track {
+  background-color: #2e3246; /* dark background track */
+}
+
+.dark .bdscript-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #2e3246; /* darker thumb */
+  border-radius: 10px;
+  
+}
+.highlight {
+  font-weight: 600;
+  padding: 0 0.3em 0 0.3em; /* a bit more horizontal padding */
+  border-radius: 0.3rem;     /* rounder corners for softness */
+  display: inline-block;
+  background-color: #f3e8ff; /* very pale lavender */
+  color: inherit;            /* same text color both modes */
+  transition: background-color 0.3s ease;
+  margin-bottom: 0.3rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .highlight {
+    background-color: #a18cff88; /* lighter purple with transparency */
+  }
+}
+.glass-tooltip {
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(101, 100, 100, 0.3);
+  white-space: nowrap;
+  max-width: calc(100vw - 80px);
+}
+
+.dark .glass-tooltip {
+  background: rgba(255 255 255 / 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255 255 255 / 0.3);
+}
+
+@media (max-width: 640px) {
+  .glass-tooltip {
+    white-space: normal;
+    min-width: 160px;
+    max-width: calc(100vw - 40px);
+  }
+}
+
+.tooltip-text {
+  transform: translateX(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.tooltip-container.active .tooltip-text {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: translateX(0);
+}
+  </style>
+</head>
+<body class="bg-gray-100 dark:bg-[#1e1e2f] text-gray-800 dark:text-gray-100 min-h-screen transition-colors duration-300">
+
+    <div id="bdtools-loader" class="bdtools-loader fixed inset-0 flex items-center justify-center bg-white dark:bg-[#1e1e2f] z-50">
+  <div class="text-center">
+    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" 
+         alt="BDTools Logo" 
+         class="h-16 w-16 mx-auto mb-4 rounded-full animate-bounce" />
+    <p class="text-gray-700 dark:text-gray-300 font-semibold text-lg">
+      Loading<span id="bdtools-dots"></span>
+    </p>
+  </div>
+</div>
+
+  <div id="toast-container"></div>
+
+      <header class="flex justify-between items-center px-6 py-4 bg-gray-100 dark:bg-[#1e1e2f]">
+  <a href="/" class="flex items-center gap-2">
+    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" class="h-10 w-10 rounded-full" alt="Logo" />
+    <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">BDTools</span>
+  </a>
+  <div class="flex items-center gap-4">
+<button id="dark-mode-toggle"
+  class="bg-gray-200 hover:bg-gray-300 dark:bg-[#2e3246] dark:hover:bg-[#3b3f54]
+         text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full
+         transition-colors duration-300 flex items-center space-x-2">
+  <i class="fas fa-moon"></i>
+  <span class="toggle-text">Dark Mode</span>
+</button>
+  </div>
+</header>
+
+    <section class="text-center mb-10 mt-4">
+      <h1 class="text-4xl font-bold text-indigo-700 dark:text-indigo-400">Send Embed Message Builder</h1>
+      <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mt-2">
+        Make Send Embed Message function using simple fillouts. Fill out the fields below, and click "Generate Embed" to create your BDFD send embed message code.
+      </p>
+    </section>
+
+     <div class="container mx-auto mt-0 px-4 sm:px-6">
+
+    <div class="flex-1 bg-white dark:bg-[#26293a] rounded-xl shadow-lg overflow-hidden max-w-4xl mx-auto w-full mt-0">
+      <div class="bg-indigo-600 dark:bg-indigo-700 px-4 py-3 flex justify-between items-center mt-0">
+        <span class="text-white font-semibold text-lg">
+          <i class="fas fa-keyboard mr-2"></i> Embed Builder
+        </span>
+        <button id="clear-input" class="text-white hover:text-indigo-200">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
+    <div class="p-4 space-y-6">
+
+   <!-- Channel ID & Content -->
+   <div class="space-y-1">
+    <div class="font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2">
+      Channel ID & Content
+      <div class="relative inline-block tooltip-container">
+        <button type="button" aria-label="Info" class="info-icon text-gray-500 hover:text-indigo-500 focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-4m0-4h.01" />
+          </svg>
+        </button>
+        <div
+          class="tooltip-text absolute left-full ml-3 top-1/2 -translate-y-1/2
+                 glass-tooltip text-white text-sm rounded px-4 py-2
+                 opacity-0 invisible pointer-events-none z-50"
+        >
+          Discord Channel ID and main message content.
+        </div>
+      </div>
+    </div>
+    <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-3">
+      <input id="channelID-input" placeholder="Channel ID" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white w-full" />
+      <input id="content-input" placeholder="Content" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white w-full" />
+    </div>
+  </div>
+
+  <!-- Author -->
+  <div class="space-y-1">
+    <div class="font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2">
+      Author
+      <div class="relative inline-block tooltip-container">
+        <button type="button" class="info-icon text-gray-500 hover:text-indigo-500 focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-4m0-4h.01" />
+          </svg>
+        </button>
+        <div
+          class="tooltip-text absolute left-full ml-3 top-1/2 -translate-y-1/2
+                 glass-tooltip text-white text-sm rounded px-4 py-2
+                 opacity-0 invisible pointer-events-none z-50"
+        >
+          Author name and optional Author Icon URL.
+        </div>
+      </div>
+    </div>
+    <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-3">
+      <input id="author-input" placeholder="Author" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white w-full" />
+      <input id="author-icon-input" placeholder="Author Icon URL" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white w-full" />
+    </div>
+  </div>
+
+  <!-- Title -->
+  <div class="space-y-1">
+    <div class="font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2">
+      Title
+      <div class="relative inline-block tooltip-container">
+        <button type="button" class="info-icon text-gray-500 hover:text-indigo-500 focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-4m0-4h.01" />
+          </svg>
+        </button>
+        <div
+          class="tooltip-text absolute left-full ml-3 top-1/2 -translate-y-1/2
+                 glass-tooltip text-white text-sm rounded px-4 py-2
+                 opacity-0 invisible pointer-events-none z-50"
+        >
+          Title of the embed and optional clickable URL.
+        </div>
+      </div>
+    </div>
+    <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-3">
+      <input id="title-input" placeholder="Title" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white w-full" />
+      <input id="title-url-input" placeholder="Title URL" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white w-full" />
+    </div>
+  </div>
+
+  <!-- Description -->
+  <div class="space-y-1">
+    <div class="font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2">
+      Description
+      <div class="relative inline-block tooltip-container">
+        <button type="button" class="info-icon text-gray-500 hover:text-indigo-500 focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-4m0-4h.01" />
+          </svg>
+        </button>
+        <div
+          class="tooltip-text absolute left-full ml-3 top-1/2 -translate-y-1/2
+                 glass-tooltip text-white text-sm rounded px-4 py-2
+                 opacity-0 invisible pointer-events-none z-50"
+        >
+          Detailed description for your embed content.
+        </div>
+      </div>
+    </div>
+    <textarea
+      id="description-input"
+      placeholder="Enter a detailed description here..."
+      class="w-full p-3 resize-y h-32 sm:h-40 md:h-48 border rounded-lg dark:bg-[#2e3246] dark:text-white"
+    ></textarea>
+  </div>
+
+  <!-- Media & Style -->
+  <div class="space-y-1">
+    <div class="font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2">
+      Media & Style
+      <div class="relative inline-block tooltip-container">
+        <button type="button" class="info-icon text-gray-500 hover:text-indigo-500 focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-4m0-4h.01" />
+          </svg>
+        </button>
+        <div
+          class="tooltip-text absolute left-full ml-3 top-1/2 -translate-y-1/2
+                 glass-tooltip text-white text-sm rounded px-4 py-2
+                 opacity-0 invisible pointer-events-none z-50"
+        >
+         URLs for thumbnail, image, and color hex code.
+        </div>
+      </div>
+    </div>
+    <div class="grid sm:grid-cols-1 md:grid-cols-3 gap-3">
+      <input id="thumbnail-input" placeholder="Thumbnail URL" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white w-full" />
+      <input id="image-input" placeholder="Image URL" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white w-full" />
+      <input id="color-input" type="text" placeholder="Color (hex code)" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white w-full" />
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="space-y-1">
+    <div class="font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2">
+      Footer
+      <div class="relative inline-block tooltip-container">
+        <button type="button" class="info-icon text-gray-500 hover:text-indigo-500 focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-4m0-4h.01" />
+          </svg>
+        </button>
+        <div
+          class="tooltip-text absolute left-full ml-3 top-1/2 -translate-y-1/2
+                 glass-tooltip text-white text-sm rounded px-4 py-2
+                 opacity-0 invisible pointer-events-none z-50"
+        >
+         Footer text and optional footer icon URL.
+        </div>
+      </div>
+    </div>
+    <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-3">
+      <input id="footer-input" placeholder="Footer Text" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white w-full" />
+      <input id="footer-icon-input" placeholder="Footer Icon URL" class="p-2 border rounded-lg dark:bg-[#2e3246] dark:text-white w-full" />
+    </div>
+  </div>
+
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <label class="flex items-center gap-2">
+      <input type="checkbox" id="timestamp-input" class="form-checkbox h-5 w-5 rounded dark:bg-[#2e3246]" />
+      <span class="text-gray-800 dark:text-gray-200">Add Timestamp</span>
+      <input type="checkbox" id="messageID-input" class="form-checkbox h-5 w-5 rounded dark:bg-[#2e3246]" />
+      <span class="text-gray-800 dark:text-gray-200">Return Message ID</span>
+      </label>
+      </div>
+
+        <div class="mt-6 space-y-4 text-center">
+          <button id="replace-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg">
+            <i class="fas fa-play mr-2"></i> Generate Embed
+          </button>
+          <textarea id="output-text" readonly class="w-full p-4 resize-y h-32 sm:h-40 md:h-48 border border-gray-300 dark:border-[#3c3f54] rounded-lg bg-gray-50 dark:bg-[#2e3246] text-gray-600 dark:text-gray-100" placeholder="Your generated BDFD embed code will appear here..."></textarea>
+          <button id="copy-output" class="bg-white dark:bg-[#2e3246] text-indigo-600 dark:text-indigo-400 px-6 py-2 rounded-md font-medium shadow-lg">
+            <i class="fas fa-copy mr-1"></i> Copy Output
+          </button>
+        </div>
+      </div>
+    </div>
+
+  <section class="mt-12 bg-white dark:bg-[#26293a] rounded-xl shadow-lg p-6 max-w-4xl mx-auto">
+    <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6">
+      <i class="fas fa-palette text-indigo-600 dark:text-indigo-400 mr-2"></i> Live Preview
+    </h3>
+
+    <div id="embed-preview" class="bg-[#2e3246] text-[#dcddde] p-6 font-sans rounded-lg"></div>
+
+    <div class="mt-4 text-gray-600 dark:text-gray-300 text-sm">
+      <i class="fas fa-info-circle mr-1"></i> This preview shows how your embed will look in Discord.
+    </div>
+  </section>
+
+  <section class="mt-12 bg-white dark:bg-[#26293a] rounded-2xl shadow-2xl p-8 max-w-4xl mx-auto">
+    <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6">
+      <i class="fas fa-palette text-indigo-600 dark:text-indigo-400 mr-2"></i> Embed Builder Information
+    </h3>
+
+<h4 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">What is Send Embed Message?</h4>
+<p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+  Send Embed Message is a BDFD function that allows the user to send an embedded message to any desired channel with properly formatted <strong>title</strong>, <strong>description</strong>, <strong>colors</strong>, <strong>images</strong>, <strong>fields</strong>, and more — all neatly structured and easy to read.
+ </p>
+
+<p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+  This tool helps you build an embed using <strong>BDFD syntax</strong> (Bot Designer for Discord), specifically the <code>$sendEmbedMessage[]</code> function.
+</p>
+
+<p class="text-gray-700 dark:text-gray-300 font-semibold mb-2">Syntax:</p>
+<div class="bg-[#2e3246] dark:bg-[#2e3246] rounded-lg p-4 overflow-x-auto text-sm font-mono text-gray-800 dark:text-gray-200 shadow-inner" id="bdscript-example">
+  <pre><code class="bdscript-example">$sendEmbedMessage[Channel ID;Content;(Title;Title URL;Description;Color;Author;Author icon;Footer;Footer icon;Thumbnail;Image;Add timestamp?;Return ID?)]</code></pre>
+</div>
+
+<p class="text-gray-700 dark:text-gray-300 font-semibold mb-2 mt-6">Parameters:</p>
+<ul class="list-disc list-inside ml-4 text-gray-700 dark:text-gray-300 mb-6">
+  <li><code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-1 rounded">Channel ID</code> <em>(Snowflake, Required)</em>: The ID of the channel where the message will be sent.</li>
+  <li><code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-1 rounded">Content</code> <em>(String, Emptiable)</em>: The text shown above the embed.</li>
+  <li><code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-1 rounded">Title</code> <em>(String, Vacantable)</em>: The embed’s title.</li>
+  <li><code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-1 rounded">Title URL</code> <em>(URL, Vacantable)</em>: The URL applied to the title.</li>
+  <li><code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-1 rounded">Description</code> <em>(String, Vacantable)</em>: The embed’s description.</li>
+  <li><code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-1 rounded">Color</code> <em>(Color hex or int, Vacantable)</em>: The color of the embed border.</li>
+  <li><code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-1 rounded">Author</code> <em>(String, Vacantable)</em>: The author name shown at the top.</li>
+  <li><code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-1 rounded">Author Icon</code> <em>(URL, Vacantable)</em>: The image next to the author name.</li>
+  <li><code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-1 rounded">Footer</code> <em>(String, Vacantable)</em>: The footer text.</li>
+  <li><code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-1 rounded">Footer Icon</code> <em>(URL, Vacantable)</em>: The image next to the footer text.</li>
+  <li><code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-1 rounded">Thumbnail</code> <em>(URL, Vacantable)</em>: The thumbnail image on the embed.</li>
+  <li><code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-1 rounded">Image</code> <em>(URL, Vacantable)</em>: The large image above the footer.</li>
+  <li><code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-1 rounded">Add Timestamp?</code> <em>(Bool, Vacantable)</em>: Add a timestamp to the embed footer (<code>yes</code> or <code>no</code>).</li>
+  <li><code class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 px-1 rounded">Return ID?</code> <em>(Bool, Vacantable)</em>: Return the message ID outside the embed (<code>yes</code> or <code>no</code>).</li>
+</ul>
+
+<p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+  Use the builder above to fill in each section, and you’ll instantly get the full, copy-paste-ready BDFD embed code below — fast, clean, and accurate.
+</p>
+
+<p class="text-gray-700 dark:text-gray-300 font-semibold mb-2">Example:</p>
+<div class="bdscript-scroll-container bg-[#2e3246] dark:bg-[#2e3246] rounded-lg p-4 overflow-x-auto text-sm font-mono text-gray-800 dark:text-gray-200 shadow-inner" id="bdscript-example">
+  <pre><code class="bdscript-example">$nomention
+$sendEmbedMessage[$channelID;;Title;https://discord.com/;description;000000;author;$authorAvatar;footer;$authorAvatar;$authorAvatar;$authorAvatar;no;no] </code></pre>
+</div>
+
+<p class="mt-6 text-gray-700 dark:text-gray-300 leading-relaxed">
+  For advanced formatting and deeper embed control, check out the
+  <a href="https://nilpointer-software.github.io/bdfd-wiki/nightly/bdscript/sendEmbedMessage.html" class="text-indigo-600 hover:underline dark:text-indigo-400" target="_blank" rel="noopener noreferrer">official BDFD docs</a>.
+</p>
+ <p class="mt-6 text-center text-sm italic text-gray-500 dark:text-gray-400">
+    Note: This is a community-made tool and is not affiliated with BDFD directly.
+  </p>
+</section>
+  <footer class="text-center mt-6 text-gray-500 dark:text-gray-400 text-sm">
+  &copy; 2026 BDTools. All rights reserved.
+</footer>
+  <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6 mb-10 text-center text-sm text-gray-600 dark:text-gray-400 space-x-4">
+    <a href="/tos" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fas fa-gavel"></i> Terms of Service
+    </a>
+    <span>|</span>
+    <a href="/privacy" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fas fa-user-shield"></i> Privacy Policy
+    </a>
+    <span>|</span>
+    <a href="/contact" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fas fa-envelope"></i> Contact Us
+    </a>
+  </div>
+<script>
+   document.querySelectorAll('.tooltip-container').forEach(container => {
+    const icon = container.querySelector('.info-icon');
+
+    icon.addEventListener('click', e => {
+      e.stopPropagation();
+      const isActive = container.classList.contains('active');
+
+      document.querySelectorAll('.tooltip-container').forEach(c => c.classList.remove('active'));
+      if (!isActive) container.classList.add('active');
+    });
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.tooltip-container').forEach(c => c.classList.remove('active'));
+  });
+</script>
+<script>
+const bdtoolsDots = document.getElementById("bdtools-dots");
+let dotCount = 0;
+let bdtoolsDotInterval;
+
+function showNextDot() {
+  dotCount = (dotCount + 1) % 4; // cycle 0 -> 1 -> 2 -> 3 -> 0
+  bdtoolsDots.textContent = ".".repeat(dotCount);
+}
+
+// First dot shows quickly (80ms)
+setTimeout(() => {
+  showNextDot();
+  bdtoolsDotInterval = setInterval(showNextDot, 350); // Smooth pace
+}, 80);
+
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    const loader = document.getElementById("bdtools-loader");
+    loader.classList.add("bdtools-fade-out");
+    setTimeout(() => loader.style.display = "none", 500);
+    clearInterval(bdtoolsDotInterval);
+  }, 1200); // Ensure at least one cycle of . .. ...
+});
+</script>
+<script>
+// ========== Theme Configuration ==========
+const myTheme = {
+  defaultTextHighlight: { color: 4288341353, style: 0 },
+  fallbackHighlight: { color: 4285791231, style: 0 },
+  bracketHighlight: { color: 4294921292, style: 1 },
+  semicolonHighlight: { color: 4294920266, style: 1 },
+  functionsHighlights: {
+    "$nomention": { color: 4294932473, style: 0 },
+    "$catch":     { color: 4288905212, style: 0 },
+    "$else":      { color: 4288905212, style: 0 },
+    "$elseif":    { color: 4288905212, style: 0 },
+    "$endif":     { color: 4288905212, style: 0 },
+    "$endtry":    { color: 4288905212, style: 0 },
+    "$error":     { color: 4288905212, style: 0 },
+    "$if":        { color: 4288905212, style: 0 },
+    "$try":       { color: 4288905212, style: 0 }
+  }
+};
+
+// ========== Highlighter Logic ==========
+const BDScriptHighlighter = (function () {
+  function intToRgba(intColor) {
+    if (typeof intColor !== 'number' || isNaN(intColor)) return 'rgba(228, 228, 231, 1)';
+    const r = (intColor >> 16) & 0xFF;
+    const g = (intColor >> 8) & 0xFF;
+    const b = intColor & 0xFF;
+    let a = ((intColor >> 24) & 0xFF);
+    a = (isNaN(a) || a < 0 || a > 255) ? 255 : a;
+    return `rgba(${r}, ${g}, ${b}, ${a / 255})`;
+  }
+
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function safeGet(obj, path, defaultValue) {
+    const keys = path.split('.');
+    let current = obj;
+    for (const key of keys) {
+      if (current === null || typeof current !== 'object' || !(key in current)) return defaultValue;
+      current = current[key];
+    }
+    return current === undefined ? defaultValue : current;
+  }
+
+  function getStyleCss(colorInt, styleInt) {
+    const color = intToRgba(colorInt);
+    let fontWeight = 'normal';
+    let fontStyle = 'normal';
+    if (styleInt === 1 || styleInt === 3) fontWeight = 'bold';
+    if (styleInt === 2 || styleInt === 3) fontStyle = 'italic';
+    return `color: ${color}; font-weight: ${fontWeight}; font-style: ${fontStyle};`;
+  }
+
+  function processTextSegment(text, defaultStyleCss, bracketStyleCss, semicolonStyleCss) {
+    let html = '';
+    let buffer = '';
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      if (char === '[' || char === ']') {
+        if (buffer) {
+          html += `<span style="${defaultStyleCss}">${escapeHtml(buffer)}</span>`;
+          buffer = '';
+        }
+        html += `<span style="${bracketStyleCss}">${escapeHtml(char)}</span>`;
+      } else if (char === ';') {
+        if (buffer) {
+          html += `<span style="${defaultStyleCss}">${escapeHtml(buffer)}</span>`;
+          buffer = '';
+        }
+        html += `<span style="${semicolonStyleCss}">${escapeHtml(char)}</span>`;
+      } else {
+        buffer += char;
+      }
+    }
+    if (buffer) {
+      html += `<span style="${defaultStyleCss}">${escapeHtml(buffer)}</span>`;
+    }
+    return html;
+  }
+
+  function highlight(code, themeConfig) {
+    if (typeof code !== 'string') return '';
+    if (typeof themeConfig !== 'object' || themeConfig === null) themeConfig = {};
+
+    const defaultStyleCss = getStyleCss(safeGet(themeConfig, 'defaultTextHighlight.color'), safeGet(themeConfig, 'defaultTextHighlight.style'));
+    const fallbackStyleCss = getStyleCss(safeGet(themeConfig, 'fallbackHighlight.color'), safeGet(themeConfig, 'fallbackHighlight.style'));
+    const bracketStyleCss = getStyleCss(safeGet(themeConfig, 'bracketHighlight.color'), safeGet(themeConfig, 'bracketHighlight.style'));
+    const semicolonStyleCss = getStyleCss(safeGet(themeConfig, 'semicolonHighlight.color'), safeGet(themeConfig, 'semicolonHighlight.style'));
+
+    const functionsHighlights = safeGet(themeConfig, 'functionsHighlights', {});
+    const functionMap = new Map();
+    for (const funcName in functionsHighlights) {
+      if (funcName.startsWith('$')) {
+        functionMap.set(funcName, getStyleCss(functionsHighlights[funcName].color, functionsHighlights[funcName].style));
+      }
+    }
+
+    let resultHtml = '';
+    const functionRegex = /(\$[a-zA-Z0-9_]+)/g;
+    let lastIndex = 0;
+
+    code.replace(functionRegex, (match, funcName, offset) => {
+      if (offset > lastIndex) {
+        resultHtml += processTextSegment(code.substring(lastIndex, offset), defaultStyleCss, bracketStyleCss, semicolonStyleCss);
+      }
+      const funcStyleCss = functionMap.get(funcName) || fallbackStyleCss;
+      resultHtml += `<span style="${funcStyleCss}">${escapeHtml(funcName)}</span>`;
+      lastIndex = offset + funcName.length;
+      return match;
+    });
+
+    if (lastIndex < code.length) {
+      resultHtml += processTextSegment(code.substring(lastIndex), defaultStyleCss, bracketStyleCss, semicolonStyleCss);
+    }
+
+    return resultHtml;
+  }
+
+  return { highlight };
+})();
+
+// ========== Highlight Function ==========
+function applyHighlighting(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const codeElement = container.querySelector('code');
+  if (!codeElement) return;
+
+  const rawCode = codeElement.textContent || '';
+  const highlighted = BDScriptHighlighter.highlight(rawCode, myTheme);
+  codeElement.innerHTML = highlighted;
+}
+
+// ========== Run on DOM Ready ==========
+document.addEventListener('DOMContentLoaded', () => {
+  applyHighlighting('bdscript-example'); // ID of your wrapper div
+});
+</script>
+
+<script>
+  window.addEventListener('load', () => {
+  if (!localStorage.getItem('visited')) {
+    showToast('Welcome User, It\'s me Auora the AI behind this page.', 'success');
+    localStorage.setItem('visited', 'true');
+  }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const html = document.documentElement;
+  const toggleBtn = document.getElementById('dark-mode-toggle');
+  const icon = toggleBtn.querySelector('i');
+  const textSpan = toggleBtn.querySelector('.toggle-text');
+
+  function updateButton() {
+    if (html.classList.contains('dark')) {
+      icon.className = 'fas fa-sun';
+      textSpan.textContent = 'Light Mode';
+    } else {
+      icon.className = 'fas fa-moon';
+      textSpan.textContent = 'Dark Mode';
+    }
+  }
+
+  // Update button on page load to match current mode
+  updateButton();
+
+  toggleBtn.addEventListener('click', () => {
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+    updateButton();
+  });
+});
+
+document.querySelectorAll('.bdscript-example').forEach(el => {
+  const rawCode = el.textContent.trim();
+  const highlighted = BDScriptHighlighter.highlight(rawCode, myTheme);
+  el.innerHTML = highlighted;
+});
+
+function sanitizeInput(str) {
+  return str
+    .replace(/\\/g, '\\\\')  
+    .replace(/\$/g, '%{DOL}%') 
+    .replace(/;/g, '\\;')    
+    .replace(/]/g, '\\]');   
+}
+
+  function showToast(message, type = 'success') {
+    const toastContainer = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.classList.add('toast', type);
+    toast.innerText = message;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
+  }
+
+  function updatePreview() {
+  const author = document.getElementById('author-input').value.trim();
+  const authorIcon = document.getElementById('author-icon-input').value.trim();
+  const title = document.getElementById('title-input').value.trim();
+  const titleURL = document.getElementById('title-url-input').value.trim();
+  const description = document.getElementById('description-input').value.trim();
+  const thumbnail = document.getElementById('thumbnail-input').value.trim();
+  const image = document.getElementById('image-input').value.trim();
+  const color = document.getElementById('color-input').value.trim() || '#ffffff'; 
+  const footer = document.getElementById('footer-input').value.trim();
+  const footerIcon = document.getElementById('footer-icon-input').value.trim();
+  const timestampChecked = document.getElementById('timestamp-input')?.checked ? 'yes' : 'no';
+  const returnID = document.getElementById('messageID-input')?.checked ? 'yes' : 'no';
+
+  const now = new Date();
+  const timeString = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const dateString = 'Today at ' + timeString;
+
+  const botName = 'Auora';
+  const botAvatarURL = 'https://auora.live/auora_logo.png';
+
+  const previewHTML = `
+    <div class="relative max-w-lg mx-auto">
+      <div class="absolute -top-0">
+        <img src="${botAvatarURL}" alt="Bot Avatar" class="w-10 h-10 rounded-full" />
+      </div>
+      <div class="ml-4 pl-9 space-y-1">
+        <div class="flex items-center gap-1 text-sm">
+          <span class="text-white font-semibold">${botName}</span>
+          <span class="bg-indigo-500 text-white text-[10px] px-1.5 py-[1px] rounded">BOT</span>
+          <span class="text-xs text-gray-400 ml-1">${timestampChecked ? dateString : 'yes'}</span>
+        </div>
+
+        <div class="flex bg-[#2f3136] border-l-4 rounded-md overflow-hidden" style="border-left-color: ${color}">
+          <div class="p-3 pr-28 w-full relative">
+            ${author ? `
+              <div class="flex items-center gap-2 text-sm mb-1">
+                ${authorIcon ? `<img src="${authorIcon}" class="w-5 h-5 rounded-full" onerror="this.style.display='none'">` : ''}
+                ${titleURL ? `<a href="${titleURL}" class="text-[#00b0f4] font-medium hover:underline">${author}</a>` : `<span class="text-[#00b0f4] font-medium">${author}</span>`}
+              </div>
+            ` : ''}
+
+            ${title ? `<div class="text-[#00b0f4] font-semibold text-base mb-0">${titleURL ? `<a href="${titleURL}" class="hover:underline">${title}</a>` : title}</div>` : ''}
+
+            ${description ? `<div class="text-sm text-[#dcddde] leading-snug preview-description mb-3">${description}</div>` : ''}
+
+            ${image ? `
+              <div class="w-full max-h-[320px] overflow-hidden rounded mb-3 flex items-center justify-center">
+                <img src="${image}" alt="Main Image" class="max-w-full max-h-[320px] object-contain" onerror="this.style.display='none'">
+              </div>
+            ` : ''}
+
+            ${footer ? `
+              <div class="flex items-center gap-2 text-xs text-[#72767d] mt-2">
+                ${footerIcon ? `<img src="${footerIcon}" alt="Footer Icon" class="w-5 h-5 rounded-full" onerror="this.style.display='none'">` : ''}
+                <span>${footer}${timestampChecked ? ` • ${dateString}` : ''}</span>
+              </div>
+            ` : timestampChecked ? `
+              <div class="flex items-center gap-2 text-xs text-[#72767d] mt-2">
+                <span>${dateString}</span>
+              </div>
+            ` : ''}
+
+            ${thumbnail ? `
+              <img src="${thumbnail}" class="absolute top-3 right-3 w-20 h-20 rounded object-cover" alt="Thumbnail" onerror="this.style.display='none'">
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('embed-preview').innerHTML = previewHTML;
+}
+
+function generateEmbedCode() {
+  const channelID = sanitizeInput(document.getElementById('channelID-input').value.trim());
+  const content = sanitizeInput(document.getElementById('content-input').value.trim());
+
+  const title = sanitizeInput(document.getElementById('title-input').value.trim());
+  const titleURL = sanitizeInput(document.getElementById('title-url-input').value.trim());
+
+  const description = sanitizeInput(document.getElementById('description-input').value.trim());
+
+  const color = sanitizeInput(document.getElementById('color-input').value.trim());
+
+  const author = sanitizeInput(document.getElementById('author-input').value.trim());
+  const authorIcon = sanitizeInput(document.getElementById('author-icon-input').value.trim());
+
+  const footer = sanitizeInput(document.getElementById('footer-input').value.trim());
+  const footerIcon = sanitizeInput(document.getElementById('footer-icon-input').value.trim());
+
+  const thumbnail = sanitizeInput(document.getElementById('thumbnail-input').value.trim());
+  const image = sanitizeInput(document.getElementById('image-input').value.trim());
+
+const timestampChecked = document.getElementById('timestamp-input')?.checked ? 'yes' : 'no';
+const returnID = document.getElementById('messageID-input')?.checked ? 'yes' : 'no';
+
+
+  if (!channelID) {
+    showToast('Please enter a Channel ID', 'error');
+    return '';
+  }
+   if (!author && authorIcon) {
+      showToast("You can't have Author Icon without Author Name.", 'error');
+      return;
+    }
+    if (!title && titleURL) {
+      showToast("You can't have Title URL without Title.", 'error');
+      return;
+    }
+    if (!footer && footerIcon) {
+      showToast("You can't have Footer Icon without Footer text.", 'error');
+      return;
+    }
+
+  const embedCode = `$sendEmbedMessage[${channelID};${content};${title};${titleURL};${description};${color};${author};${authorIcon};${footer};${footerIcon};${thumbnail};${image};${timestampChecked};${returnID}]`;
+
+  return embedCode;
+}
+
+  document.addEventListener('DOMContentLoaded', () => {
+
+    const inputsToWatch = [
+      'author-input', 'author-icon-input', 'title-input', 'title-url-input', 'description-input',
+      'thumbnail-input', 'image-input', 'color-input', 'footer-input', 'footer-icon-input', 'timestamp-input'
+    ];
+
+    inputsToWatch.forEach(id => {
+      const el = document.getElementById(id);
+      if(el) {
+        el.addEventListener('input', updatePreview);
+        if(el.type === 'checkbox') el.addEventListener('change', updatePreview);
+      }
+    });
+
+    document.getElementById('clear-input').addEventListener('click', () => {
+      [
+        'channelID-input', 'content-input', 'author-input', 'author-icon-input',
+        'title-input', 'title-url-input', 'description-input',
+        'thumbnail-input', 'image-input', 'color-input',
+        'footer-input', 'footer-icon-input'
+      ].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.value = '';
+      });
+      ['timestamp-input', 'messageID-input'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.checked = false;
+      });
+      document.getElementById('output-text').value = '';
+      showToast('Cleared All Inputs', 'success');
+      updatePreview();
+    });
+
+    document.getElementById('replace-btn').addEventListener('click', () => {
+  const channelID = document.getElementById('channelID-input').value.trim();
+
+       if (!channelID) {
+    showToast('Please enter a Channel ID', 'error');
+    return; 
+  }
+  const embedCode = generateEmbedCode();
+  const output = document.getElementById('output-text');
+
+  output.value = embedCode;
+
+  if(embedCode) {
+    showToast('Successfully Generated Embed Code', 'success');
+    updatePreview();
+  }
+});
+
+const copyBtn = document.getElementById('copy-output');
+  const output = document.getElementById('output-text');
+
+copyBtn.addEventListener('click', () => {
+  if (!output.value.trim()) {
+    showToast('No Code to Copy', 'error');
+    return;
+  }
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(output.value).then(() => {
+      const original = copyBtn.innerHTML;
+      copyBtn.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
+      showToast('Successfully Copied Code', 'success');
+      setTimeout(() => (copyBtn.innerHTML = original), 2000);
+    }).catch(() => {
+      showToast('Failed to copy!', 'error');
+    });
+  } else {
+
+    output.select();
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
+        const original = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
+        showToast('Successfully Copied Code', 'success');
+        setTimeout(() => (copyBtn.innerHTML = original), 2000);
+      } else {
+        showToast('Failed to copy!', 'error');
+      }
+    } catch {
+      showToast('Failed to copy!', 'error');
+    }
+    window.getSelection().removeAllRanges(); 
+  }
+});
+
+    updatePreview();
+  });
+</script>
+
+</body>
+</html>

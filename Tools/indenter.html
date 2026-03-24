@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+  <script>
+    (function() {
+      const darkMode = localStorage.getItem('darkMode');
+      if (darkMode === 'enabled') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BDTools | Code Indenter</title>
+    <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .text-area {
+      min-height: 300px;
+      transition: all 0.3s ease;
+    }
+    .text-area:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+    }
+    .copy-btn {
+      transition: all 0.2s ease;
+    }
+    .copy-btn:hover {
+      transform: scale(1.05);
+    }
+    .copy-btn:active {
+      transform: scale(0.95);
+    }
+    .replace-btn {
+      transition: all 0.3s ease;
+    }
+    .replace-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    .replace-btn:active {
+      transform: translateY(0);
+    }
+
+    #toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 250px;
+  max-width: 350px;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: white;
+  animation: slideIn 0.4s ease, fadeOut 0.4s ease 4.6s forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.toast.success {
+  background: linear-gradient(135deg, #4ade80, #16a34a);
+}
+
+.toast.error {
+  background: linear-gradient(135deg, #f87171, #dc2626);
+}
+
+.toast::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.4);
+  animation: progressBar 4.6s linear forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+}
+
+@keyframes progressBar {
+  to {
+    width: 0%;
+  }
+}
+/* Match modal input styling for both fields */
+#indent-size-input,
+#indent-depth-input {
+  outline: none;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 16px;
+  background-color: white;
+  color: #333;
+  transition: border 0.3s, box-shadow 0.3s;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.dark #indent-size-input,
+.dark #indent-depth-input {
+  background-color: #2e3246;
+  color: #f0f0f0;
+  border: 1px solid #3c3f54;
+}
+
+/* Remove default blue focus ring and add custom glow */
+#indent-size-input:focus,
+#indent-depth-input:focus {
+  border: 1px solid #6366f1; /* Indigo border */
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.4); /* Glow effect */
+}
+
+/* Remove default spinner arrows for WebKit */
+#indent-size-input::-webkit-inner-spin-button,
+#indent-size-input::-webkit-outer-spin-button,
+#indent-depth-input::-webkit-inner-spin-button,
+#indent-depth-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+  </style>
+</head>
+<body class="bg-gray-100 dark:bg-[#1e1e2f] text-gray-800 dark:text-gray-100 min-h-screen transition-colors duration-300">
+
+    <div id="bdtools-loader" class="bdtools-loader fixed inset-0 flex items-center justify-center bg-white dark:bg-[#1e1e2f] z-50">
+  <div class="text-center">
+    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" 
+         alt="BDTools Logo" 
+         class="h-16 w-16 mx-auto mb-4 rounded-full animate-bounce" />
+    <p class="text-gray-700 dark:text-gray-300 font-semibold text-lg">
+      Loading<span id="bdtools-dots"></span>
+    </p>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+      <header class="flex justify-between items-center px-6 py-4 bg-gray-100 dark:bg-[#1e1e2f]">
+  <a href="/" class="flex items-center gap-2">
+    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" class="h-10 w-10 rounded-full" alt="Logo" />
+    <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">BDTools</span>
+  </a>
+  <div class="flex items-center gap-4">
+<button id="dark-mode-toggle"
+  class="bg-gray-200 hover:bg-gray-300 dark:bg-[#2e3246] dark:hover:bg-[#3b3f54]
+         text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full
+         transition-colors duration-300 flex items-center space-x-2">
+  <i class="fas fa-moon"></i>
+  <span class="toggle-text">Dark Mode</span>
+</button>
+  </div>
+</header>
+
+    <section class="text-center mb-10 mt-5">
+      <h1 class="text-4xl font-bold text-indigo-700 dark:text-indigo-400 mb-2">Code Indenter</h1>
+      <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+        Indent your BDFD code to make it more readable and organized. Paste your code below, and click "Indent Code" to format it.
+      </p>
+    </section>    
+    <!-- Panels -->
+         <div class="container mx-auto mt-0 px-4 sm:px-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Input -->
+      <div class="flex-1 bg-white dark:bg-[#26293a] rounded-xl shadow-lg overflow-hidden">
+        <div class="bg-indigo-600 dark:bg-indigo-700 px-4 py-3 flex justify-between items-center">
+          <h2 class="text-white font-semibold text-lg">
+            <i class="fas fa-keyboard mr-2"></i> Original Text
+          </h2>
+          <button id="clear-input" class="text-white hover:text-indigo-200">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+        <div class="p-4">
+          <textarea id="input-text" class="text-area w-full p-4 border border-gray-300 dark:border-[#3c3f54] rounded-lg bg-white dark:bg-[#2e3246] text-gray-600 dark:text-gray-100" placeholder="Paste your text here..."></textarea>
+        </div>
+      </div>
+
+      <!-- Output -->
+      <div class="flex-1 bg-white dark:bg-[#26293a] rounded-xl shadow-lg overflow-hidden">
+        <div class="bg-indigo-600 dark:bg-indigo-700 px-4 py-3 flex justify-between items-center">
+          <h2 class="text-white font-semibold text-lg">
+            <i class="fas fa-code mr-2"></i> Indented Text
+          </h2>
+          <button id="copy-output" class="copy-btn bg-white dark:bg-[#2e3246] text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-md text-sm font-medium hover:bg-indigo-0 dark:hover:bg-[#3b3f54]">
+            <i class="fas fa-copy mr-1"></i> Copy
+          </button>
+        </div>
+        <div class="p-4">
+          <textarea id="output-text" readonly class="text-area w-full p-4 border border-gray-300 dark:border-[#3c3f54] rounded-lg bg-gray-50 dark:bg-[#2e3246] text-gray-600 dark:text-gray-100" placeholder="Your Indented text will appear here..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Replace Button -->
+    <div class="mt-8 text-center">
+      <button id="replace-btn" class="replace-btn bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg">
+        <i class="fas fa-exchange-alt mr-2"></i> Indent Code
+      </button>
+    </div>
+ <div class="mt-12 bg-white dark:bg-[#26293a] rounded-2xl shadow-2xl p-8 max-w-4xl mx-auto">
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6">
+    <i class="fas fa-code text-indigo-600 dark:text-indigo-400 mr-2"></i> Indentation Rules
+  </h3>
+
+  <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+    This section explains the two key indentation settings used in this tool:
+  </p>
+
+  <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Indent Size</h4>
+  <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+    <strong>Indent Size</strong> is the number of spaces added between nested control statements such as <code>$if</code>, <code>$async</code>, or <code>$try</code>. Each nested block is indented further by this many spaces to visually separate different logic levels.
+  </p>
+
+  <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Indent Depth</h4>
+  <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+    <strong>Indent Depth</strong> defines how much deeper the <em>content inside</em> a control block is indented relative to its parent statement. This keeps the content slightly nested but prevents excessive spacing.
+  </p>
+
+  <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">How It Works</h4>
+  <p class="text-gray-700 dark:text-gray-300 mb-2">
+    For example, with <code>Indent Size = 2</code> and <code>Indent Depth = 1</code>:
+  </p>
+
+  <div id="bdscript-example2">
+  <pre class="bg-[#2e3246] dark:bg-[#2e3246] rounded-lg p-4 overflow-x-auto text-sm font-mono text-gray-800 dark:text-gray-200 shadow-inner mb-6"><code class="bdscript-example2">$if[condition]        <- Control statement at 0 spaces
+ Hello                <- Content indented 1 space inside $if
+  $if[condition2]     <- Nested control indented by 2 spaces
+   Hi                 <- Content inside nested block indented 3 spaces (2 + 1)
+  $endif              <- Close nested block at 2 spaces
+$endif                <- Close outer block at 0 spaces</code></pre></div>
+
+  <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+    This logic applies consistently to all control blocks including <code>$async</code>, <code>$try</code>, and <code>$jsonParse</code> (which uses JSON pretty-printing for its contents).
+  </p>
+</div> 
+
+<div class="mt-12 bg-white dark:bg-[#26293a] rounded-2xl shadow-2xl p-8 max-w-4xl mx-auto">
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6">
+    <i class="fas fa-info-circle text-indigo-600 dark:text-indigo-400 mr-2"></i> Indentation Information
+  </h3>
+
+  <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">
+    What is Indenting?
+  </h4>
+  <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+    Indenting is the process of organizing your BDFD code by adding line breaks and spaces to visually separate blocks, functions, and commands. This makes your code easier to read, debug, and maintain by clearly showing its structure.
+  </p>
+
+  <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+    Proper indentation helps you quickly spot nested commands and understand the logic flow — especially useful in complex function chains or long scripts.
+  </p>
+
+  <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-2">
+    This tool helps by automatically:
+  </p>
+  <ul class="list-disc list-inside ml-4 space-y-1 text-gray-700 dark:text-gray-300 mb-6">
+    <li>Placing each block or function on its own line</li>
+    <li>Adding indentation for nested logic</li>
+    <li>Making your script more readable without altering functionality</li>
+  </ul>
+
+  <p class="text-gray-700 dark:text-gray-300 font-semibold mb-2">Example:</p>
+  <div class="bg-[#2e3246] dark:bg-[#2e3246] rounded-lg p-4 overflow-x-auto text-sm font-mono text-gray-800 dark:text-gray-200 shadow-inner" id="bdscript-example">
+    <pre><code class="bdscript-example">$nomention
+$if[1>2]
+  Hi!
+$elseif[2>1]
+  Hi!
+$endif</code></pre>
+  </div>
+
+  <p class="mt-6 text-gray-700 dark:text-gray-300 leading-relaxed">
+    Use this tool to keep your scripts clean, structured, and easier to scale as your project grows. Clear code = fewer bugs and easier troubleshooting.
+  </p>
+
+  <p class="mt-4 text-gray-700 dark:text-gray-300">
+    Need more help or want to dive deeper into BDFD scripting? Visit the
+    <a href="https://nilpointer-software.github.io/bdfd-wiki/" class="text-indigo-600 dark:text-indigo-400 hover:underline" target="_blank">official BDFD documentation</a>.
+  </p>
+
+  <p class="mt-6 text-center text-sm italic text-gray-500 dark:text-gray-400">
+    Note: This is a community-made tool and is not affiliated with BDFD directly.
+  </p>
+</div>
+  <footer class="text-center mt-6 text-gray-500 dark:text-gray-400 text-sm">
+  &copy; 2026 BDTools. All rights reserved.
+</footer>
+  <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6 mb-10 text-center text-sm text-gray-600 dark:text-gray-400 space-x-4">
+    <a href="/tos" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fas fa-gavel"></i> Terms of Service
+    </a>
+    <span>|</span>
+    <a href="/privacy" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fas fa-user-shield"></i> Privacy Policy
+    </a>
+    <span>|</span>
+    <a href="/contact" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+      <i class="fas fa-envelope"></i> Contact Us
+    </a>
+  </div>
+
+<!-- Modal -->
+<div id="indent-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white dark:bg-[#26293a] rounded-lg shadow-lg p-6 w-80 max-w-full">
+    <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Indent Settings</h3>
+    
+    <label class="block text-gray-700 dark:text-gray-300 mb-1">Indent Size</label>
+    <input
+      id="indent-size-input"
+      type="number"
+      min="1"
+      max="10"
+      value="2"
+      class="w-full p-2 mb-4 border border-gray-300 dark:border-[#3c3f54] rounded-md bg-white dark:bg-[#2e3246]"
+    />
+
+    <label class="block text-gray-700 dark:text-gray-300 mb-1">Indent Depth</label>
+    <input
+      id="indent-depth-input"
+      type="number"
+      min="1"
+      max="10"
+      value="1"
+      class="w-full p-2 mb-4 border border-gray-300 dark:border-[#3c3f54] rounded-md bg-white dark:bg-[#2e3246]"
+    />
+
+    <div class="mt-4 flex justify-end gap-2">
+      <button id="indent-modal-cancel" class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600">Cancel</button>
+      <button id="indent-modal-ok" class="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700">OK</button>
+    </div>
+  </div>
+</div>
+<script>
+const myTheme = {
+  defaultTextHighlight: { color: 4288341353, style: 0 },
+  fallbackHighlight: { color: 4285791231, style: 0 },
+  bracketHighlight: { color: 4294921292, style: 1 },
+  semicolonHighlight: { color: 4294920266, style: 1 },
+  functionsHighlights: {
+    "$nomention": { color: 4294932473, style: 0 },
+    "$catch":     { color: 4288905212, style: 0 },
+    "$else":      { color: 4288905212, style: 0 },
+    "$elseif":    { color: 4288905212, style: 0 },
+    "$endif":     { color: 4288905212, style: 0 },
+    "$endtry":    { color: 4288905212, style: 0 },
+    "$error":     { color: 4288905212, style: 0 },
+    "$if":        { color: 4288905212, style: 0 },
+    "$try":       { color: 4288905212, style: 0 }
+  }
+};
+
+const BDScriptHighlighter = (function () {
+  function intToRgba(intColor) {
+    if (typeof intColor !== 'number' || isNaN(intColor)) return 'rgba(228, 228, 231, 1)';
+    const r = (intColor >> 16) & 0xFF;
+    const g = (intColor >> 8) & 0xFF;
+    const b = intColor & 0xFF;
+    let a = ((intColor >> 24) & 0xFF);
+    a = (isNaN(a) || a < 0 || a > 255) ? 255 : a;
+    return `rgba(${r}, ${g}, ${b}, ${a / 255})`;
+  }
+
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function safeGet(obj, path, defaultValue) {
+    const keys = path.split('.');
+    let current = obj;
+    for (const key of keys) {
+      if (current === null || typeof current !== 'object' || !(key in current)) return defaultValue;
+      current = current[key];
+    }
+    return current === undefined ? defaultValue : current;
+  }
+
+  function getStyleCss(colorInt, styleInt) {
+    const color = intToRgba(colorInt);
+    let fontWeight = 'normal';
+    let fontStyle = 'normal';
+    if (styleInt === 1 || styleInt === 3) fontWeight = 'bold';
+    if (styleInt === 2 || styleInt === 3) fontStyle = 'italic';
+    return `color: ${color}; font-weight: ${fontWeight}; font-style: ${fontStyle};`;
+  }
+
+  function processTextSegment(text, defaultStyleCss, bracketStyleCss, semicolonStyleCss) {
+    let html = '';
+    let buffer = '';
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      if (char === '[' || char === ']') {
+        if (buffer) {
+          html += `<span style="${defaultStyleCss}">${escapeHtml(buffer)}</span>`;
+          buffer = '';
+        }
+        html += `<span style="${bracketStyleCss}">${escapeHtml(char)}</span>`;
+      } else if (char === ';') {
+        if (buffer) {
+          html += `<span style="${defaultStyleCss}">${escapeHtml(buffer)}</span>`;
+          buffer = '';
+        }
+        html += `<span style="${semicolonStyleCss}">${escapeHtml(char)}</span>`;
+      } else {
+        buffer += char;
+      }
+    }
+    if (buffer) {
+      html += `<span style="${defaultStyleCss}">${escapeHtml(buffer)}</span>`;
+    }
+    return html;
+  }
+
+  function highlight(code, themeConfig) {
+    if (typeof code !== 'string') return '';
+    if (typeof themeConfig !== 'object' || themeConfig === null) themeConfig = {};
+
+    const defaultStyleCss = getStyleCss(safeGet(themeConfig, 'defaultTextHighlight.color'), safeGet(themeConfig, 'defaultTextHighlight.style'));
+    const fallbackStyleCss = getStyleCss(safeGet(themeConfig, 'fallbackHighlight.color'), safeGet(themeConfig, 'fallbackHighlight.style'));
+    const bracketStyleCss = getStyleCss(safeGet(themeConfig, 'bracketHighlight.color'), safeGet(themeConfig, 'bracketHighlight.style'));
+    const semicolonStyleCss = getStyleCss(safeGet(themeConfig, 'semicolonHighlight.color'), safeGet(themeConfig, 'semicolonHighlight.style'));
+
+    const functionsHighlights = safeGet(themeConfig, 'functionsHighlights', {});
+    const functionMap = new Map();
+    for (const funcName in functionsHighlights) {
+      if (funcName.startsWith('$')) {
+        functionMap.set(funcName, getStyleCss(functionsHighlights[funcName].color, functionsHighlights[funcName].style));
+      }
+    }
+
+    let resultHtml = '';
+    const functionRegex = /(\$[a-zA-Z0-9_]+)/g;
+    let lastIndex = 0;
+
+    code.replace(functionRegex, (match, funcName, offset) => {
+      if (offset > lastIndex) {
+        resultHtml += processTextSegment(code.substring(lastIndex, offset), defaultStyleCss, bracketStyleCss, semicolonStyleCss);
+      }
+      const funcStyleCss = functionMap.get(funcName) || fallbackStyleCss;
+      resultHtml += `<span style="${funcStyleCss}">${escapeHtml(funcName)}</span>`;
+      lastIndex = offset + funcName.length;
+      return match;
+    });
+
+    if (lastIndex < code.length) {
+      resultHtml += processTextSegment(code.substring(lastIndex), defaultStyleCss, bracketStyleCss, semicolonStyleCss);
+    }
+
+    return resultHtml;
+  }
+
+  return { highlight };
+})();
+
+function applyHighlighting(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const codeElement = container.querySelector('code');
+  if (!codeElement) return;
+
+  const rawCode = codeElement.textContent || '';
+  const highlighted = BDScriptHighlighter.highlight(rawCode, myTheme);
+  codeElement.innerHTML = highlighted;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  applyHighlighting('bdscript-example'); 
+  applyHighlighting('bdscript-example2'); 
+  applyHighlighting('output-text'); 
+});
+</script>
+<script>
+const bdtoolsDots = document.getElementById("bdtools-dots");
+let dotCount = 0;
+let bdtoolsDotInterval;
+
+function showNextDot() {
+  dotCount = (dotCount + 1) % 4; // cycle 0 -> 1 -> 2 -> 3 -> 0
+  bdtoolsDots.textContent = ".".repeat(dotCount);
+}
+
+// First dot shows quickly (80ms)
+setTimeout(() => {
+  showNextDot();
+  bdtoolsDotInterval = setInterval(showNextDot, 350); // Smooth pace
+}, 80);
+
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    const loader = document.getElementById("bdtools-loader");
+    loader.classList.add("bdtools-fade-out");
+    setTimeout(() => loader.style.display = "none", 500);
+    clearInterval(bdtoolsDotInterval);
+  }, 1200); // Ensure at least one cycle of . .. ...
+});
+</script>
+<script>
+window.addEventListener('load', () => {
+  if (!localStorage.getItem('visited')) {
+    showToast('Welcome User, It\'s me Auora the AI behind this page.', 'success');
+    localStorage.setItem('visited', 'true');
+  }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const html = document.documentElement;
+  const toggleBtn = document.getElementById('dark-mode-toggle');
+  const icon = toggleBtn.querySelector('i');
+  const textSpan = toggleBtn.querySelector('.toggle-text');
+
+  function updateButton() {
+    if (html.classList.contains('dark')) {
+      icon.className = 'fas fa-sun';
+      textSpan.textContent = 'Light Mode';
+    } else {
+      icon.className = 'fas fa-moon';
+      textSpan.textContent = 'Dark Mode';
+    }
+  }
+
+  // Update button on page load to match current mode
+  updateButton();
+
+  toggleBtn.addEventListener('click', () => {
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+    updateButton();
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  const htmlTag = document.documentElement;
+  const darkModeToggle = document.getElementById('dark-mode-toggle');
+  const inputText = document.getElementById('input-text');
+  const outputText = document.getElementById('output-text');
+  const replaceBtn = document.getElementById('replace-btn');
+  const copyBtn = document.getElementById('copy-output');
+  const clearInputBtn = document.getElementById('clear-input');
+
+  // Modal Elements
+  const indentModal = document.getElementById('indent-modal');
+  const indentSizeInput = document.getElementById('indent-size-input');
+  const indentDepthInput = document.getElementById('indent-depth-input');
+  const modalOkBtn = document.getElementById('indent-modal-ok');
+  const modalCancelBtn = document.getElementById('indent-modal-cancel');  
+
+  // Replace Button -> Show Modal
+   replaceBtn.addEventListener('click', () => {
+    const val = inputText.value.trim();
+  if (val === 'Zubariel' || val === 'Zub' || val === 'zubariel' || val === 'zub') {
+    showToast('Hello there, Zubariel is one of the contributors of this page.', 'success');
+    return;
+  }
+  if (val === 'Auora' || val === 'auora') {
+    window.open('https://www.auora.live', '_blank');;
+    return;
+  }
+    if (!inputText.value.trim()) {
+      showToast('No Code to Indent', 'error');
+      return;
+    }
+    indentModal.classList.remove('hidden'); // Show modal
+    indentSizeInput.focus();
+  });
+
+  // OK Button -> Process Indentation
+  modalOkBtn.addEventListener('click', () => {
+    const indentSize = parseInt(indentSizeInput.value);
+    const indentDepth = parseInt(indentDepthInput.value);
+
+    if (isNaN(indentSize) || isNaN(indentDepth) || indentSize < 1 || indentDepth < 1) {
+      showToast('Please enter valid numbers', 'error');
+      return;
+    }
+
+     const val1 = inputText.value.trim();
+  if (val1.includes('$let') || val1.includes('$set') || val1.includes('$get') || val1.includes('$for') || val1.includes('$forEach') || val1.includes('$while') || val1.includes('$wait') || val1.includes('$repeat') || val1.includes('$switch') || val1.includes('$loop') || val1.includes('$wait') || val1.includes('&&') || val1.includes('||')) {
+    showToast('pssh DON\'T USE AI FOR BDFD CODES!!!', 'error');
+  }
+
+    indentModal.classList.add('hidden'); // Hide modal
+    outputText.value = indentBDFD(inputText.value, indentSize, indentDepth);
+    replaceBtn.classList.add('animate-pulse');
+    setTimeout(() => replaceBtn.classList.remove('animate-pulse'), 300);
+    showToast('Successfully Indented Code', 'success');
+  });
+
+  // Cancel Button
+  modalCancelBtn.addEventListener('click', () => {
+    indentModal.classList.add('hidden'); // Hide modal
+    showToast('Failed to Indent Code', 'error');
+  });
+
+  // Close Modal by clicking outside
+  indentModal.addEventListener('click', (e) => {
+    if (e.target === indentModal) indentModal.classList.add('hidden');
+});
+
+  // Copy Button
+  copyBtn.addEventListener('click', () => {
+    if (!outputText.value.trim()) {
+      showToast('No Code to Copy', 'error');
+      return;
+    }
+    navigator.clipboard.writeText(outputText.value).then(() => {
+      const original = copyBtn.innerHTML;
+      copyBtn.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
+      showToast('Successfully Copied Code', 'success');
+      setTimeout(() => (copyBtn.innerHTML = original), 2000);
+    }).catch(() => showToast('Failed to copy!', 'error'));
+  });
+
+  // Clear Button
+  clearInputBtn.addEventListener('click', () => {
+    inputText.value = '';
+    outputText.value = '';
+    showToast('Cleared all Inputs', 'success');
+  });
+
+  inputText.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'Enter') {
+      e.preventDefault();
+      replaceBtn.click();
+    }
+  });
+});
+
+// BDFD Indentation Logic
+  function indentBDFD(code, indentSize = 2, indentDepth = 1) {
+  const specialFuncs = new Set([
+    '$if', '$elseif', '$else', '$endif',
+    '$async', '$endasync',
+    '$try', '$catch', '$endtry',
+    '$jsonparse'  
+  ]);
+
+  const lines = code.split('\n');
+  let indentLevel = 0;
+  let output = [];
+
+  let insideJsonParse = false;
+  let jsonParseBuffer = [];
+
+  let insideBracketFunction = false; // tracks if inside brackets of a non-special function
+  let bracketIndentBase = 0; // base indent level for bracket multiline content
+
+  // Helper: check if a line starts with a special function from the set (case-insensitive)
+  function getSpecialFunction(line) {
+    const trimmed = line.trim().toLowerCase();
+    for (const func of specialFuncs) {
+      if (trimmed.startsWith(func)) return func;
+    }
+    return null;
+  }
+
+  // Helper: indent JSON inside $jsonParse[]
+  function indentJsonParseBlock(lines) {
+    const fullText = lines.join('\n');
+
+    const startIdx = fullText.indexOf('[');
+    const endIdx = fullText.lastIndexOf(']');
+    if (startIdx < 0 || endIdx < 0 || endIdx <= startIdx) return fullText;
+
+    let before = fullText.substring(0, startIdx + 1);
+    let after = fullText.substring(endIdx);
+
+    let jsonStr = fullText.substring(startIdx + 1, endIdx);
+
+    // Remove ALL backslashes inside JSON string
+    jsonStr = jsonStr.replace(/\\/g, '');
+
+    try {
+      const parsed = JSON.parse(jsonStr);
+      let pretty = JSON.stringify(parsed, null, indentSize);
+
+      // Re-escape ] and ; in JSON output
+      pretty = pretty.replace(/\]/g, '\\]').replace(/;/g, '\\;');
+
+      // Add indentSize spaces to all lines except first for nesting inside $jsonParse[]
+      const prettyIndented = pretty
+        .split('\n')
+        .map((l, idx) => (idx === 0 ? l : ' '.repeat(indentSize) + l))
+        .join('\n');
+
+      return before + prettyIndented + after;
+    } catch {
+      return fullText; // fallback raw on error
+    }
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+    const trimmedLower = line.trim().toLowerCase();
+
+    // Handle multiline $jsonParse block
+    if (insideJsonParse) {
+      jsonParseBuffer.push(line);
+      if (line.includes(']')) {
+        const indentedJsonBlock = indentJsonParseBlock(jsonParseBuffer);
+        output.push(' '.repeat(indentLevel * indentSize) + indentedJsonBlock.trim());
+        insideJsonParse = false;
+        jsonParseBuffer = [];
+      }
+      continue;
+    }
+
+    // Start multiline $jsonParse block
+    if (trimmedLower.startsWith('$jsonparse[') && !line.trim().endsWith(']')) {
+      insideJsonParse = true;
+      jsonParseBuffer = [line];
+      continue;
+    }
+
+    // Single line $jsonParse[]
+    if (trimmedLower.startsWith('$jsonparse[') && line.trim().endsWith(']')) {
+      const indentedJsonLine = indentJsonParseBlock([line]);
+      output.push(' '.repeat(indentLevel * indentSize) + indentedJsonLine.trim());
+      continue;
+    }
+
+    // Handle inside non-special function bracket content: NO indentation AT ALL on inner lines
+    if (insideBracketFunction) {
+      output.push(line);  // **raw line output, no added indent**
+      if (line.includes(']')) {
+        insideBracketFunction = false;  // end multiline bracket content
+      }
+      continue;
+    }
+
+    // Detect start of multiline brackets for non-special functions only (treat like normal text)
+    if (line.includes('[')) {
+      const funcName = line.trim().split('[')[0].toLowerCase();
+      if (!specialFuncs.has(funcName)) {
+        insideBracketFunction = true;
+        // indent only the first line of the function call normally (like text inside block)
+        const textIndent = Math.max(indentLevel - 1, 0) * indentSize + indentDepth;
+        output.push(' '.repeat(textIndent) + line.trim());
+        continue;
+      }
+    }
+
+    // Handle control flow indentation for special functions
+    if (trimmedLower.startsWith('$endif') || trimmedLower.startsWith('$endasync') || trimmedLower.startsWith('$endtry')) {
+      indentLevel = Math.max(indentLevel - 1, 0);
+      output.push(' '.repeat(indentLevel * indentSize) + line.trim());
+      continue;
+    }
+
+    if (trimmedLower.startsWith('$elseif') || trimmedLower.startsWith('$else') || trimmedLower.startsWith('$catch')) {
+      indentLevel = Math.max(indentLevel - 1, 0);
+      output.push(' '.repeat(indentLevel * indentSize) + line.trim());
+      indentLevel++;
+      continue;
+    }
+
+    if (trimmedLower.startsWith('$if') || trimmedLower.startsWith('$async') || trimmedLower.startsWith('$try')) {
+      output.push(' '.repeat(indentLevel * indentSize) + line.trim());
+      indentLevel++;
+      continue;
+    }
+
+    // Normal text or non-special function call, indent relative to parent block by indentDepth
+    const textIndent = Math.max(indentLevel - 1, 0) * indentSize + indentDepth;
+    output.push(' '.repeat(textIndent) + line.trim());
+  }
+
+  return output.join('\n');
+}
+
+
+// Toast Notifications
+function showToast(message, type = 'success') {
+  const toastContainer = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.classList.add('toast', type);
+  toast.innerText = message;
+  toastContainer.appendChild(toast);
+  setTimeout(() => toast.remove(), 5000);
+}
+</script>
+
+</body>
+</html>
