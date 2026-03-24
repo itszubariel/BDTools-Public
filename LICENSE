@@ -1,0 +1,4 @@
+All Rights Reserved. 
+
+This repository is provided for viewing and reference purposes only.
+No permission is granted to copy, modify, redistribute, or use the code without explicit permission.
