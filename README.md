@@ -1,69 +1,65 @@
 # BDTools
 
-This repository is a public showcase of the **BDTools** project, a suite of browser-based utilities for the **Bot Designer for Discord (BDFD)** community.  
+> Browser-based utilities for the [Bot Designer for Discord](https://botdesignerdiscord.com) community — no installs, no accounts required for most tools.
 
-The live tools are available at [bdtools.netlify.app](https://bdtools.netlify.app).
-
----
-
-## Overview
-
-BDTools provides fast, lightweight tools that help developers write, format, debug, and manage BDFD commands directly in the browser — no installation required.  
-
-Whether you are an experienced scripter or just getting started, BDTools helps you:
-
-- Format and clean up messy command blocks  
-- Escape tricky characters like `;`, `$`, `]`, `\`  
-- Generate templates for commands and event logic  
-- Preview outputs before deploying them live  
-- Use advanced features like Embed Builders, Performance Profilers, and more  
-
-New features are added frequently on the live site to save time and effort for the community.
+**[bdtools.netlify.app](https://bdtools.netlify.app)** · [Report a Bug](https://bdtools.netlify.app/contact) · [Request a Feature](https://bdtools.netlify.app/contact)
 
 ---
 
-## About the API
+## Tools
 
-BDTools includes a secure and developer-friendly API for connecting projects with our services.  
-
-Current capabilities include:
-
-- Server data submission and retrieval  
-- API key authentication via JWT  
-- Dashboard-generated API keys  
-
-More endpoints and features are planned in the future. For usage examples, rate limits, and updates, see the live site.
-
----
-
-## Tech Stack
-
-**Frontend:** HTML, JavaScript, Tailwind CSS  
-**Backend / Services:** Node.js, Netlify Functions, MongoDB, JWT, Discord API  
-**Development / Deployment:** Git, GitHub Actions, YAML, Netlify
+| Tool | Description |
+|------|-------------|
+| [Embed Builder](https://bdtools.netlify.app/Tools/embed-builder) | Visually build Discord embeds with buttons, select menus, and modals. Outputs ready-to-use `$newEmbed` code. |
+| [Send Embed Builder](https://bdtools.netlify.app/Tools/send-embed-builder) | Build `$sendEmbedMessage[]` blocks with a live preview. |
+| [Code Highlighter](https://bdtools.netlify.app/Tools/highlighter) | Custom syntax highlighting for BDFD scripts. Supports 300+ functions with per-function color and style controls. |
+| [Code Indenter](https://bdtools.netlify.app/Tools/indenter) | Auto-format and indent messy BDFD scripts for readability. |
+| [Character Escaper](https://bdtools.netlify.app/Tools/escaper) | Escape BDFD special characters: `$`, `;`, `\`, `]`. |
+| [Permission Calculator](https://bdtools.netlify.app/Tools/permission-calc) | Calculate Discord permission bitfields for bot invites. |
+| [Bot Guild List](https://bdtools.netlify.app/bot-guild-list) | API-authenticated dashboard to browse your bot's servers with member counts, icons, and invite links. |
 
 ---
 
-## Note About the Code
+## API
 
-This repository is public **for showcase purposes only**.  
+BDTools exposes a small serverless API for bot integrations, primarily for the Bot Guild List feature.
 
-The tools’ source code is protected under a strict license and **may not be copied, modified, or redistributed** without explicit permission.  
+**Base URL:** `https://api-bdtools.netlify.app/.netlify/functions`
 
-While the code is visible for reference, the underlying logic can be studied and re-implemented independently, but direct reuse is prohibited.
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/get-servers` | `GET` | Retrieve the guild list associated with an API key |
+| `/submit-servers` | `POST` | Submit and queue a bot's server list for processing |
+| `/bdfd-functions` | `GET` | Proxy for the BDFD public function list API |
+
+Authentication uses JWT-based API keys generated via Discord OAuth. Full docs at [bdtools.netlify.app/API/api.html](https://bdtools.netlify.app/API/api).
+
+```bash
+# Example — fetch BDFD function list
+curl https://bdtools.netlify.app/.netlify/functions/bdfd-functions
+```
+
+---
+
+## Stack
+
+- **Frontend** — Vanilla JS, Tailwind CSS, Geist font
+- **Backend** — Netlify Functions (Node.js), MongoDB
+- **Auth** — Discord OAuth2, JWT
+- **Deployment** — Netlify (continuous deployment from GitHub)
+
 
 ---
 
 ## License
 
-See the [LICENSE](LICENSE) file.
-
-All rights reserved. This repository is provided for viewing and reference purposes only.  
-No permission is granted to copy, modify, redistribute, or use the code without explicit permission.
+All rights reserved. This repository is public for reference only — you may not copy, modify, or redistribute any part of this codebase without explicit permission.
 
 ---
 
-## Author
+## Credits
 
-BDTools Project  
-[https://bdtools.netlify.app](https://bdtools.netlify.app)
+Built and maintained by [Zubariel](https://zubariel.is-a.dev).  
+Thanks to Catearo (BDFD examples) and Luka (testing and bug reports).
+
+Not officially affiliated with Bot Designer for Discord.

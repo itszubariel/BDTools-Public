@@ -2,7 +2,8 @@
 .env
 .vscode/
 API Docs/
-To Do List.txt
+bdtools.txt
+TODO.md
 .DS_Store
 Test/
 images/
