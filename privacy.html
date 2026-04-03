@@ -136,11 +136,11 @@
       <h1 class="text-3xl font-black text-white tracking-tight dark-text mb-4">Terms &amp; Privacy</h1>
       <div class="flex gap-2">
         <button id="tabTos" onclick="showTab('tos')"
-          class="tab-btn active px-4 py-1.5 text-sm font-semibold rounded-xl bg-[#1e2130] text-gray-300 border border-[#2e3350] dark-surface dark-border">
+          class="tab-btn px-4 py-1.5 text-sm font-semibold rounded-xl bg-[#1e2130] text-gray-300 border border-[#2e3350] dark-surface dark-border">
           Terms of Service
         </button>
         <button id="tabPrivacy" onclick="showTab('privacy')"
-          class="tab-btn px-4 py-1.5 text-sm font-semibold rounded-xl bg-[#1e2130] text-gray-300 border border-[#2e3350] dark-surface dark-border">
+          class="tab-btn active px-4 py-1.5 text-sm font-semibold rounded-xl bg-[#1e2130] text-gray-300 border border-[#2e3350] dark-surface dark-border">
           Privacy Policy
         </button>
       </div>
@@ -150,7 +150,7 @@
   <main class="flex-1 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
 
     <!-- TOS -->
-    <div id="paneTos" class="space-y-6 fu">
+    <div id="paneTos" class="space-y-6 fu hidden">
 
       <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
         <h2 class="text-lg font-bold text-white dark-text mb-2">Acceptance of Terms</h2>
@@ -225,7 +225,7 @@
     </div>
 
     <!-- PRIVACY -->
-    <div id="panePrivacy" class="space-y-6 fu hidden">
+    <div id="panePrivacy" class="space-y-6 fu">
 
       <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
         <h2 class="text-lg font-bold text-white dark-text mb-2">Data Collection</h2>

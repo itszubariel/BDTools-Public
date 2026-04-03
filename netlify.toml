@@ -1,3 +1,16 @@
 [build]
+  node_bundler = "esbuild"
   publish = "."
   functions = "netlify/functions"
+
+[[redirects]]
+  from = "/get-servers"
+  to = "/.netlify/functions/get-servers"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/submit-server"
+  to = "/.netlify/functions/submit-server"
+  status = 200
+  force = true

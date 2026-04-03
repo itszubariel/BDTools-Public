@@ -1,10 +1,11 @@
-/escaper                      /Tools-HTML/escaper.html                     200
-/indenter                     /Tools-HTML/indenter.html                    200
-/highlighter                  /Tools-HTML/highlighter.html                 200
-/embed-builder                /Tools-HTML/embed-builder.html               200
-/send-embed-builder           /Tools-HTML/send-embed-builder.html          200
-/bot-guild-list               /Tools-HTML/bot-guild-list.html              200
+/escaper                      /Tools/escaper.html                     200
+/indenter                     /Tools/indenter.html                    200
+/highlighter                  /Tools/highlighter.html                 200
+/embed-builder                /Tools/embed-builder.html               200
+/send-embed-builder           /Tools/send-embed-builder.html          200
+/bot-guild-list               /Tools/bot-guild-list.html              200
+/permission-calculator        /Tools/permission-calc.html             200
 
-/api                          /API/api.html                                200
-/api-packages                 /API/package.html                            200
-/api-packages-lock            /API/package-lock.html                       200
+/api                          /API/api.html                           200
+/api-packages                 /API/package.html                       200
+/api-packages-lock            /API/package-lock.html                  200

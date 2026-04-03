@@ -1,349 +1,860 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
+
 <head>
-  <script>
-    (function() {
-      const darkMode = localStorage.getItem('darkMode');
-      if (darkMode === 'enabled') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    })();
-</script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = { darkMode: 'class' };
-  </script>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BDTools | API Docs</title>
-  <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" type="image/x-icon" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>API Docs</title>
+  <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <script>tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Geist', 'sans-serif'], mono: ['Geist Mono', 'monospace'] } } } }</script>
   <style>
-    #toast-container {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.toast {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-width: 250px;
-  max-width: 350px;
-  padding: 1rem 1.25rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  font-weight: 500;
-  font-size: 0.95rem;
-  color: white;
-  animation: slideIn 0.4s ease, fadeOut 0.4s ease 4.6s forwards;
-  position: relative;
-  overflow: hidden;
-}
-
-.toast.success {
-  background: linear-gradient(135deg, #4ade80, #16a34a);
-}
-
-.toast.error {
-  background: linear-gradient(135deg, #f87171, #dc2626);
-}
-
-.toast::before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.4);
-  animation: progressBar 4.6s linear forwards;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0%);
-  }
-}
-
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-    transform: translateX(120%);
-  }
-}
-
-@keyframes progressBar {
-  to {
-    width: 0%;
-  }
-}
-    .copy-btn {
-      transition: all 0.2s ease;
-    }
-    .copy-btn:hover {
-      transform: scale(1.05);
-    }
-    .copy-btn:active {
-      transform: scale(0.95);
+    body {
+      font-family: 'Geist', sans-serif;
     }
 
-    .text-area {
-      min-height: 150px;
-      transition: all 0.3s ease;
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
-    .text-area:focus {
+
+    .modal {
+      background: #0f1117;
+      border: 1px solid #1e2130;
+      border-radius: 12px;
+      padding: 1.25rem;
+      width: 360px;
+      max-width: calc(100vw - 2rem);
+      position: relative;
+    }
+
+    .modal h3 {
+      font-size: 0.9375rem;
+      font-weight: 800;
+      color: #f3f4f6;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .modal p {
+      font-size: 0.875rem;
+      color: #8b8aa8;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 0.875rem;
+      right: 0.875rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #6b7280;
+      transition: color 0.15s;
+    }
+
+    .modal-close:hover {
+      color: #f3f4f6;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+
+    .btn-ghost {
+      background: #1e2130;
+      border: 1px solid #2e3350;
+      color: #8b8aa8;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+      background: #252840;
+      color: #f3f4f6;
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #f87171;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    html.light .modal {
+      background: #fff;
+      border-color: #e2e4ef;
+    }
+
+    html.light .modal h3 {
+      color: #0f1117;
+    }
+
+    html.light .modal p {
+      color: #54526e;
+    }
+
+    html.light .modal-close {
+      color: #6b7280;
+    }
+
+    html.light .modal-close:hover {
+      color: #0f1117;
+    }
+
+    html.light .btn-ghost {
+      background: #f4f5fa;
+      border-color: #d1d5db;
+      color: #54526e;
+    }
+
+    html.light .btn-ghost:hover {
+      background: #e8e9f2;
+      color: #0f1117;
+    }
+
+    .tog-track {
+      width: 40px;
+      height: 22px;
+      border-radius: 999px;
+      background: #1e2130;
+      position: relative;
+      cursor: pointer;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+
+    .tog-track.on {
+      background: #5865F2;
+    }
+
+    .tog-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transition: transform .2s;
+    }
+
+    .tog-track.on .tog-thumb {
+      transform: translateX(18px);
+    }
+
+    pre {
+      font-family: 'Geist Mono', monospace;
+      font-size: .8rem;
+      line-height: 1.7;
+      overflow-x: auto;
+    }
+
+    .code-block {
+      background: #060810;
+      border: 1px solid #1e2130;
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .kw {
+      color: #818cf8;
+    }
+
+    .fn {
+      color: #a78bfa;
+    }
+
+    .str {
+      color: #34d399;
+    }
+
+    .cmt {
+      color: #4b5563;
+      font-style: italic;
+    }
+
+    .num {
+      color: #fb923c;
+    }
+
+    .key {
+      color: #60a5fa;
+    }
+
+    html.light body {
+      background: #f4f5fa !important;
+      color: #0f1117 !important;
+    }
+
+    html.light nav {
+      background: rgba(244, 245, 250, .92) !important;
+      border-color: #e2e4ef !important;
+    }
+
+    html.light .dark-surface {
+      background: #fff !important;
+      border-color: #e2e4ef !important;
+    }
+
+    html.light .dark-surface-2 {
+      background: #f4f5fa !important;
+    }
+
+    html.light .dark-text {
+      color: #0f1117 !important;
+    }
+
+    html.light .dark-text-2 {
+      color: #4b5563 !important;
+    }
+
+    html.light .dark-text-3 {
+      color: #6b7280 !important;
+    }
+
+    html.light .dark-border {
+      border-color: #e2e4ef !important;
+    }
+
+    html.light .code-block {
+      background: #1e1e2e !important;
+      border-color: #2e3350 !important;
+    }
+
+    html.light .input-field {
+      background: #fff;
+      border-color: #d1d5db;
+      color: #111827;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: .65rem .875rem;
+      background: #0f1117;
+      border: 1.5px solid #1e2130;
+      border-radius: 12px;
+      color: #f3f4f6;
+      font-size: .875rem;
+      font-family: 'Geist', sans-serif;
       outline: none;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+      transition: border-color .15s;
     }
 
-    pre[class*="language-"],
-code[class*="language-"] {
-  background-color: #2e3246 !important; /* Light mode */
-}
+    .input-field:focus {
+      border-color: #5865F2;
+    }
 
-.dark pre[class*="language-"],
-.dark code[class*="language-"] {
-  background-color: #2e3246 !important; /* Dark mode */
-}
+    .input-field::placeholder {
+      color: #374151;
+    }
 
-code[class*="language-"] {
-  font-family: inherit !important;
-}
-pre[class*="language-"] {
-  font-family: inherit !important;
-}
-@media (max-width: 768px) {
-  #dark-mode-toggle .toggle-text {
-    display: none;
-  }
-}@media (max-width: 768px) {
-  #header-login-btn .login-text {
-    display: none;
-  }
-}
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 99px;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .fu {
+      animation: fadeUp .3s ease both;
+    }
+
+    #toast {
+      transition: opacity .25s, transform .25s;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .sidebar-link {
+      display: block;
+      padding: .375rem .75rem;
+      border-radius: 8px;
+      font-size: .8125rem;
+      color: #6b7280;
+      transition: background .12s, color .12s;
+    }
+
+    .sidebar-link:hover,
+    .sidebar-link.active {
+      background: #1e2130;
+      color: #e5e7eb;
+    }
+
+    #loginOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: #080a10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #loginOverlay.hidden {
+      display: none;
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #1e2130;
+      border-top-color: #5865F2;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
   </style>
 </head>
-<body class="bg-gray-100 dark:bg-[#1e1e2f] text-gray-800 dark:text-gray-100 min-h-screen transition-colors duration-300">
 
-  <div id="bdtools-loader" class="bdtools-loader fixed inset-0 flex items-center justify-center bg-white dark:bg-[#1e1e2f] z-50">
-  <div class="text-center">
-    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" 
-         alt="BDTools Logo" 
-         class="h-16 w-16 mx-auto mb-4 rounded-full animate-bounce" />
-    <p class="text-gray-700 dark:text-gray-300 font-semibold text-lg">
-      Loading<span id="bdtools-dots"></span>
-    </p>
-  </div>
-</div>
+<body class="bg-[#080a10] text-gray-100 min-h-screen flex flex-col">
 
-<!-- Toast Container -->
-<div id="toast-container"></div>
 
-<!-- HEADER -->
-<header class="flex justify-between items-center px-6 py-4 bg-bg-[#f3f4f6] dark:bg-[#1e1e2f]">
-  <a href="/" class="flex items-center gap-2">
-    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" class="h-10 w-10 rounded-full" alt="Logo" />
-    <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">BDTools</span>
-  </a>
-  <div class="flex items-center gap-4">
-<button id="dark-mode-toggle"
-  class="bg-gray-200 hover:bg-gray-300 dark:bg-[#2e3246] dark:hover:bg-[#3b3f54]
-         text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full
-         transition-colors duration-300 flex items-center space-x-2">
-  <i class="fas fa-moon"></i>
-  <span class="toggle-text">Dark Mode</span>
-</button>
-
-<div id="auth-section" class="flex items-center gap-3">
-  <a id="header-login-btn"
-     class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition font-medium flex items-center"
-     href="#">
-    <i class="fab fa-discord mr-2"></i>
-    <span class="login-text">Login</span></a>
-  <div id="profile" class="hidden">
-    <img id="avatar" class="h-10 w-10 rounded-full border-2 border-indigo-500" alt="User Avatar" />
-  </div>
-</div>
-  </div>
-</header>
-
-<!-- LOGIN SCREEN -->
-<div id="login-container" class="flex justify-center items-center min-h-[80vh]">
-  <div class="bg-white dark:bg-[#26293a] p-6 rounded-xl shadow-xl text-center max-w-md w-full">
-    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" class="mx-auto h-16 mb-4" />
-    <h1 class="text-2xl font-bold mb-4 text-indigo-600 dark:text-indigo-400">Login to Access API</h1>
-    <p class="text-gray-600 dark:text-gray-300 mb-6">Manage your keys and access API tools.</p>
-    <a id="main-login-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg inline-flex items-center justify-center gap-2 w-full">
-      <i class="fab fa-discord text-lg"></i> Login with Discord
-    </a>
-  </div>
-</div>
-
-<!-- DASHBOARD CONTENT -->
-<div id="dashboard-container" class="hidden container mx-auto px-4 py-6 max-w-4xl">
-
-  <section class="text-center mb-10 mt-0">
-      <h1 class="text-4xl font-bold text-indigo-700 dark:text-indigo-400 mb-2">API Documentation</h1>
-      <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-        Explore the BDTools API to manage your servers, access tools, and more. Use the API key below to authenticate your requests.
-      </p>
-    </section>
-  
-  <!-- API Key -->
-  <div class="bg-white dark:bg-[#26293a] p-6 rounded-xl shadow-xl mb-6">
-    <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6"><i class="fas fa-key text-indigo-600 dark:text-indigo-400 mr-2"></i>Your API Key</h3>
-    <div class="relative">
-      <pre id="apiKey" class="bg-gray-100 dark:bg-[#2e3246] p-4 rounded-md text-sm font-mono break-words whitespace-pre-wrap overflow-x-auto mb-4">•••••••••••••••</pre>
-      <button id="revealBtn" class="absolute top-2 right-2 text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400">
-        <i class="fas fa-eye"></i>
+  <!-- ── FULL-SCREEN LOGIN GATE ── -->
+  <div id="loginOverlay">
+    <div class="fu text-center px-4">
+      <img src="/images/bdfd_logo.png" alt="BDTools" class="w-16 h-16 rounded-2xl mx-auto mb-6 shadow-2xl"
+        onerror="this.style.display='none'" />
+      <h1 class="text-2xl font-black text-white mb-2 tracking-tight">BDTools API Docs</h1>
+      <p class="text-gray-400 text-sm mb-8 max-w-sm">Sign in with Discord to access the full API documentation, your
+        personal API key, and the interactive tester.</p>
+      <button id="loginBtn" onclick="loginDiscord()"
+        class="inline-flex items-center gap-3 px-7 py-3 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold rounded-xl transition-all shadow-lg text-base">
+        <!-- Discord icon -->
+        <svg width="20" height="20" viewBox="0 0 127.14 96.36" fill="currentColor">
+          <path
+            d="M107.7 8.07A105.15 105.15 0 0081.47 0a72.06 72.06 0 00-3.36 6.83 97.68 97.68 0 00-29.11 0A72.37 72.37 0 0045.64 0a105.89 105.89 0 00-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0032.17 16.15 77.7 77.7 0 006.89-11.11 68.42 68.42 0 01-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0064.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 01-10.87 5.19 77 77 0 006.89 11.1 105.25 105.25 0 0032.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15zM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69z" />
+        </svg>
+        Sign in with Discord
       </button>
+      <p id="loginStatus" class="text-xs text-gray-600 mt-4 min-h-[1.25rem]"></p>
     </div>
-<button id="copyBtn" class="copy-btn bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-full text-sm shadow-md">
-  <i class="fas fa-copy mr-1"></i> Copy API Key
-</button>
   </div>
 
-  <!-- Example Usage COPY PASTE THIS AND THE BUTTON ABOVE-->
-<div class="bg-white dark:bg-[#26293a] p-6 rounded-xl shadow-xl mb-6">
-  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6">
-    <i class="fas fa-code text-indigo-600 dark:text-indigo-400 mr-2"></i> Example Usage
-  </h3>
+  <!-- ── NAV ── -->
+  <nav class="sticky top-0 z-50 border-b border-[#1e2130] bg-[#080a10]/90 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2.5">
+        <img src="/images/bdfd_logo.png" alt="BDTools" class="w-7 h-7 rounded-lg" onerror="this.style.display='none'" />
+        <span class="font-bold text-white tracking-tight">BDTools</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <div id="userInfo" class="hidden items-center gap-2">
+          <img id="userAvatar" src="" alt="" class="w-7 h-7 rounded-full" />
+          <span id="userName" class="font-semibold text-sm hidden sm:block"></span>
+          <button onclick="openLogoutModal()"
+            class="text-xs text-gray-500 hover:text-red-400 transition-colors ml-1">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
 
-  <!-- Endpoint Selector -->
-  <label for="endpoint" class="block mb-3 text-gray-700 dark:text-gray-300 font-medium">
-    Select Endpoint:
-  </label>
-  <select id="endpoint" class="bg-gray-100 dark:bg-[#2e3246] text-gray-800 dark:text-gray-200 px-4 py-2 rounded-lg mb-6 w-full">
-    <option value="submit-server">Submit Server</option>
-   <!--<option value="get-servers">Get Servers</option>--> 
-    <!--<option value="delete-server">Delete Server</option>-->
-  </select>
-
-  <label for="bdscript-example" class="block mb-3 text-gray-700 dark:text-gray-300 font-medium">
-    Required Code:
-  <div class="bg-[#2e3246] dark:bg-[#2e3246] rounded-lg p-4 overflow-x-auto text-sm font-mono text-gray-800 dark:text-gray-200 shadow-inner" id="bdscript-example">
-    <pre><code class="bdscript-example" id="exampleCode">$nomention
-$c[You have to changes these two placeholder values]     
-$var[count;NUMBER_OF_SERVERS]
-$httpAddHeader[Authorization;Bearer YOUR_API_KEY_HERE]
-      
-$c[DONOT CHANGE ANYTHING FROM THIS POINT ONWARDS, NOT EVEN BRACKETS]       
-$var[i;1]
-$textSplit[$serverNames[$var[count];%%%];%%%]
-$httpPost[https://api-bdtools.netlify.app/submit-server;
-Author ID: $authorID
-$eval[$replaceText[$cropText[$repeatMessage[10;$repeatMessage[10;$repeatMessage[5;a]]];$min[$getTextSplitLength;250];];a;Server Name: %{DOL}%splitText[%{DOL}%var[i\]\]
-Server ID: %{DOL}%guildID[%{DOL}%splitText[%{DOL}%var[i\]\]\]
-Invite Link: %{DOL}%try %{DOL}%getServerInvite[%{DOL}%guildID[%{DOL}%splitText[%{DOL}%var[i\]\]\]\] %{DOL}%catch failed %{DOL}%endtry 
-Owner ID: %{DOL}%serverOwner[%{DOL}%guildID[%{DOL}%splitText[%{DOL}%var[i\]\]\]\] %{DOL}%var[i\;%{DOL}%sum[1\;%{DOL}%var[i\]\]\]
-]]
-]
-$c[DONOT CHANGE ANYTHING UP TO THIS POINT, NOT EVEN BRACKETS]    
-      
-$c[You can edit this message down here:]      
-$httpResult</code></pre>
+  <!-- Logout Confirmation Modal -->
+  <div class="overlay hidden" id="logoutModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeLogoutModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <h3>Confirm Logout</h3>
+      <p>Are you sure you want to log out? This will clear your session and API key.</p>
+      <div class="modal-buttons">
+        <button class="btn-ghost" onclick="closeLogoutModal()">Cancel</button>
+        <button class="btn-danger" onclick="logout()">Logout</button>
+      </div>
+    </div>
   </div>
-      <button id="copyBtn1" class="copy-btn bg-indigo-600 hover:bg-indigo-700 text-white mt-2 py-2 px-4 rounded-full text-sm shadow-md">
-  <i class="fas fa-copy mr-1"></i> Copy Code
-</button>
-  <label for="output-text" class="block mb-3 text-gray-700 dark:text-gray-300 font-medium mt-6">
-    Example Response:
-  <pre class="rounded-lg p-4 text-sm overflow-x-auto bg-gray-100 dark:bg-[#2e3246]"><code class="language-json" id="exampleResponse">{
-    "message": "Processing started. This may take anywhere from 15 seconds to 5 minutes depending on the number of servers and Discord's response time.",
-    "receivedServers": "10",
-    "info": "Once processing is complete, you can view the updated guild list at https://bdtools.netlify.app/botguildlist"
-}</code></pre>
-    <button id="copyBtn2" class="copy-btn bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-full text-sm shadow-md">
-  <i class="fas fa-copy mr-1"></i> Copy Response
-</button>
-      <p class="mt-6 text-gray-500 dark:text-gray-400">
-  <i class="fas fa-info-circle text-indigo-600 dark:text-indigo-400 mt-1 text-lg"></i> Full credit for the <strong>Example Code</strong> goes to Catearo, Thank you so much!
-  </p>
-</div>
 
-  <!-- Rules & Security COPY PASTE THIS-->
-<div class="bg-white dark:bg-[#26293a] p-6 rounded-2xl shadow-2xl mb-6 border border-gray-200 dark:border-[#3b3f54]">
-  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6">
-    <i class="fas fa-shield-alt text-indigo-600 dark:text-indigo-400 mr-3 text-3xl"></i> Rules & Security
-  </h3>
-  <ul class="space-y-4 text-gray-700 dark:text-gray-300">
-    <li class="flex items-start gap-3 bg-gray-50 dark:bg-[#2e3246] p-3 rounded-lg transition hover:shadow-md hover:bg-gray-100 dark:hover:bg-[#3b3f54]">
-      <i class="fas fa-user-secret text-indigo-600 dark:text-indigo-400 mt-1 text-lg"></i>
-      <span>Never share your API key with anyone to prevent unauthorized access.</span>
-    </li>
-    <li class="flex items-start gap-3 bg-gray-50 dark:bg-[#2e3246] p-3 rounded-lg transition hover:shadow-md hover:bg-gray-100 dark:hover:bg-[#3b3f54]">
-      <i class="fas fa-tachometer-alt text-indigo-600 dark:text-indigo-400 mt-1 text-lg"></i>
-      <span>Requests are rate-limited to <span class="font-bold">1 request every 5 hours</span>.</span>
-    </li>
-    <li class="flex items-start gap-3 bg-gray-50 dark:bg-[#2e3246] p-3 rounded-lg transition hover:shadow-md hover:bg-gray-100 dark:hover:bg-[#3b3f54]">
-      <i class="fas fa-clock text-indigo-600 dark:text-indigo-400 mt-1 text-lg"></i>
-      <span>API keys automatically expire every <span class="font-bold">30 days</span> for security.</span>
-    </li>
-    <li class="flex items-start gap-3 bg-gray-50 dark:bg-[#2e3246] p-3 rounded-lg transition hover:shadow-md hover:bg-gray-100 dark:hover:bg-[#3b3f54]">
-      <i class="fas fa-ban text-indigo-600 dark:text-indigo-400 mt-1 text-lg"></i>
-      <span>Strictly avoid spamming, scraping, or abusing API endpoints.</span>
-    </li>
-    <li class="flex items-start gap-3 bg-gray-50 dark:bg-[#2e3246] p-3 rounded-lg transition hover:shadow-md hover:bg-gray-100 dark:hover:bg-[#3b3f54]">
-      <i class="fas fa-gavel text-indigo-600 dark:text-indigo-400 mt-1 text-lg"></i>
-      <span>Violations will result in <span class="font-bold">permanent access revocation</span>.</span>
-    </li>
-  </ul>
-  <p class="mt-6 text-center text-sm italic text-gray-500 dark:text-gray-400">
-    Note: This is a community-made tool and is not affiliated with BDFD directly.
-  </p>
-</div>
-
-  <!-- API Tester -->
-  <div class="bg-white dark:bg-[#26293a] p-6 rounded-xl shadow-xl">
-    <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-6"><i class="fas fa-flask text-indigo-600 dark:text-indigo-400 mr-2"></i> API Tester (Beta)</h3>
-    <div class="mb-4">
-      <label class="block text-gray-600 dark:text-gray-300 mb-2">Endpoint:</label>
-      <input id="endpoint-input" type="text" class="w-full p-3 border border-gray-300 dark:border-[#3c3f54] rounded-lg bg-white dark:bg-[#2e3246] text-gray-600 dark:text-gray-100" placeholder="https://api.bdtools.netlify.app/v1/example">
+  <!-- ── HERO ── -->
+  <div class="border-b border-[#1e2130]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
+      <p class="text-xs font-mono text-[#5865F2] uppercase tracking-widest mb-3">// reference</p>
+      <h1 class="text-3xl font-black text-white tracking-tight dark-text mb-2">API Documentation</h1>
+      <p class="text-gray-400 text-sm dark-text-2 max-w-lg mt-3">Explore the BDTools API to manage servers, access
+        tools, and integrate your projects. Authenticate via API keys generated in your dashboard.</p>
     </div>
-    <div class="mb-4">
-      <label class="block text-gray-600 dark:text-gray-300 mb-2">Request Body (JSON):</label>
-      <textarea id="request-body" class="text-area w-full p-3 border border-gray-300 dark:border-[#3c3f54] rounded-lg bg-white dark:bg-[#2e3246] text-gray-600 dark:text-gray-100" placeholder='{"key": "value"}'></textarea>
-    </div>
-    <button id="test-api-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg w-full">
-      <i class="fas fa-paper-plane mr-2"></i> Test API
-    </button>
-    <div class="mt-4">
-      <label class="block text-gray-600 dark:text-gray-300 mb-2">Response:</label>
-      <pre id="api-response" class="text-area w-full p-3 border border-gray-300 dark:border-[#3c3f54] rounded-lg bg-gray-50 dark:bg-[#2e3246] text-gray-600 dark:text-gray-100 min-h-[150px]"></pre>
-    </div>
-  </div>  
-  <footer class="text-center mt-6 text-gray-500 dark:text-gray-400 text-sm">
-  &copy; 2025 BDTools. All rights reserved.
-</footer>
-  <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6 mb-10 text-center text-sm text-gray-600 dark:text-gray-400 space-x-4">
-    <a href="/tos" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
-      <i class="fas fa-gavel"></i> Terms of Service
-    </a>
-    <span>|</span>
-    <a href="/privacy" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
-      <i class="fas fa-user-shield"></i> Privacy Policy
-    </a>
-    <span>|</span>
-    <a href="/contact" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
-      <i class="fas fa-envelope"></i> Contact Us
-    </a>
   </div>
-<script src="api.js"></script>
+
+  <!-- ── MAIN CONTENT ── -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex gap-8">
+
+    <!-- Sidebar -->
+    <aside class="hidden lg:block w-48 flex-shrink-0 sticky top-24 self-start">
+      <p class="text-[10px] font-mono text-gray-600 uppercase tracking-widest mb-2 px-3">On this page</p>
+      <nav class="space-y-0.5">
+        <a href="#auth" class="sidebar-link active">Authentication</a>
+        <a href="#api-key" class="sidebar-link">Your API Key</a>
+        <a href="#endpoints" class="sidebar-link">Endpoints</a>
+        <a href="#example" class="sidebar-link">Example Usage</a>
+        <a href="#rules" class="sidebar-link">Rules &amp; Limits</a>
+        <a href="#tester" class="sidebar-link">API Tester</a>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="flex-1 min-w-0 space-y-8">
+
+      <!-- Auth -->
+      <section id="auth" class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 fu">
+        <div class="flex items-center gap-3 mb-4">
+          <div
+            class="w-10 h-10 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+            </svg>
+          </div>
+          <h2 class="text-lg font-bold text-white dark-text">Authentication</h2>
+        </div>
+        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed mb-4">All API requests must include your API key in
+          the <code class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded">Authorization</code> header as
+          a Bearer token.</p>
+        <div class="code-block">
+          <pre class="text-sm"><span class="cmt">// Authorization header format</span>
+<span class="key">Authorization</span><span class="kw">:</span> <span class="str">Bearer YOUR_API_KEY_HERE</span></pre>
+        </div>
+      </section>
+
+      <!-- API Key -->
+      <section id="api-key" class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 fu">
+        <div class="flex items-center gap-3 mb-4">
+          <div
+            class="w-10 h-10 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <h2 class="text-lg font-bold text-white dark-text">Your API Key</h2>
+        </div>
+        <div
+          class="bg-[#060810] border border-[#1e2130] rounded-xl px-4 py-3 flex items-center justify-between gap-4 mb-3">
+          <span id="apiKeyDisplay" class="font-mono text-sm text-gray-400 tracking-widest truncate">Loading…</span>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <button onclick="toggleKeyVisibility()" id="toggleKeyBtn"
+              class="text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold whitespace-nowrap">Show</button>
+            <button onclick="copyApiKey()"
+              class="text-xs bg-[#5865F2]/10 hover:bg-[#5865F2]/20 text-[#818cf8] border border-[#5865F2]/20 px-3 py-1.5 rounded-lg transition-colors font-semibold whitespace-nowrap">Copy</button>
+          </div>
+        </div>
+        <p class="text-xs text-gray-600 dark-text-3 font-mono">Your key expires 30 days after generation. Re-login to
+          refresh it.</p>
+      </section>
+
+      <!-- Endpoints -->
+      <section id="endpoints" class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 fu">
+        <div class="flex items-center gap-3 mb-4">
+          <div
+            class="w-10 h-10 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h2 class="text-lg font-bold text-white dark-text">Endpoints</h2>
+        </div>
+        <div class="space-y-3">
+          <div class="bg-[#060810] border border-[#1e2130] rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span
+                class="text-[11px] font-mono font-bold bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded">POST</span>
+              <code class="font-mono text-sm text-gray-200">/submit-server</code>
+            </div>
+            <p class="text-xs text-gray-500">Submit your bot's guild list to BDTools. Requires Authorization header.
+              Rate limited to 1 request per 5 hours.</p>
+          </div>
+          <div class="bg-[#060810] border border-[#1e2130] rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span
+                class="text-[11px] font-mono font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded">GET</span>
+              <code class="font-mono text-sm text-gray-200">/bot-guild-list</code>
+            </div>
+            <p class="text-xs text-gray-500">Retrieve the stored guild list for your bot. Returns paginated server data.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Example Usage -->
+      <section id="example" class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 fu">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+              </svg>
+            </div>
+            <h2 class="text-lg font-bold text-white dark-text">Example Usage</h2>
+          </div>
+          <button onclick="copyCode()"
+            class="text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold">Copy
+            Code</button>
+        </div>
+        <p class="text-sm text-gray-400 dark-text-3 mb-4">Endpoint: <span class="font-mono text-[#818cf8]">Submit
+            Server</span> — paste this into a BDFD command. Full credit for the example code goes to <strong
+            class="text-white">Catearo</strong>.</p>
+        <div id="codeBlock" class="code-block">
+          <pre id="exampleCode"><span class="fn">$nomention</span>
+<span class="fn">$c</span><span class="kw">[</span><span class="cmt">You have to change these two placeholder values</span><span class="kw">]</span>
+<span class="fn">$var</span><span class="kw">[</span><span class="str">count</span><span class="kw">;</span><span class="num">NUMBER_OF_SERVERS</span><span class="kw">]</span>
+<span class="fn">$httpAddHeader</span><span class="kw">[</span><span class="str">Authorization</span><span class="kw">;</span><span class="str">Bearer YOUR_API_KEY_HERE</span><span class="kw">]</span>
+
+<span class="fn">$c</span><span class="kw">[</span><span class="cmt">DO NOT CHANGE ANYTHING FROM THIS POINT ONWARDS, NOT EVEN BRACKETS</span><span class="kw">]</span>
+<span class="fn">$var</span><span class="kw">[</span><span class="str">i</span><span class="kw">;</span><span class="num">1</span><span class="kw">]</span>
+<span class="fn">$textSplit</span><span class="kw">[</span><span class="fn">$serverNames</span><span class="kw">[</span><span class="fn">$var</span><span class="kw">[</span><span class="str">count</span><span class="kw">];</span><span class="str">%%%</span><span class="kw">];</span><span class="str">%%%</span><span class="kw">]</span>
+<span class="fn">$httpPost</span><span class="kw">[</span><span class="str">https://api-bdtools.netlify.app/submit-server</span><span class="kw">;</span>
+<span class="str">Author ID: $authorID</span>
+<span class="fn">$eval</span><span class="kw">[</span><span class="fn">$replaceText</span><span class="kw">[</span><span class="fn">$cropText</span><span class="kw">[</span><span class="fn">$repeatMessage</span><span class="kw">[</span><span class="num">10</span><span class="kw">;</span><span class="fn">$repeatMessage</span><span class="kw">[</span><span class="num">10</span><span class="kw">;</span><span class="fn">$repeatMessage</span><span class="kw">[</span><span class="num">5</span><span class="kw">;</span><span class="str">a</span><span class="kw">]]];</span><span class="fn">$min</span><span class="kw">[</span><span class="fn">$getTextSplitLength</span><span class="kw">;</span><span class="num">250</span><span class="kw">]];</span><span class="str">a</span><span class="kw">;</span><span class="str">Server Name: ...</span><span class="kw">]]]</span>
+<span class="kw">]</span>
+<span class="fn">$c</span><span class="kw">[</span><span class="cmt">You can edit this message below:</span><span class="kw">]</span>
+<span class="fn">$httpResult</span></pre>
+        </div>
+        <div class="mt-5">
+          <p class="text-sm text-gray-400 dark-text-3 mb-3">Example Response:</p>
+          <div class="code-block">
+            <pre><span class="kw">{</span>
+  <span class="key">"message"</span><span class="kw">:</span> <span class="str">"Processing started. This may take 15s–5min."</span><span class="kw">,</span>
+  <span class="key">"receivedServers"</span><span class="kw">:</span> <span class="str">"10"</span><span class="kw">,</span>
+  <span class="key">"info"</span><span class="kw">:</span> <span class="str">"View updated guild list at /bot-guild-list"</span>
+<span class="kw">}</span></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Rules -->
+      <section id="rules" class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 fu">
+        <div class="flex items-center gap-3 mb-4">
+          <div
+            class="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h2 class="text-lg font-bold text-white dark-text">Rules &amp; Security</h2>
+        </div>
+        <ul class="space-y-2.5">
+          <li class="flex items-start gap-2.5 text-sm text-gray-400 dark-text-3"><span
+              class="text-red-400 mt-0.5 flex-shrink-0">▸</span> Never share your API key with anyone to prevent
+            unauthorized access.</li>
+          <li class="flex items-start gap-2.5 text-sm text-gray-400 dark-text-3"><span
+              class="text-red-400 mt-0.5 flex-shrink-0">▸</span> Requests are rate-limited to <strong
+              class="text-white">1 request every 5 hours</strong>.</li>
+          <li class="flex items-start gap-2.5 text-sm text-gray-400 dark-text-3"><span
+              class="text-red-400 mt-0.5 flex-shrink-0">▸</span> API keys automatically expire every <strong
+              class="text-white">30 days</strong> for security.</li>
+          <li class="flex items-start gap-2.5 text-sm text-gray-400 dark-text-3"><span
+              class="text-red-400 mt-0.5 flex-shrink-0">▸</span> Strictly avoid spamming, scraping, or abusing API
+            endpoints.</li>
+          <li class="flex items-start gap-2.5 text-sm text-gray-400 dark-text-3"><span
+              class="text-red-400 mt-0.5 flex-shrink-0">▸</span> Violations will result in <strong
+              class="text-red-400">permanent access revocation</strong>.</li>
+        </ul>
+      </section>
+
+      <!-- API Tester -->
+      <section id="tester" class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 fu">
+        <div class="flex items-center gap-3 mb-4">
+          <div
+            class="w-10 h-10 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h2 class="text-lg font-bold text-white dark-text">API Tester <span
+              class="text-xs font-mono bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 px-1.5 py-0.5 rounded ml-1">Beta</span>
+          </h2>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-widest">Endpoint</label>
+            <select id="testerEndpoint" class="input-field">
+              <option value="https://api-bdtools.netlify.app/submit-server">POST /submit-server</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-widest">Request Body
+              (JSON)</label>
+            <textarea id="testerBody" rows="4" class="input-field resize-none font-mono text-xs"
+              placeholder='{"key": "value"}'></textarea>
+          </div>
+          <button onclick=""
+            class="px-5 py-2 bg-[#5865F2] hover:bg-[#4752c4] text-white text-sm font-semibold rounded-xl transition-colors">
+            Test API
+          </button>
+          <div id="testerResponse" class="hidden">
+            <label class="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-widest">Response</label>
+            <div id="testerResponseContent" class="code-block font-mono text-xs text-gray-300 min-h-[60px]"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="border-t border-[#1e2130] bg-[#080a10]">
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <span class="text-sm text-gray-600">© 2026 BDTools. All rights reserved.</span>
+      <div class="flex items-center gap-4 text-xs text-gray-600">
+        <a href="/tos" class="hover:text-gray-400 transition-colors">Terms of Service</a>
+        <a href="/privacy" class="hover:text-gray-400 transition-colors">Privacy Policy</a>
+        <a href="/contact" class="hover:text-gray-400 transition-colors">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast"
+    class="fixed bottom-6 right-6 z-50 bg-[#5865F2] text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+    </svg>
+    <span id="toastMsg">Copied!</span>
+  </div>
+  <script>
+    const DISCORD_CLIENT_ID = '1395739162635800789';
+    const REDIRECT_URI = 'https://bdtools.netlify.app/api';
+
+    function toggleTheme() {
+      const h = document.documentElement, t = document.getElementById('themeToggle');
+      if (h.classList.contains('dark')) { h.classList.replace('dark', 'light'); t.classList.remove('on'); }
+      else { h.classList.replace('light', 'dark'); t.classList.add('on'); }
+    }
+
+    let _tt;
+    function showToast(msg, color) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      if (color === 'red') toast.style.background = '#ef4444';
+      else toast.style.background = '#5865F2';
+      toast.classList.add('show');
+      clearTimeout(_tt);
+      _tt = setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    let _apiKey = '';
+    let _keyVisible = false;
+
+    function setStatus(msg) { document.getElementById('loginStatus').textContent = msg; }
+
+    function showApp(user, apiKey) {
+      _apiKey = apiKey;
+      // Hide overlay
+      document.getElementById('loginOverlay').classList.add('hidden');
+      // Show user in nav
+      const ui = document.getElementById('userInfo');
+      ui.classList.remove('hidden');
+      ui.classList.add('flex');
+      const avatarUrl = user.avatar
+        ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=64`
+        : `https://cdn.discordapp.com/embed/avatars/0.png`;
+      document.getElementById('userAvatar').src = avatarUrl;
+      document.getElementById('userName').textContent = user.username;
+      // Show masked API key
+      renderKey(false);
+    }
+
+    function renderKey(visible) {
+      const el = document.getElementById('apiKeyDisplay');
+      const btn = document.getElementById('toggleKeyBtn');
+      if (visible) {
+        el.textContent = _apiKey;
+        el.className = 'font-mono text-sm text-green-400 tracking-widest truncate';
+        btn.textContent = 'Hide';
+      } else {
+        el.textContent = '•'.repeat(Math.min(_apiKey.length, 40));
+        el.className = 'font-mono text-sm text-gray-600 tracking-widest truncate';
+        btn.textContent = 'Show';
+      }
+      _keyVisible = visible;
+    }
+
+    function toggleKeyVisibility() { renderKey(!_keyVisible); }
+
+    function copyApiKey() {
+      if (!_apiKey) { showToast('No key to copy', 'red'); return; }
+      navigator.clipboard.writeText(_apiKey).then(() => showToast('API key copied!'));
+    }
+
+    function logout() {
+      localStorage.removeItem('bdtools_session');
+      location.reload();
+    }
+
+    function openLogoutModal() {
+      document.getElementById("logoutModal").classList.remove("hidden");
+    }
+
+    function closeLogoutModal() {
+      document.getElementById("logoutModal").classList.add("hidden");
+    }
+
+    function loginDiscord() {
+      const state = crypto.randomUUID();
+      sessionStorage.setItem('oauth_state', state);
+      const params = new URLSearchParams({
+        client_id: DISCORD_CLIENT_ID,
+        redirect_uri: REDIRECT_URI,
+        response_type: 'code',
+        scope: 'identify',
+        state,
+      });
+      window.location.href = 'https://discord.com/api/oauth2/authorize?' + params.toString();
+    }
+
+    async function handleOAuthCallback(code, state) {
+      const savedState = sessionStorage.getItem('oauth_state');
+      sessionStorage.removeItem('oauth_state');
+
+      if (state && savedState && state !== savedState) {
+        setStatus('❌ State mismatch — possible CSRF. Please try again.');
+        return;
+      }
+
+      setStatus('Exchanging code with server…');
+      try {
+        const res = await fetch('/.netlify/functions/exchange-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code }),
+        });
+        const data = await res.json();
+        if (!res.ok || data.error) {
+          setStatus('❌ ' + (data.error || 'Login failed'));
+          return;
+        }
+        // Persist session
+        localStorage.setItem('bdtools_session', JSON.stringify({
+          user: data.user,
+          apiKey: data.apiKey,
+          savedAt: Date.now(),
+        }));
+        // Clean URL
+        window.history.replaceState({}, '', window.location.pathname);
+        showApp(data.user, data.apiKey);
+        showToast('Welcome, ' + data.user.username + '!');
+      } catch (err) {
+        setStatus('❌ Network error: ' + err.message);
+      }
+    }
+
+    function copyCode() {
+      const raw = `$nomention\n$c[You have to change these two placeholder values]\n$var[count;NUMBER_OF_SERVERS]\n$httpAddHeader[Authorization;Bearer YOUR_API_KEY_HERE]\n\n$c[DO NOT CHANGE ANYTHING FROM THIS POINT ONWARDS, NOT EVEN BRACKETS]\n$var[i;1]\n$textSplit[$serverNames[$var[count];%%%];%%%]\n$httpPost[https://api-bdtools.netlify.app/submit-server;\nAuthor ID: $authorID\n$eval[$replaceText[$cropText[$repeatMessage[10;$repeatMessage[10;$repeatMessage[5;a]]];$min[$getTextSplitLength;250]];a;Server Name: ...]]]\n]\n$c[You can edit this message below:]\n$httpResult`;
+      navigator.clipboard.writeText(raw).then(() => showToast('Code copied!'));
+    }
+
+    async function testAPI() {
+      const endpoint = document.getElementById('testerEndpoint').value;
+      const body = document.getElementById('testerBody').value;
+      const resp = document.getElementById('testerResponse');
+      const content = document.getElementById('testerResponseContent');
+      resp.classList.remove('hidden');
+      content.textContent = 'Sending request…';
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (_apiKey) headers['Authorization'] = 'Bearer ' + _apiKey;
+        const r = await fetch(endpoint, { method: 'POST', headers, body: body || '{}' });
+        const json = await r.json();
+        content.textContent = JSON.stringify(json, null, 2);
+      } catch (e) {
+        content.textContent = 'Error: ' + e.message;
+      }
+    }
+
+    const sections = document.querySelectorAll('section[id]');
+    const sideLinks = document.querySelectorAll('.sidebar-link');
+    window.addEventListener('scroll', () => {
+      let cur = '';
+      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
+      sideLinks.forEach(l => { l.classList.toggle('active', l.getAttribute('href') === '#' + cur); });
+    });
+
+    (function init() {
+      // 1. Check for OAuth callback (code in URL)
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      const state = params.get('state');
+      if (code) {
+        handleOAuthCallback(code, state);
+        return;
+      }
+
+      // 2. Check saved session in localStorage
+      const raw = localStorage.getItem('bdtools_session');
+      if (raw) {
+        try {
+          const session = JSON.parse(raw);
+          // Sessions expire after 30 days (same as API key)
+          const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+          if (Date.now() - session.savedAt < thirtyDays) {
+            showApp(session.user, session.apiKey);
+            return;
+          }
+        } catch (_) { }
+        localStorage.removeItem('bdtools_session');
+      }
+
+      // 3. No session — overlay stays visible (default state)
+    })();
+  </script>
+
 </body>
+
 </html>

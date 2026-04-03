@@ -1,3 +1,5 @@
+/node_modules
+.env
 .vscode/
 API Docs/
 To Do List.txt
