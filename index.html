@@ -32,7 +32,7 @@
     html {
       scroll-behavior: smooth;
     }
-    
+
     #ldr {
       position: fixed;
       inset: 0;
@@ -81,7 +81,7 @@
     /* grid bg */
     .grid-bg {
       background-image: linear-gradient(rgba(88, 101, 242, .04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(88, 101, 242, .04) 1px, transparent 1px);
+        linear-gradient(90deg, rgba(88, 101, 242, .07) 1px, transparent 1px);
       background-size: 48px 48px;
     }
 
@@ -324,20 +324,34 @@
   <div class="border-y border-[#1e2130] bg-[#0a0c14]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
       <div class="stat-num" style="animation-delay:.1s">
-        <div class="text-3xl font-black text-[#5865F2]">7</div>
+        <div class="h-10 flex items-center justify-center">
+          <span class="text-3xl font-black text-[#5865F2]">7</span>
+        </div>
         <div class="text-xs text-gray-500 mt-1 font-mono uppercase tracking-widest">Tools</div>
       </div>
       <div class="stat-num" style="animation-delay:.2s">
-        <div class="text-3xl font-black text-[#5865F2]">~</div>
-        <div class="text-xs text-gray-500 mt-1 font-mono uppercase tracking-widest">Users</div>
+        <div class="h-10 flex items-center justify-center">
+          <svg class="w-8 h-8 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <div class="text-xs text-gray-500 mt-1 font-mono uppercase tracking-widest">Free Forever</div>
       </div>
       <div class="stat-num" style="animation-delay:.3s">
-        <div class="text-3xl font-black text-[#5865F2]">13</div>
-        <div class="text-xs text-gray-500 mt-1 font-mono uppercase tracking-widest">Contributions</div>
+        <div class="h-10 flex items-center justify-center">
+          <svg class="w-8 h-8 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+          </svg>
+        </div>
+        <div class="text-xs text-gray-500 mt-1 font-mono uppercase tracking-widest">Open Source</div>
       </div>
       <div class="stat-num" style="animation-delay:.4s">
-        <div class="text-3xl font-black text-[#5865F2]">1</div>
-        <div class="text-xs text-gray-500 mt-1 font-mono uppercase tracking-widest">Contributor</div>
+        <div class="h-10 flex items-center justify-center">
+          <span class="text-3xl font-black text-[#5865F2]">0</span>
+        </div>
+        <div class="text-xs text-gray-500 mt-1 font-mono uppercase tracking-widest">Installs</div>
       </div>
     </div>
   </div>
@@ -639,7 +653,7 @@
 
           <p class="text-xs text-gray-500 mt-0.5">Lead developer &amp; maintainer</p>
           <span
-            class="text-[10px] font-mono bg-[#5865F2]/10 text-[#818cf8] px-1.5 py-0.5 rounded mt-1.5 inline-block">12
+            class="text-[10px] font-mono bg-[#5865F2]/10 text-[#818cf8] px-1.5 py-0.5 rounded mt-1.5 inline-block">15+
             contributions</span>
         </div>
       </div>
