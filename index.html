@@ -42,14 +42,10 @@
         --surface-2: #1e2130;
         --border: #1e2130;
         --border-2: #2e3350;
-        --text-1: #f3f4f6;
-        /* headings / bold */
-        --text-2: #9ca3af;
-        /* body */
-        --text-3: #6b7280;
-        /* muted */
-        --text-4: #4b5563;
-        /* very muted */
+        --text-1: #f3f4f6; /* headings / bold */
+        --text-2: #9ca3af; /* body */
+        --text-3: #6b7280; /* muted */
+        --text-4: #4b5563; /* very muted */
         --nav-bg: rgba(8, 10, 16, 0.9);
         --tag-bg: #1e2130;
         --tag-text: #6b7280;
@@ -81,58 +77,51 @@
           color 0.25s;
       }
 
-    html {
-      scroll-behavior: smooth;
-    }
-    
-    #ldr {
-      position: fixed;
-      inset: 0;
-      background: #07080f;
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: .875rem;
-      transition: opacity .4s;
-    }
+      html {
+        scroll-behavior: smooth;
+      }
 
-    html.light #ldr {
-      background: #f1f2f9;
-    }
-
+      /* ── Loader ── */
+      #ldr {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.875rem;
+        transition: opacity 0.4s;
+      }
       #ldr.out {
         opacity: 0;
         pointer-events: none;
       }
-
       #ldr img {
         width: 48px;
         height: 48px;
         border-radius: 50%;
         animation: ldrb 0.75s ease-in-out infinite alternate;
       }
-
       #ldr p {
         font-size: 0.8125rem;
         font-weight: 600;
         color: var(--text-3);
       }
-
       @keyframes ldrb {
         to {
           transform: translateY(-8px);
         }
       }
 
-    /* grid bg */
-    .grid-bg {
-      background-image: linear-gradient(rgba(88, 101, 242, .04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(88, 101, 242, .04) 1px, transparent 1px);
-      background-size: 48px 48px;
-    }
-
+      /* ── Grid bg ── */
+      .grid-bg {
+        background-image:
+          linear-gradient(rgba(88, 101, 242, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(88, 101, 242, 0.07) 1px, transparent 1px);
+        background-size: 48px 48px;
+      }
       html.light .grid-bg {
         background-image:
           linear-gradient(rgba(88, 101, 242, 0.06) 1px, transparent 1px),
@@ -155,7 +144,6 @@
           box-shadow 0.2s,
           border-color 0.2s;
       }
-
       .tool-card:hover {
         transform: translateY(-3px);
         box-shadow: 0 8px 40px rgba(88, 101, 242, 0.15);
@@ -176,17 +164,15 @@
         width: 40px;
         height: 22px;
         border-radius: 999px;
-        background: #5865f2;
+        background: var(--surface-2);
         position: relative;
         cursor: pointer;
         transition: background 0.2s;
         flex-shrink: 0;
       }
-
       .tog-track.on {
         background: #5865f2;
       }
-
       .tog-thumb {
         width: 16px;
         height: 16px;
@@ -197,7 +183,6 @@
         left: 3px;
         transition: transform 0.2s;
       }
-
       .tog-track.on .tog-thumb {
         transform: translateX(18px);
       }
@@ -206,11 +191,9 @@
       .bg-alt {
         background: var(--bg-alt) !important;
       }
-
       .bg-main {
         background: var(--bg) !important;
       }
-
       .bg-surf {
         background: var(--surface) !important;
       }
@@ -219,15 +202,12 @@
       .t1 {
         color: var(--text-1) !important;
       }
-
       .t2 {
         color: var(--text-2) !important;
       }
-
       .t3 {
         color: var(--text-3) !important;
       }
-
       .t4 {
         color: var(--text-4) !important;
       }
@@ -236,7 +216,6 @@
       .bd {
         border-color: var(--border) !important;
       }
-
       .bd2 {
         border-color: var(--border-2) !important;
       }
@@ -281,45 +260,35 @@
           opacity: 0;
           transform: translateY(14px);
         }
-
         to {
           opacity: 1;
           transform: translateY(0);
         }
       }
-
       .fu {
         animation: fadeUp 0.35s ease both;
       }
-
       .fu-1 {
         animation-delay: 0.05s;
       }
-
       .fu-2 {
         animation-delay: 0.1s;
       }
-
       .fu-3 {
         animation-delay: 0.15s;
       }
-
       .fu-4 {
         animation-delay: 0.2s;
       }
-
       .fu-5 {
         animation-delay: 0.25s;
       }
-
       .fu-6 {
         animation-delay: 0.3s;
       }
-
       .fu-7 {
         animation-delay: 0.35s;
       }
-
       .fu-8 {
         animation-delay: 0.4s;
       }
@@ -329,13 +298,11 @@
           opacity: 0;
           transform: scale(0.7);
         }
-
         to {
           opacity: 1;
           transform: scale(1);
         }
       }
-
       .stat-num {
         animation: countUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
       }
@@ -345,12 +312,10 @@
         100% {
           opacity: 1;
         }
-
         50% {
           opacity: 0.5;
         }
       }
-
       .live-dot {
         animation: pulse-accent 2s ease infinite;
       }
@@ -361,7 +326,6 @@
         color: var(--text-1) !important;
         border-color: var(--border-2) !important;
       }
-
       .hero-btn-secondary:hover {
         filter: brightness(1.1);
       }
@@ -474,27 +438,81 @@
       </div>
     </section>
 
-  <!-- STATS BAR -->
-  <div class="border-y border-[#1e2130] bg-[#0a0c14]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-      <div class="stat-num" style="animation-delay:.1s">
-        <div class="text-3xl font-black text-[#5865F2]">7</div>
-        <div class="text-xs text-gray-500 mt-1 font-mono uppercase tracking-widest">Tools</div>
-      </div>
-      <div class="stat-num" style="animation-delay:.2s">
-        <div class="text-3xl font-black text-[#5865F2]">~</div>
-        <div class="text-xs text-gray-500 mt-1 font-mono uppercase tracking-widest">Users</div>
-      </div>
-      <div class="stat-num" style="animation-delay:.3s">
-        <div class="text-3xl font-black text-[#5865F2]">13</div>
-        <div class="text-xs text-gray-500 mt-1 font-mono uppercase tracking-widest">Contributions</div>
-      </div>
-      <div class="stat-num" style="animation-delay:.4s">
-        <div class="text-3xl font-black text-[#5865F2]">1</div>
-        <div class="text-xs text-gray-500 mt-1 font-mono uppercase tracking-widest">Contributor</div>
+    <!-- STATS BAR -->
+    <div class="stats-bar border-y" style="border-color: var(--border)">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center"
+      >
+        <div class="stat-num" style="animation-delay: 0.1s">
+          <div class="h-10 flex items-center justify-center">
+            <span class="text-3xl font-black text-[#5865F2]">7</span>
+          </div>
+          <div
+            class="text-xs mt-1 font-mono uppercase tracking-widest"
+            style="color: var(--text-3)"
+          >
+            Tools
+          </div>
+        </div>
+        <div class="stat-num" style="animation-delay: 0.2s">
+          <div class="h-10 flex items-center justify-center">
+            <svg
+              class="w-8 h-8 text-[#5865F2]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              />
+            </svg>
+          </div>
+          <div
+            class="text-xs mt-1 font-mono uppercase tracking-widest"
+            style="color: var(--text-3)"
+          >
+            Free Forever
+          </div>
+        </div>
+        <div class="stat-num" style="animation-delay: 0.3s">
+          <div class="h-10 flex items-center justify-center">
+            <svg
+              class="w-8 h-8 text-[#5865F2]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+              />
+            </svg>
+          </div>
+          <div
+            class="text-xs mt-1 font-mono uppercase tracking-widest"
+            style="color: var(--text-3)"
+          >
+            Open Source
+          </div>
+        </div>
+        <div class="stat-num" style="animation-delay: 0.4s">
+          <div class="h-10 flex items-center justify-center">
+            <span class="text-3xl font-black text-[#5865F2]">0</span>
+          </div>
+          <div
+            class="text-xs mt-1 font-mono uppercase tracking-widest"
+            style="color: var(--text-3)"
+          >
+            Installs
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
     <!-- TOOLS GRID -->
     <section id="tools" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -935,42 +953,63 @@
       </div>
     </section>
 
-  <!-- CONTRIBUTORS -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <p class="text-xs font-mono text-[#5865F2] uppercase tracking-widest mb-3">// people</p>
-    <h2 class="text-2xl font-black text-white mb-8 tracking-tight">Contributors & Credits</h2>
-
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
-      <!-- Zubariel -->
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-5 flex items-start gap-4">
+    <!-- CONTRIBUTORS -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <p
+        class="text-xs font-mono text-[#5865F2] uppercase tracking-widest mb-3"
+      >
+        // people
+      </p>
+      <h2
+        class="text-2xl font-black mb-8 tracking-tight"
+        style="color: var(--text-1)"
+      >
+        Contributors &amp; Credits
+      </h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Zubariel -->
         <div
-          class="w-10 h-10 rounded-full bg-[#5865F2]/20 flex items-center justify-center text-[#5865F2] font-bold text-sm flex-shrink-0">
-          Z</div>
-
-        <div>
-          <div class="flex items-center gap-2">
-            <a href="https://zubariel.is-a.dev/" target="_blank"
-              class="text-white font-semibold hover:text-[#818cf8] transition-colors">
-              Zubariel
-            </a>
-
-            <!-- Marker -->
-            <span
-              class="flex items-center gap-1 text-[10px] font-medium text-[#818cf8] bg-[#5865F2]/15 px-2 py-[2px] rounded-md">
-              <svg class="w-3 h-3 opacity-80" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 2l2.39 4.84L18 8.27l-4 3.89.94 5.49L10 15.77 5.06 17.65 6 12.16 2 8.27l5.61-1.43L10 2z" />
-              </svg>
-              contributor
-            </span>
+          class="contrib-card border rounded-2xl p-5 flex items-start gap-4"
+          style="border-color: var(--border)"
+        >
+          <div
+            class="w-10 h-10 rounded-full bg-[#5865F2]/20 flex items-center justify-center text-[#5865F2] font-bold text-sm flex-shrink-0"
+          >
+            Z
           </div>
-
-          <p class="text-xs text-gray-500 mt-0.5">Lead developer &amp; maintainer</p>
-          <span
-            class="text-[10px] font-mono bg-[#5865F2]/10 text-[#818cf8] px-1.5 py-0.5 rounded mt-1.5 inline-block">12
-            contributions</span>
+          <div>
+            <div class="flex items-center gap-2">
+              <a
+                href="https://zubariel.is-a.dev/"
+                target="_blank"
+                class="font-semibold hover:text-[#818cf8] transition-colors"
+                style="color: var(--text-1)"
+                >Zubariel</a
+              >
+              <span
+                class="flex items-center gap-1 text-[10px] font-medium text-[#818cf8] bg-[#5865F2]/15 px-2 py-[2px] rounded-md"
+              >
+                <svg
+                  class="w-3 h-3 opacity-80"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M10 2l2.39 4.84L18 8.27l-4 3.89.94 5.49L10 15.77 5.06 17.65 6 12.16 2 8.27l5.61-1.43L10 2z"
+                  />
+                </svg>
+                contributor
+              </span>
+            </div>
+            <p class="text-xs mt-0.5" style="color: var(--text-3)">
+              Lead developer &amp; maintainer
+            </p>
+            <span
+              class="text-[10px] font-mono bg-[#5865F2]/10 text-[#818cf8] px-1.5 py-0.5 rounded mt-1.5 inline-block"
+              >15+ contributions</span
+            >
+          </div>
         </div>
-      </div>
 
         <!-- Catearo -->
         <div
