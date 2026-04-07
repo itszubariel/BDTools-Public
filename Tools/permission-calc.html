@@ -1,739 +1,912 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="dark">
-
-<head>
-  <script>(function () { localStorage.getItem('darkMode') === 'enabled' ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark'); })()</script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BDTools | Permission Calculator</title>
-  <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
-    rel="stylesheet" />
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
-
-    body {
-      font-family: 'Geist', sans-serif;
-      background: #07080f;
-      color: #f0eff8;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    :root {
-      --bg: #07080f;
-      --bg2: #0d0f1a;
-      --bg3: #12141f;
-      --bg4: #181a28;
-      --bg5: #1e2133;
-      --border: #1e2133;
-      --border2: #252840;
-      --border3: #22232c;
-      --accent: #5865f2;
-      --accent-h: #4752c4;
-      --accent-dim: rgba(88, 101, 242, .14);
-      --text: #f0eff8;
-      --text2: #8b8aa8;
-      --text3: #45435e;
-      --mono: 'Geist Mono', monospace;
-      --r: 10px;
-      --r2: 14px;
-    }
-
-    html.light body {
-      background: #f1f2f9;
-      color: #0d0f1a;
-    }
-
-    html.light {
-      --bg: #f1f2f9;
-      --bg2: #ffffff;
-      --bg3: #e8e9f2;
-      --bg4: #dfe0ec;
-      --bg5: #d5d6e8;
-      --border: #dcdde8;
-      --border2: #d0d1de;
-      --border3: #c4c5d4;
-      --text: #0d0f1a;
-      --text2: #54526e;
-      --text3: #a0a0b8;
-    }
-
-    #ldr {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: .875rem;
-      transition: opacity .4s;
-    }
-
-    #ldr.out {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    #ldr img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      animation: ldrb .75s ease-in-out infinite alternate;
-    }
-
-    #ldr p {
-      font-size: .8125rem;
-      font-weight: 600;
-      color: var(--text2);
-    }
-
-    @keyframes ldrb {
-      to {
-        transform: translateY(-8px)
+  <head>
+    <script>
+      (function () {
+        localStorage.getItem("darkMode") === "enabled"
+          ? document.documentElement.classList.add("dark")
+          : document.documentElement.classList.remove("dark");
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BDTools | Permission Calculator</title>
+    <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-    }
 
-    #toasts {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: .4rem;
-      pointer-events: none;
-    }
+      body {
+        font-family: "Geist", sans-serif;
+        background: #07080f;
+        color: #f0eff8;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        -webkit-font-smoothing: antialiased;
+      }
 
-    .toast {
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      padding: .625rem .875rem;
-      border-radius: var(--r);
+      :root {
+        --bg: #07080f;
+        --bg2: #0d0f1a;
+        --bg3: #12141f;
+        --bg4: #181a28;
+        --bg5: #1e2133;
+        --border: #1e2133;
+        --border2: #252840;
+        --border3: #22232c;
+        --accent: #5865f2;
+        --accent-h: #4752c4;
+        --accent-dim: rgba(88, 101, 242, 0.14);
+        --text: #f0eff8;
+        --text2: #8b8aa8;
+        --text3: #45435e;
+        --mono: "Geist Mono", monospace;
+        --r: 10px;
+        --r2: 14px;
+      }
 
-      font-size: .8rem;
-      font-weight: 600;
-      color: var(--text);
+      html.light body {
+        background: #f1f2f9;
+        color: #0d0f1a;
+      }
 
-      position: relative;
-      overflow: hidden;
+      html.light {
+        --bg: #f1f2f9;
+        --bg2: #ffffff;
+        --bg3: #e8e9f2;
+        --bg4: #dfe0ec;
+        --bg5: #d5d6e8;
+        --border: #dcdde8;
+        --border2: #d0d1de;
+        --border3: #c4c5d4;
+        --text: #0d0f1a;
+        --text2: #54526e;
+        --text3: #a0a0b8;
+      }
 
-      /* MATCHES YOUR CARD SYSTEM */
-      background:
-        radial-gradient(120% 120% at 0% 0%, rgba(88, 101, 242, 0.14), transparent 65%),
-        var(--bg3);
+      #ldr {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.875rem;
+        transition: opacity 0.4s;
+      }
 
-      border: 1px solid var(--border);
-
-      box-shadow: 0 6px 24px rgba(0, 0, 0, .35);
-
-      animation: tin .25s ease both;
-    }
-
-    /* success */
-    .toast.s {
-      border-left: 3px solid #22c55e;
-    }
-
-    /* error */
-    .toast.e {
-      border-left: 3px solid #ef4444;
-    }
-
-    .tbar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 2px;
-      width: 100%;
-      background: rgba(255, 255, 255, .3);
-      animation: tbar 4s linear forwards;
-    }
-
-    @keyframes tin {
-      from {
+      #ldr.out {
         opacity: 0;
-        transform: translateX(12px)
+        pointer-events: none;
       }
 
-      to {
-        opacity: 1;
-        transform: none
+      #ldr img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        animation: ldrb 0.75s ease-in-out infinite alternate;
       }
-    }
 
-    @keyframes tbar {
-      to {
-        width: 0
+      #ldr p {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--text2);
       }
-    }
 
-    /* ── nav ── */
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      border-bottom: 1px solid var(--border);
-      background: rgba(7, 8, 15, .88);
-      backdrop-filter: blur(18px);
-      height: 52px;
-      display: flex;
-      align-items: center;
-      padding: 0 1.5rem;
-      gap: 1rem;
-    }
+      @keyframes ldrb {
+        to {
+          transform: translateY(-8px);
+        }
+      }
 
-    html.light nav {
-      background: rgba(241, 242, 249, .9);
-    }
+      #toasts {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        pointer-events: none;
+      }
 
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      text-decoration: none;
-    }
+      .toast {
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 0.875rem;
+        border-radius: var(--r);
 
-    .nav-logo img {
-      width: 26px;
-      height: 26px;
-      border-radius: 7px;
-    }
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text);
 
-    .nav-logo span {
-      font-weight: 800;
-      font-size: .9375rem;
-      color: var(--text);
-      letter-spacing: -.02em;
-    }
+        position: relative;
+        overflow: hidden;
 
-    .spacer {
-      flex: 1;
-    }
+        /* MATCHES YOUR CARD SYSTEM */
+        background:
+          radial-gradient(
+            120% 120% at 0% 0%,
+            rgba(88, 101, 242, 0.14),
+            transparent 65%
+          ),
+          var(--bg3);
 
-    .tog {
-      display: flex;
-      align-items: center;
-      gap: .4rem;
-      cursor: pointer;
-      user-select: none;
-    }
+        border: 1px solid var(--border);
 
-    .tog-lbl {
-      font-size: .7rem;
-      font-weight: 600;
-      color: var(--text3);
-      text-transform: uppercase;
-      letter-spacing: .03em;
-    }
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
 
-    .tog-track {
-      width: 40px;
-      height: 22px;
-      border-radius: 999px;
-      background: #1e2130;
-      position: relative;
-      cursor: pointer;
-      transition: background .2s;
-      flex-shrink: 0;
-    }
+        animation: tin 0.25s ease both;
+      }
 
-    .tog-track.on {
-      background: #5865F2;
-    }
+      /* success */
+      .toast.s {
+        border-left: 3px solid #22c55e;
+      }
 
-    .tog-thumb {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: #fff;
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      transition: transform .2s;
-    }
+      /* error */
+      .toast.e {
+        border-left: 3px solid #ef4444;
+      }
 
-    .tog-track.on .tog-thumb {
-      transform: translateX(18px);
-    }
+      .tbar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.3);
+        animation: tbar 4s linear forwards;
+      }
 
-    .hero {
-      max-width: 900px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 2.25rem 1.5rem 1.75rem;
-      border-bottom: 1px solid var(--border);
-    }
+      @keyframes tin {
+        from {
+          opacity: 0;
+          transform: translateX(12px);
+        }
 
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: .375rem;
-      font-size: .6875rem;
-      font-family: var(--mono);
-      color: var(--accent);
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      margin-bottom: .75rem;
-    }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
 
-    .hero h1 {
-      font-size: 1.625rem;
-      font-weight: 900;
-      letter-spacing: -.035em;
-      line-height: 1.1;
-      color: var(--text);
-      margin-bottom: .4rem;
-    }
+      @keyframes tbar {
+        to {
+          width: 0;
+        }
+      }
 
-    .hero p {
-      font-size: .875rem;
-      color: var(--text2);
-      line-height: 1.6;
-      max-width: 440px;
-    }
+      /* ── nav ── */
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        border-bottom: 1px solid var(--border);
+        background: rgba(7, 8, 15, 0.88);
+        backdrop-filter: blur(18px);
+        height: 52px;
+        display: flex;
+        align-items: center;
+        padding: 0 1.5rem;
+        gap: 1rem;
+      }
 
-    main {
-      flex: 1;
-      max-width: 900px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 1.75rem 1.5rem;
-    }
+      html.light nav {
+        background: rgba(241, 242, 249, 0.9);
+      }
 
-    .card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: var(--r2);
-    }
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+      }
 
-    .card-hdr {
-      padding: .625rem 1rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--bg3);
-      border-radius: var(--r2) var(--r2) 0 0;
-    }
+      .nav-logo img {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+      }
 
-    .card-hdr-title {
-      font-size: .6875rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      color: var(--text3);
-    }
+      .nav-logo span {
+        font-weight: 800;
+        font-size: 0.9375rem;
+        color: var(--text);
+        letter-spacing: -0.02em;
+      }
 
-    .card-body {
-      padding: 1rem;
-    }
+      .spacer {
+        flex: 1;
+      }
 
-    /* custom checkbox */
-    .perm-cb {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 1rem;
-      height: 1rem;
-      border: 1.5px solid var(--border2);
-      border-radius: 4px;
-      background: var(--bg);
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: background .12s, border-color .12s;
-      position: relative;
-    }
+      .tog {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        user-select: none;
+      }
 
-    .perm-cb:checked {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
+      .tog-lbl {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
 
-    .perm-cb:checked::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 5px;
-      height: 9px;
-      border: 2px solid #fff;
-      border-top: none;
-      border-left: none;
-      transform: translate(-50%, -50%) rotate(45deg);
-    }
+      .tog-track {
+        width: 40px;
+        height: 22px;
+        border-radius: 999px;
+        background: #1e2130;
+        position: relative;
+        cursor: pointer;
+        transition: background 0.2s;
+        flex-shrink: 0;
+      }
 
-    .perm-cb:hover:not(:checked) {
-      border-color: var(--accent);
-    }
+      .tog-track.on {
+        background: #5865f2;
+      }
 
-    .perm-row {
-      border-bottom: 1px solid var(--border3) !important;
-      transition: background .1s;
-    }
+      .tog-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #fff;
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        transition: transform 0.2s;
+      }
 
-    .perm-row:hover {
-      background: var(--accent-dim);
-    }
+      .tog-track.on .tog-thumb {
+        transform: translateX(18px);
+      }
 
-    .val-box {
-      font-family: var(--mono);
-      word-break: break-all;
-    }
+      .hero {
+        max-width: 900px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 2.25rem 1.5rem 1.75rem;
+        border-bottom: 1px solid var(--border);
+      }
 
-    .field {
-      width: 100%;
-      padding: .6rem .875rem;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-size: .8125rem;
-      outline: none;
-      transition: border-color .15s;
-      font-family: var(--mono);
-    }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-size: 0.6875rem;
+        font-family: var(--mono);
+        color: var(--accent);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
 
-    .field:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent-dim);
-    }
+      .hero h1 {
+        font-size: 1.625rem;
+        font-weight: 900;
+        letter-spacing: -0.035em;
+        line-height: 1.1;
+        color: var(--text);
+        margin-bottom: 0.4rem;
+      }
 
-    .field::placeholder {
-      color: var(--text3);
-    }
+      .hero p {
+        font-size: 0.875rem;
+        color: var(--text2);
+        line-height: 1.6;
+        max-width: 440px;
+      }
 
-    html.light .perm-cb {
-      background: #fff;
-      border-color: #d1d5db;
-    }
+      main {
+        flex: 1;
+        max-width: 900px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 1.75rem 1.5rem;
+      }
 
-    html.light .perm-row:hover {
-      background: var(--accent-dim);
-    }
+      .card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--r2);
+      }
 
-    html.light .field {
-      background: #f8f9fc !important;
-      border-color: #d1d5db !important;
-      color: #1f2937 !important;
-    }
+      .card-hdr {
+        padding: 0.625rem 1rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--bg3);
+        border-radius: var(--r2) var(--r2) 0 0;
+      }
 
-    ::-webkit-scrollbar {
-      width: 5px;
-    }
+      .card-hdr-title {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text3);
+      }
 
-    ::-webkit-scrollbar-thumb {
-      background: #374151;
-      border-radius: 99px;
-    }
+      .card-body {
+        padding: 1rem;
+      }
 
-    @keyframes fadeUp {
-      from {
+      /* custom checkbox */
+      .perm-cb {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 1rem;
+        height: 1rem;
+        border: 1.5px solid var(--border2);
+        border-radius: 4px;
+        background: var(--bg);
+        cursor: pointer;
+        flex-shrink: 0;
+        transition:
+          background 0.12s,
+          border-color 0.12s;
+        position: relative;
+      }
+
+      .perm-cb:checked {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .perm-cb:checked::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 9px;
+        border: 2px solid #fff;
+        border-top: none;
+        border-left: none;
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+
+      .perm-cb:hover:not(:checked) {
+        border-color: var(--accent);
+      }
+
+      .perm-row {
+        border-bottom: 1px solid var(--border3) !important;
+        transition: background 0.1s;
+      }
+
+      .perm-row:hover {
+        background: var(--accent-dim);
+      }
+
+      .val-box {
+        font-family: var(--mono);
+        word-break: break-all;
+      }
+
+      .field {
+        width: 100%;
+        padding: 0.6rem 0.875rem;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        color: var(--text);
+        font-size: 0.8125rem;
+        outline: none;
+        transition: border-color 0.15s;
+        font-family: var(--mono);
+      }
+
+      .field:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent-dim);
+      }
+
+      .field::placeholder {
+        color: var(--text3);
+      }
+
+      html.light .perm-cb {
+        background: #fff;
+        border-color: #d1d5db;
+      }
+
+      html.light .perm-row:hover {
+        background: var(--accent-dim);
+      }
+
+      html.light .field {
+        background: #f8f9fc !important;
+        border-color: #d1d5db !important;
+        color: #1f2937 !important;
+      }
+
+      ::-webkit-scrollbar {
+        width: 5px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #374151;
+        border-radius: 99px;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fu {
+        animation: fadeUp 0.3s ease both;
+      }
+
+      #toast {
+        transition:
+          opacity 0.25s,
+          transform 0.25s;
         opacity: 0;
-        transform: translateY(10px)
+        transform: translateY(8px);
+        pointer-events: none;
       }
 
-      to {
+      #toast.show {
         opacity: 1;
-        transform: translateY(0)
+        transform: translateY(0);
+        pointer-events: auto;
       }
-    }
 
-    .fu {
-      animation: fadeUp .3s ease both;
-    }
-
-    #toast {
-      transition: opacity .25s, transform .25s;
-      opacity: 0;
-      transform: translateY(8px);
-      pointer-events: none;
-    }
-
-    #toast.show {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    .section-label {
-      font-size: .6875rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: var(--text3);
-    }
-
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 1rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: .5rem;
-    }
-
-    footer p {
-      font-size: .7rem;
-      color: var(--text3);
-    }
-
-    .foot-links {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .foot-links a {
-      font-size: .7rem;
-      color: var(--text3);
-      text-decoration: none;
-      transition: color .15s;
-    }
-
-    .foot-links a:hover {
-      color: var(--text2);
-    }
-  </style>
-</head>
-
-<body>
-  <div id="ldr"><img src="https://bdtools.netlify.app/images/bdfd_logo.png" alt="" />
-    <p id="ldrtxt">Loading</p>
-  </div>
-  <div id="toasts"></div>
-
-  <!-- ── NAV (fixed) ── -->
-  <nav>
-    <a href="/" class="nav-logo">
-      <img src="https://bdtools.netlify.app/images/bdfd_logo.png" onerror="this.style.display='none'" alt="" />
-      <span>BDTools</span>
-    </a>
-    <div class="spacer"></div>
-    <div class="tog" onclick="toggleTheme()">
-      <span class="tog-lbl">Dark</span>
-      <div class="tog-track on" id="themeToggle">
-        <div class="tog-thumb"></div>
-      </div>
-    </div>
-  </nav>
-
-  <div class="border-b border-[#1e2130]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
-      <div class="flex items-start gap-4">
-        <div
-          class="w-11 h-11 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center flex-shrink-0">
-          <svg class="w-5 h-5 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-          </svg>
-        </div>
-        <div>
-          <h1 class="text-2xl font-black text-white tracking-tight">Permission Calculator</h1>
-          <p class="text-gray-400 text-sm mt-1">Calculate Discord permission bitfield values for bot invite links or
-            <code class="font-mono text-[#818cf8]">$botInvite</code> in BDFD. Toggle permissions to build the combined
-            value.</p>
-          <div class="flex flex-wrap gap-1.5 mt-3">
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">JavaScript</span>
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">HTML</span>
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">Tailwind
-              CSS</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
-      <!-- LEFT: permission groups -->
-      <div class="xl:col-span-2 space-y-4 fu">
-        <!-- Toolbar -->
-        <div class="flex flex-wrap items-center gap-2">
-          <button onclick="enableAll()"
-            class="px-4 py-1.5 text-xs font-bold bg-[#5865F2] hover:bg-[#4752c4] text-white rounded-xl transition-colors">Enable
-            All</button>
-          <button onclick="disableAll()"
-            class="px-4 py-1.5 text-xs font-semibold bg-[#0f1117] hover:bg-[#1e2130] text-gray-400 border border-[#2e3350] rounded-xl transition-colors">Disable
-            All</button>
-          <input id="search" type="text" placeholder="Search permissions…" oninput="filterPerms(this.value)"
-            class="ml-auto w-52 px-3 py-1.5 text-xs rounded-xl bg-[#0f1117] border border-[#1e2130] text-gray-200 placeholder-gray-700 focus:outline-none focus:border-[#5865F2] transition-colors font-mono" />
-        </div>
-
-        <!-- Sections injected by JS -->
-        <div id="sections" class="space-y-3"></div>
-      </div>
-
-      <!-- RIGHT: output panel -->
-      <div class="space-y-4 fu" style="animation-delay:.06s">
-        <!-- Value card -->
-        <div class="bg-[#0f1117] border border-[#1e2130] rounded-2xl p-5 sticky top-20">
-          <p class="section-label mb-4">Current Permission Value</p>
-
-          <div class="mb-3">
-            <label
-              class="block text-[10px] text-gray-600 uppercase tracking-widest mb-1.5 font-semibold">Decimal</label>
-            <div class="flex gap-2">
-              <div id="decVal"
-                class="val-box flex-1 bg-[#060810] border border-[#1e2130] rounded-xl px-3 py-2.5 text-[#818cf8] text-sm flex items-center min-h-[40px]">
-                0</div>
-              <button onclick="copyEl('decVal')" title="Copy"
-                class="p-2 bg-[#0f1117] hover:bg-[#1e2130] border border-[#1e2130] rounded-xl text-gray-500 hover:text-white transition-colors flex-shrink-0">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="mb-4">
-            <label
-              class="block text-[10px] text-gray-600 uppercase tracking-widest mb-1.5 font-semibold">Hexadecimal</label>
-            <div class="flex gap-2">
-              <div id="hexVal"
-                class="val-box flex-1 bg-[#060810] border border-[#1e2130] rounded-xl px-3 py-2.5 text-purple-400 text-sm flex items-center min-h-[40px]">
-                0x0</div>
-              <button onclick="copyEl('hexVal')" title="Copy"
-                class="p-2 bg-[#0f1117] hover:bg-[#1e2130] border border-[#1e2130] rounded-xl text-gray-500 hover:text-white transition-colors flex-shrink-0">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="border-t border-[#1e2130] pt-4 mb-4">
-            <label class="block text-[10px] text-gray-600 uppercase tracking-widest mb-1.5 font-semibold">Enter Value
-              Manually</label>
-            <input id="manualIn" type="text" placeholder="e.g. 8 or 0x8" oninput="parseManual()" class="field" />
-          </div>
-
-          <div class="border-t border-[#1e2130] pt-4">
-            <label class="block text-[10px] text-gray-600 uppercase tracking-widest mb-1.5 font-semibold">Bot Invite
-              Link</label>
-            <div class="flex gap-2">
-              <input id="clientId" type="text" placeholder="Client / App ID" class="field flex-1 min-w-0" />
-              <button onclick="copyInvite()"
-                class="px-3 py-2 text-xs font-bold bg-[#5865F2] hover:bg-[#4752c4] text-white rounded-xl transition-colors whitespace-nowrap flex-shrink-0">Copy
-                Link</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Active permissions -->
-        <div class="bg-[#0f1117] border border-[#1e2130] rounded-2xl p-5">
-          <div class="flex items-center justify-between mb-3">
-            <p class="section-label mb-0">Active Permissions</p>
-            <span id="activeCount"
-              class="text-xs font-mono bg-[#5865F2]/10 text-[#818cf8] border border-[#5865F2]/20 px-2 py-0.5 rounded-full">0</span>
-          </div>
-          <div id="activeList" class="space-y-1 max-h-64 overflow-y-auto pr-0.5">
-            <p class="text-xs text-[var(--text3)] italic">No permissions selected.</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </main>
-
-  <footer>
-    <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
-    <div class="foot-links"><a href="/tos">Terms</a><a href="/privacy">Privacy</a><a href="/contact">Contact</a></div>
-  </footer>
-
-  <script>
-    // Loader
-    const ldrtxt = document.getElementById('ldrtxt'); let dc = 0;
-    const di = setInterval(() => { dc = (dc + 1) % 4; ldrtxt.textContent = 'Loading' + '.'.repeat(dc); }, 350);
-    window.addEventListener('load', () => { setTimeout(() => { const l = document.getElementById('ldr'); l.classList.add('out'); setTimeout(() => l.remove(), 400); clearInterval(di); }, 900); });
-
-    // Toast
-    function toast(msg, type = 's') { const box = document.getElementById('toasts'); const t = document.createElement('div'); t.className = `toast ${type}`; t.innerHTML = `<span>${msg}</span><div class="tbar"></div>`; box.appendChild(t); setTimeout(() => t.remove(), 4500); }
-
-    // Theme toggle
-    function toggleTheme() {
-      const h = document.documentElement, t = document.getElementById('themeToggle');
-      const dark = h.classList.toggle('dark');
-      localStorage.setItem('darkMode', dark ? 'enabled' : 'disabled');
-      t.classList.toggle('on', dark);
-    }
-    (function () { document.getElementById('themeToggle').classList.toggle('on', document.documentElement.classList.contains('dark')); })();
-
-    // Permission calculator logic
-    const GROUPS = [
-      {
-        label: 'General Server Permissions', perms: [
-          { name: 'Manage Server', value: 32n }, { name: 'View Audit Log', value: 128n },
-          { name: 'View Server Insights', value: 524288n }, { name: 'Administrator', value: 8n }]
-      },
-      {
-        label: 'Member Management', perms: [
-          { name: 'Kick Members', value: 2n }, { name: 'Ban Members', value: 4n },
-          { name: 'Manage Nicknames', value: 134217728n }, { name: 'Change Nickname', value: 67108864n }]
-      },
-      {
-        label: 'Channel Management', perms: [
-          { name: 'Manage Channels', value: 16n }, { name: 'Manage Roles', value: 268435456n },
-          { name: 'Manage Webhooks', value: 536870912n }, { name: 'View Channels', value: 1024n }]
-      },
-      {
-        label: 'Text Permissions', perms: [
-          { name: 'Send Messages', value: 2048n }, { name: 'Send Messages in Threads', value: 274877906944n },
-          { name: 'Create Public Threads', value: 34359738368n }, { name: 'Create Private Threads', value: 68719476736n },
-          { name: 'Embed Links', value: 16384n }, { name: 'Attach Files', value: 32768n },
-          { name: 'Add Reactions', value: 64n }, { name: 'Use External Emoji', value: 262144n },
-          { name: 'Use External Stickers', value: 137438953472n }, { name: 'Mention @everyone, @here, All Roles', value: 131072n },
-          { name: 'Manage Messages', value: 8192n }, { name: 'Manage Threads', value: 17179869184n },
-          { name: 'Read Message History', value: 65536n }, { name: 'Send Text-to-Speech Messages', value: 4096n },
-          { name: 'Use Application Commands', value: 2147483648n }]
-      },
-      {
-        label: 'Voice Permissions', perms: [
-          { name: 'Connect', value: 1048576n }, { name: 'Speak', value: 2097152n },
-          { name: 'Video', value: 512n }, { name: 'Start Activities', value: 549755813888n },
-          { name: 'Use Voice Activity', value: 33554432n }, { name: 'Priority Speaker', value: 256n },
-          { name: 'Mute Members', value: 4194304n }, { name: 'Deafen Members', value: 8388608n },
-          { name: 'Move Members', value: 16777216n }, { name: 'Request to Speak', value: 4294967296n }]
-      },
-      {
-        label: 'Other Permissions', perms: [
-          { name: 'Manage Emojis and Stickers', value: 1073741824n },
-          { name: 'Manage Events', value: 8589934592n }, { name: 'Create Invite', value: 1n }]
+      .section-label {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text3);
       }
-    ];
 
-    const VAL_TO_NAME = {};
-    GROUPS.forEach(g => g.perms.forEach(p => VAL_TO_NAME[p.value.toString()] = p.name));
-    let bits = 0n;
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
 
-    function buildSections() {
-      const container = document.getElementById('sections');
-      GROUPS.forEach((group, gi) => {
-        const wrap = document.createElement('div');
-        wrap.className = 'bg-[var(--bg2)] border border-[var(--border)] rounded-2xl overflow-hidden';
-        wrap.dataset.gi = gi;
+      footer p {
+        font-size: 0.7rem;
+        color: var(--text3);
+      }
 
-        const hdr = document.createElement('div');
-        hdr.className = 'flex items-center justify-between px-5 py-3.5 border-b border-[var(--border)] cursor-pointer select-none hover:bg-[var(--bg4)]/50 transition-colors';
-        hdr.innerHTML = `
+      .foot-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .foot-links a {
+        font-size: 0.7rem;
+        color: var(--text3);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+
+      .foot-links a:hover {
+        color: var(--text2);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="ldr">
+      <img src="https://bdtools.netlify.app/images/bdfd_logo.png" alt="" />
+      <p id="ldrtxt">Loading</p>
+    </div>
+    <div id="toasts"></div>
+
+    <!-- ── NAV (fixed) ── -->
+    <nav>
+      <a href="/" class="nav-logo">
+        <img
+          src="https://bdtools.netlify.app/images/bdfd_logo.png"
+          onerror="this.style.display = 'none'"
+          alt=""
+        />
+        <span>BDTools</span>
+      </a>
+      <div class="spacer"></div>
+      <div class="tog" onclick="toggleTheme()">
+        <span class="tog-lbl">Dark</span>
+        <div class="tog-track on" id="themeToggle">
+          <div class="tog-thumb"></div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="border-b border-[#1e2130]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
+        <div class="flex items-start gap-4">
+          <div
+            class="w-11 h-11 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center flex-shrink-0"
+          >
+            <svg
+              class="w-5 h-5 text-[#5865F2]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-2xl font-black text-white tracking-tight">
+              Permission Calculator
+            </h1>
+            <p class="text-gray-400 text-sm mt-1">
+              Calculate Discord permission bitfield values for bot invite links
+              or <code class="font-mono text-[#818cf8]">$botInvite</code> in
+              BDFD. Toggle permissions to build the combined value.
+            </p>
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >JavaScript</span
+              >
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >HTML</span
+              >
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >Tailwind CSS</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <!-- LEFT: permission groups -->
+        <div class="xl:col-span-2 space-y-4 fu">
+          <!-- Toolbar -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              onclick="enableAll()"
+              class="px-4 py-1.5 text-xs font-bold bg-[#5865F2] hover:bg-[#4752c4] text-white rounded-xl transition-colors"
+            >
+              Enable All
+            </button>
+            <button
+              onclick="disableAll()"
+              class="px-4 py-1.5 text-xs font-semibold bg-[#0f1117] hover:bg-[#1e2130] text-gray-400 border border-[#2e3350] rounded-xl transition-colors"
+            >
+              Disable All
+            </button>
+            <input
+              id="search"
+              type="text"
+              placeholder="Search permissions…"
+              oninput="filterPerms(this.value)"
+              class="ml-auto w-52 px-3 py-1.5 text-xs rounded-xl bg-[#0f1117] border border-[#1e2130] text-gray-200 placeholder-gray-700 focus:outline-none focus:border-[#5865F2] transition-colors font-mono"
+            />
+          </div>
+
+          <!-- Sections injected by JS -->
+          <div id="sections" class="space-y-3"></div>
+        </div>
+
+        <!-- RIGHT: output panel -->
+        <div class="space-y-4 fu" style="animation-delay: 0.06s">
+          <!-- Value card -->
+          <div
+            class="bg-[#0f1117] border border-[#1e2130] rounded-2xl p-5 sticky top-20"
+          >
+            <p class="section-label mb-4">Current Permission Value</p>
+
+            <div class="mb-3">
+              <label
+                class="block text-[10px] text-gray-600 uppercase tracking-widest mb-1.5 font-semibold"
+                >Decimal</label
+              >
+              <div class="flex gap-2">
+                <div
+                  id="decVal"
+                  class="val-box flex-1 bg-[#060810] border border-[#1e2130] rounded-xl px-3 py-2.5 text-[#818cf8] text-sm flex items-center min-h-[40px]"
+                >
+                  0
+                </div>
+                <button
+                  onclick="copyEl('decVal')"
+                  title="Copy"
+                  class="p-2 bg-[#0f1117] hover:bg-[#1e2130] border border-[#1e2130] rounded-xl text-gray-500 hover:text-white transition-colors flex-shrink-0"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label
+                class="block text-[10px] text-gray-600 uppercase tracking-widest mb-1.5 font-semibold"
+                >Hexadecimal</label
+              >
+              <div class="flex gap-2">
+                <div
+                  id="hexVal"
+                  class="val-box flex-1 bg-[#060810] border border-[#1e2130] rounded-xl px-3 py-2.5 text-purple-400 text-sm flex items-center min-h-[40px]"
+                >
+                  0x0
+                </div>
+                <button
+                  onclick="copyEl('hexVal')"
+                  title="Copy"
+                  class="p-2 bg-[#0f1117] hover:bg-[#1e2130] border border-[#1e2130] rounded-xl text-gray-500 hover:text-white transition-colors flex-shrink-0"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="border-t border-[#1e2130] pt-4 mb-4">
+              <label
+                class="block text-[10px] text-gray-600 uppercase tracking-widest mb-1.5 font-semibold"
+                >Enter Value Manually</label
+              >
+              <input
+                id="manualIn"
+                type="text"
+                placeholder="e.g. 8 or 0x8"
+                oninput="parseManual()"
+                class="field"
+              />
+            </div>
+
+            <div class="border-t border-[#1e2130] pt-4">
+              <label
+                class="block text-[10px] text-gray-600 uppercase tracking-widest mb-1.5 font-semibold"
+                >Bot Invite Link</label
+              >
+              <div class="flex gap-2">
+                <input
+                  id="clientId"
+                  type="text"
+                  placeholder="Client / App ID"
+                  class="field flex-1 min-w-0"
+                />
+                <button
+                  onclick="copyInvite()"
+                  class="px-3 py-2 text-xs font-bold bg-[#5865F2] hover:bg-[#4752c4] text-white rounded-xl transition-colors whitespace-nowrap flex-shrink-0"
+                >
+                  Copy Link
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active permissions -->
+          <div class="bg-[#0f1117] border border-[#1e2130] rounded-2xl p-5">
+            <div class="flex items-center justify-between mb-3">
+              <p class="section-label mb-0">Active Permissions</p>
+              <span
+                id="activeCount"
+                class="text-xs font-mono bg-[#5865F2]/10 text-[#818cf8] border border-[#5865F2]/20 px-2 py-0.5 rounded-full"
+                >0</span
+              >
+            </div>
+            <div
+              id="activeList"
+              class="space-y-1 max-h-64 overflow-y-auto pr-0.5"
+            >
+              <p class="text-xs text-[var(--text3)] italic">
+                No permissions selected.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+      <div class="foot-links">
+        <a href="/tos">Terms</a><a href="/privacy">Privacy</a
+        ><a href="/contact">Contact</a>
+      </div>
+    </footer>
+
+    <script>
+      // Loader
+      const ldrtxt = document.getElementById("ldrtxt");
+      let dc = 0;
+      const di = setInterval(() => {
+        dc = (dc + 1) % 4;
+        ldrtxt.textContent = "Loading" + ".".repeat(dc);
+      }, 350);
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          const l = document.getElementById("ldr");
+          l.classList.add("out");
+          setTimeout(() => l.remove(), 400);
+          clearInterval(di);
+        }, 900);
+      });
+
+      // Toast
+      function toast(msg, type = "s") {
+        const box = document.getElementById("toasts");
+        const t = document.createElement("div");
+        t.className = `toast ${type}`;
+        t.innerHTML = `<span>${msg}</span><div class="tbar"></div>`;
+        box.appendChild(t);
+        setTimeout(() => t.remove(), 4500);
+      }
+
+      // Theme toggle
+      function toggleTheme() {
+        const h = document.documentElement,
+          t = document.getElementById("themeToggle");
+        const dark = h.classList.toggle("dark");
+        localStorage.setItem("darkMode", dark ? "enabled" : "disabled");
+        t.classList.toggle("on", dark);
+      }
+      (function () {
+        document
+          .getElementById("themeToggle")
+          .classList.toggle(
+            "on",
+            document.documentElement.classList.contains("dark"),
+          );
+      })();
+
+      // Permission calculator logic
+      const GROUPS = [
+        {
+          label: "General Server Permissions",
+          perms: [
+            { name: "Manage Server", value: 32n },
+            { name: "View Audit Log", value: 128n },
+            { name: "View Server Insights", value: 524288n },
+            { name: "Administrator", value: 8n },
+          ],
+        },
+        {
+          label: "Member Management",
+          perms: [
+            { name: "Kick Members", value: 2n },
+            { name: "Ban Members", value: 4n },
+            { name: "Manage Nicknames", value: 134217728n },
+            { name: "Change Nickname", value: 67108864n },
+          ],
+        },
+        {
+          label: "Channel Management",
+          perms: [
+            { name: "Manage Channels", value: 16n },
+            { name: "Manage Roles", value: 268435456n },
+            { name: "Manage Webhooks", value: 536870912n },
+            { name: "View Channels", value: 1024n },
+          ],
+        },
+        {
+          label: "Text Permissions",
+          perms: [
+            { name: "Send Messages", value: 2048n },
+            { name: "Send Messages in Threads", value: 274877906944n },
+            { name: "Create Public Threads", value: 34359738368n },
+            { name: "Create Private Threads", value: 68719476736n },
+            { name: "Embed Links", value: 16384n },
+            { name: "Attach Files", value: 32768n },
+            { name: "Add Reactions", value: 64n },
+            { name: "Use External Emoji", value: 262144n },
+            { name: "Use External Stickers", value: 137438953472n },
+            { name: "Mention @everyone, @here, All Roles", value: 131072n },
+            { name: "Manage Messages", value: 8192n },
+            { name: "Manage Threads", value: 17179869184n },
+            { name: "Read Message History", value: 65536n },
+            { name: "Send Text-to-Speech Messages", value: 4096n },
+            { name: "Use Application Commands", value: 2147483648n },
+          ],
+        },
+        {
+          label: "Voice Permissions",
+          perms: [
+            { name: "Connect", value: 1048576n },
+            { name: "Speak", value: 2097152n },
+            { name: "Video", value: 512n },
+            { name: "Start Activities", value: 549755813888n },
+            { name: "Use Voice Activity", value: 33554432n },
+            { name: "Priority Speaker", value: 256n },
+            { name: "Mute Members", value: 4194304n },
+            { name: "Deafen Members", value: 8388608n },
+            { name: "Move Members", value: 16777216n },
+            { name: "Request to Speak", value: 4294967296n },
+          ],
+        },
+        {
+          label: "Other Permissions",
+          perms: [
+            { name: "Manage Emojis and Stickers", value: 1073741824n },
+            { name: "Manage Events", value: 8589934592n },
+            { name: "Create Invite", value: 1n },
+          ],
+        },
+      ];
+
+      const VAL_TO_NAME = {};
+      GROUPS.forEach((g) =>
+        g.perms.forEach((p) => (VAL_TO_NAME[p.value.toString()] = p.name)),
+      );
+      let bits = 0n;
+
+      function buildSections() {
+        const container = document.getElementById("sections");
+        GROUPS.forEach((group, gi) => {
+          const wrap = document.createElement("div");
+          wrap.className =
+            "bg-[var(--bg2)] border border-[var(--border)] rounded-2xl overflow-hidden";
+          wrap.dataset.gi = gi;
+
+          const hdr = document.createElement("div");
+          hdr.className =
+            "flex items-center justify-between px-5 py-3.5 border-b border-[var(--border)] cursor-pointer select-none hover:bg-[var(--bg4)]/50 transition-colors";
+          hdr.innerHTML = `
       <div class="flex items-center gap-2">
         <span class="text-sm font-semibold text-[var(--text)]">${group.label}</span>
         <span class="text-[10px] font-mono px-1.5 py-0.5 rounded-lg bg-[var(--bg)] border border-[var(--border2)] text-[var(--text3)] section-badge" data-gi="${gi}">0/${group.perms.length}</span>
@@ -744,92 +917,148 @@
         <svg class="w-4 h-4 text-[var(--text3)] section-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
       </div>`;
 
-        const body = document.createElement('div');
-        body.className = 'grid grid-cols-1 sm:grid-cols-2 border-t border-[var(--border)]';
-        body.dataset.gi = gi;
+          const body = document.createElement("div");
+          body.className =
+            "grid grid-cols-1 sm:grid-cols-2 border-t border-[var(--border)]";
+          body.dataset.gi = gi;
 
-        group.perms.forEach(perm => {
-          const row = document.createElement('label');
-          row.className = 'perm-row flex items-center gap-3 px-5 py-3 cursor-pointer border-b border-[var(--border)]/50';
-          row.dataset.name = perm.name.toLowerCase();
-          row.dataset.gi = gi;
-          row.innerHTML = `<input type="checkbox" class="perm-cb" data-val="${perm.value}" data-gi="${gi}"/>
+          group.perms.forEach((perm) => {
+            const row = document.createElement("label");
+            row.className =
+              "perm-row flex items-center gap-3 px-5 py-3 cursor-pointer border-b border-[var(--border)]/50";
+            row.dataset.name = perm.name.toLowerCase();
+            row.dataset.gi = gi;
+            row.innerHTML = `<input type="checkbox" class="perm-cb" data-val="${perm.value}" data-gi="${gi}"/>
         <div class="flex-1 min-w-0">
           <div class="text-sm text-[var(--text)]">${perm.name}</div>
           <div class="text-[11px] font-mono text-[var(--text3)] mt-0.5">${perm.value}</div>
         </div>`;
-          body.appendChild(row);
+            body.appendChild(row);
+          });
+
+          hdr.addEventListener("click", (e) => {
+            if (e.target.closest(".sect-btn")) return;
+            const hidden = body.style.display === "none";
+            body.style.display = hidden ? "" : "none";
+            hdr.querySelector(".section-chevron").style.transform = hidden
+              ? "rotate(180deg)"
+              : "";
+          });
+          hdr.querySelectorAll(".sect-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              body
+                .querySelectorAll(".perm-cb")
+                .forEach((cb) => (cb.checked = btn.dataset.enable === "1"));
+              recalc();
+            });
+          });
+          body.addEventListener("change", () => recalc());
+
+          wrap.appendChild(hdr);
+          wrap.appendChild(body);
+          container.appendChild(wrap);
+        });
+      }
+
+      function recalc() {
+        bits = 0n;
+        document.querySelectorAll(".perm-cb:checked").forEach((cb) => {
+          bits |= BigInt(cb.dataset.val);
+        });
+        document.getElementById("decVal").textContent = bits.toString();
+        document.getElementById("hexVal").textContent =
+          "0x" + bits.toString(16).toUpperCase();
+
+        GROUPS.forEach((group, gi) => {
+          const cbs = [
+            ...document.querySelectorAll(`.perm-cb[data-gi="${gi}"]`),
+          ];
+          const checked = cbs.filter((c) => c.checked).length;
+          const badge = document.querySelector(
+            `.section-badge[data-gi="${gi}"]`,
+          );
+          if (!badge) return;
+          badge.textContent = `${checked}/${group.perms.length}`;
+          badge.classList.toggle("bg-[var(--accent)]/10", checked > 0);
+          badge.classList.toggle("border-[var(--accent)]/20", checked > 0);
+          badge.classList.toggle("text-[var(--accent)]", checked > 0);
         });
 
-        hdr.addEventListener('click', e => {
-          if (e.target.closest('.sect-btn')) return;
-          const hidden = body.style.display === 'none';
-          body.style.display = hidden ? '' : 'none';
-          hdr.querySelector('.section-chevron').style.transform = hidden ? 'rotate(180deg)' : '';
+        const checked = [...document.querySelectorAll(".perm-cb:checked")];
+        document.getElementById("activeCount").textContent = checked.length;
+        const list = document.getElementById("activeList");
+        list.innerHTML =
+          checked.length === 0
+            ? '<p class="text-xs text-[var(--text3)] italic">No permissions selected.</p>'
+            : checked
+                .map(
+                  (cb) =>
+                    `<div class="flex items-center justify-between gap-2 bg-[var(--bg)] rounded-lg px-3 py-1.5 border border-[var(--border)]"><span class="text-xs text-[var(--text)] truncate">${VAL_TO_NAME[cb.dataset.val] ?? "?"}</span><span class="text-[10px] font-mono text-[var(--text3)] flex-shrink-0">${cb.dataset.val}</span></div>`,
+                )
+                .join("");
+      }
+
+      function enableAll() {
+        document
+          .querySelectorAll(".perm-cb")
+          .forEach((cb) => (cb.checked = true));
+        recalc();
+      }
+      function disableAll() {
+        document
+          .querySelectorAll(".perm-cb")
+          .forEach((cb) => (cb.checked = false));
+        recalc();
+      }
+
+      function filterPerms(q) {
+        q = q.trim().toLowerCase();
+        document.querySelectorAll(".perm-row").forEach((row) => {
+          row.style.display = !q || row.dataset.name.includes(q) ? "" : "none";
         });
-        hdr.querySelectorAll('.sect-btn').forEach(btn => {
-          btn.addEventListener('click', e => { e.stopPropagation(); body.querySelectorAll('.perm-cb').forEach(cb => cb.checked = btn.dataset.enable === '1'); recalc(); });
+        document.querySelectorAll("#sections>div").forEach((sec) => {
+          const any = [...sec.querySelectorAll(".perm-row")].some(
+            (r) => r.style.display !== "none",
+          );
+          sec.style.display = any ? "" : "none";
         });
-        body.addEventListener('change', () => recalc());
+      }
 
-        wrap.appendChild(hdr); wrap.appendChild(body); container.appendChild(wrap);
-      });
-    }
+      function parseManual() {
+        const raw = document.getElementById("manualIn").value.trim();
+        if (!raw) return;
+        let v;
+        try {
+          v = BigInt(raw);
+        } catch {
+          return;
+        }
+        document.querySelectorAll(".perm-cb").forEach((cb) => {
+          const pv = BigInt(cb.dataset.val);
+          cb.checked = pv !== 0n && (v & pv) === pv;
+        });
+        recalc();
+      }
 
-    function recalc() {
-      bits = 0n;
-      document.querySelectorAll('.perm-cb:checked').forEach(cb => { bits |= BigInt(cb.dataset.val); });
-      document.getElementById('decVal').textContent = bits.toString();
-      document.getElementById('hexVal').textContent = '0x' + bits.toString(16).toUpperCase();
+      function copyEl(id) {
+        const text = document.getElementById(id).textContent.trim();
+        navigator.clipboard.writeText(text).then(() => toast("Copied!"));
+      }
+      function copyInvite() {
+        const id = document.getElementById("clientId").value.trim();
+        if (!id) {
+          toast("Enter a Client ID first!", "e");
+          return;
+        }
+        const url = `https://discord.com/api/oauth2/authorize?client_id=${id}&permissions=${bits.toString()}&scope=bot`;
+        navigator.clipboard
+          .writeText(url)
+          .then(() => toast("Invite link copied!"));
+      }
 
-      GROUPS.forEach((group, gi) => {
-        const cbs = [...document.querySelectorAll(`.perm-cb[data-gi="${gi}"]`)];
-        const checked = cbs.filter(c => c.checked).length;
-        const badge = document.querySelector(`.section-badge[data-gi="${gi}"]`);
-        if (!badge) return;
-        badge.textContent = `${checked}/${group.perms.length}`;
-        badge.classList.toggle('bg-[var(--accent)]/10', checked > 0);
-        badge.classList.toggle('border-[var(--accent)]/20', checked > 0);
-        badge.classList.toggle('text-[var(--accent)]', checked > 0);
-      });
-
-      const checked = [...document.querySelectorAll('.perm-cb:checked')];
-      document.getElementById('activeCount').textContent = checked.length;
-      const list = document.getElementById('activeList');
-      list.innerHTML = checked.length === 0
-        ? '<p class="text-xs text-[var(--text3)] italic">No permissions selected.</p>'
-        : checked.map(cb => `<div class="flex items-center justify-between gap-2 bg-[var(--bg)] rounded-lg px-3 py-1.5 border border-[var(--border)]"><span class="text-xs text-[var(--text)] truncate">${VAL_TO_NAME[cb.dataset.val] ?? '?'}</span><span class="text-[10px] font-mono text-[var(--text3)] flex-shrink-0">${cb.dataset.val}</span></div>`).join('');
-    }
-
-    function enableAll() { document.querySelectorAll('.perm-cb').forEach(cb => cb.checked = true); recalc(); }
-    function disableAll() { document.querySelectorAll('.perm-cb').forEach(cb => cb.checked = false); recalc(); }
-
-    function filterPerms(q) {
-      q = q.trim().toLowerCase();
-      document.querySelectorAll('.perm-row').forEach(row => { row.style.display = (!q || row.dataset.name.includes(q)) ? '' : 'none'; });
-      document.querySelectorAll('#sections>div').forEach(sec => {
-        const any = [...sec.querySelectorAll('.perm-row')].some(r => r.style.display !== 'none');
-        sec.style.display = any ? '' : 'none';
-      });
-    }
-
-    function parseManual() {
-      const raw = document.getElementById('manualIn').value.trim();
-      if (!raw) return;
-      let v; try { v = BigInt(raw); } catch { return; }
-      document.querySelectorAll('.perm-cb').forEach(cb => { const pv = BigInt(cb.dataset.val); cb.checked = pv !== 0n && (v & pv) === pv; });
+      buildSections();
       recalc();
-    }
-
-    function copyEl(id) { const text = document.getElementById(id).textContent.trim(); navigator.clipboard.writeText(text).then(() => toast('Copied!')); }
-    function copyInvite() {
-      const id = document.getElementById('clientId').value.trim();
-      if (!id) { toast('Enter a Client ID first!', 'e'); return; }
-      const url = `https://discord.com/api/oauth2/authorize?client_id=${id}&permissions=${bits.toString()}&scope=bot`;
-      navigator.clipboard.writeText(url).then(() => toast('Invite link copied!'));
-    }
-
-    buildSections(); recalc();
-  </script>
-</body>
+    </script>
+  </body>
 </html>

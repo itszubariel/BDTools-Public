@@ -1,791 +1,836 @@
 <!doctype html>
 <html lang="en" class="dark">
-
-<head>
-  <script>
-    (function () {
-      localStorage.getItem("darkMode") === "enabled"
-        ? document.documentElement.classList.add("dark")
-        : document.documentElement.classList.remove("dark");
-    })();
-  </script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css" />
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BDTools | Code Highlighter</title>
-  <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
-    rel="stylesheet" />
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: "Geist", sans-serif;
-      background: #07080f;
-      color: #f0eff8;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    :root {
-      --bg: #07080f;
-      --bg2: #0d0f1a;
-      --bg3: #12141f;
-      --bg4: #181a28;
-      --bg5: #1e2133;
-      --border: #1e2133;
-      --border2: #252840;
-      --border3: #2e3150;
-      --accent: #5865f2;
-      --accent-h: #4752c4;
-      --accent-dim: rgba(88, 101, 242, 0.14);
-      --text: #f0eff8;
-      --text2: #8b8aa8;
-      --text3: #45435e;
-      --mono: "Geist Mono", monospace;
-      --r: 10px;
-      --r2: 14px;
-    }
-
-    html.light body {
-      background: #f1f2f9;
-      color: #0d0f1a;
-    }
-
-    html.light {
-      --bg: #f1f2f9;
-      --bg2: #ffffff;
-      --bg3: #e8e9f2;
-      --bg4: #dfe0ec;
-      --bg5: #d5d6e8;
-      --border: #dcdde8;
-      --border2: #d0d1de;
-      --text: #0d0f1a;
-      --text2: #54526e;
-      --text3: #a0a0b8;
-    }
-
-    #ldr {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 0.875rem;
-      transition: opacity 0.4s;
-    }
-
-    #ldr.out {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    #ldr img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      animation: ldrb 0.75s ease-in-out infinite alternate;
-    }
-
-    #ldr p {
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--text2);
-    }
-
-    @keyframes ldrb {
-      to {
-        transform: translateY(-8px);
+  <head>
+    <script>
+      (function () {
+        localStorage.getItem("darkMode") === "enabled"
+          ? document.documentElement.classList.add("dark")
+          : document.documentElement.classList.remove("dark");
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BDTools | Code Highlighter</title>
+    <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-    }
 
-    #toasts {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      pointer-events: none;
-    }
+      body {
+        font-family: "Geist", sans-serif;
+        background: #07080f;
+        color: #f0eff8;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        -webkit-font-smoothing: antialiased;
+      }
 
-    .toast {
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.625rem 0.875rem;
-      border-radius: var(--r);
+      :root {
+        --bg: #07080f;
+        --bg2: #0d0f1a;
+        --bg3: #12141f;
+        --bg4: #181a28;
+        --bg5: #1e2133;
+        --border: #1e2133;
+        --border2: #252840;
+        --border3: #2e3150;
+        --accent: #5865f2;
+        --accent-h: #4752c4;
+        --accent-dim: rgba(88, 101, 242, 0.14);
+        --text: #f0eff8;
+        --text2: #8b8aa8;
+        --text3: #45435e;
+        --mono: "Geist Mono", monospace;
+        --r: 10px;
+        --r2: 14px;
+      }
 
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text);
+      html.light body {
+        background: #f1f2f9;
+        color: #0d0f1a;
+      }
 
-      position: relative;
-      overflow: hidden;
+      html.light {
+        --bg: #f1f2f9;
+        --bg2: #ffffff;
+        --bg3: #e8e9f2;
+        --bg4: #dfe0ec;
+        --bg5: #d5d6e8;
+        --border: #dcdde8;
+        --border2: #d0d1de;
+        --text: #0d0f1a;
+        --text2: #54526e;
+        --text3: #a0a0b8;
+      }
 
-      /* MATCHES YOUR CARD SYSTEM */
-      background:
-        radial-gradient(120% 120% at 0% 0%,
-          rgba(88, 101, 242, 0.14),
-          transparent 65%),
-        var(--bg3);
+      #ldr {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.875rem;
+        transition: opacity 0.4s;
+      }
 
-      border: 1px solid var(--border);
-
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
-
-      animation: tin 0.25s ease both;
-    }
-
-    /* success */
-    .toast.s {
-      border-left: 3px solid #22c55e;
-    }
-
-    /* error */
-    .toast.e {
-      border-left: 3px solid #ef4444;
-    }
-
-    .tbar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 2px;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.3);
-      animation: tbar 4s linear forwards;
-    }
-
-    @keyframes tin {
-      from {
+      #ldr.out {
         opacity: 0;
-        transform: translateX(12px);
+        pointer-events: none;
       }
 
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    @keyframes tbar {
-      to {
-        width: 0;
-      }
-    }
-
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      border-bottom: 1px solid var(--border);
-      background: rgba(7, 8, 15, 0.88);
-      backdrop-filter: blur(18px);
-      height: 52px;
-      display: flex;
-      align-items: center;
-      padding: 0 1.5rem;
-      gap: 1rem;
-    }
-
-    html.light nav {
-      background: rgba(241, 242, 249, 0.9);
-    }
-
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      text-decoration: none;
-    }
-
-    .nav-logo img {
-      width: 26px;
-      height: 26px;
-      border-radius: 7px;
-    }
-
-    .nav-logo span {
-      font-weight: 800;
-      font-size: 0.9375rem;
-      color: var(--text);
-      letter-spacing: -0.02em;
-    }
-
-    .spacer {
-      flex: 1;
-    }
-
-    .tog {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .tog-lbl {
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: var(--text3);
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-
-    .tog-track {
-      width: 34px;
-      height: 19px;
-      border-radius: 999px;
-      background: var(--border2);
-      position: relative;
-      transition: background 0.2s;
-      flex-shrink: 0;
-    }
-
-    .tog-track.on {
-      background: var(--accent);
-    }
-
-    .tog-thumb {
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      background: #fff;
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      transition: transform 0.2s;
-    }
-
-    .tog-track.on .tog-thumb {
-      transform: translateX(15px);
-    }
-
-    .hero {
-      max-width: 1060px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 2.25rem 1.5rem 1.75rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.375rem;
-      font-size: 0.6875rem;
-      font-family: var(--mono);
-      color: var(--accent);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-bottom: 0.75rem;
-    }
-
-    .hero h1 {
-      font-size: 1.625rem;
-      font-weight: 900;
-      letter-spacing: -0.035em;
-      line-height: 1.1;
-      color: var(--text);
-      margin-bottom: 0.4rem;
-    }
-
-    .hero p {
-      font-size: 0.875rem;
-      color: var(--text2);
-      line-height: 1.6;
-      max-width: 440px;
-    }
-
-    main {
-      flex: 1;
-      max-width: 1060px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 1.75rem 1.5rem;
-    }
-
-    .card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: var(--r2);
-    }
-
-    .card-hdr {
-      padding: 0.625rem 1rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      background: var(--bg3);
-      border-radius: var(--r2) var(--r2) 0 0;
-    }
-
-    .card-hdr-title {
-      font-size: 0.6875rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--text3);
-    }
-
-    .card-body {
-      padding: 1rem;
-    }
-
-    .code-area {
-      width: 100%;
-      min-height: 200px;
-      padding: 0.75rem 0.875rem;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: var(--r);
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 0.7875rem;
-      line-height: 1.8;
-      resize: vertical;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-
-    .code-area:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent-dim);
-    }
-
-    .code-area::placeholder {
-      color: var(--text3);
-    }
-
-    .finput {
-      padding: 0.45rem 0.7rem;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: var(--r);
-      color: var(--text);
-      font-family: "Geist", sans-serif;
-      font-size: 0.8rem;
-      outline: none;
-      transition: border-color 0.15s;
-      width: 100%;
-    }
-
-    .finput:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent-dim);
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.375rem;
-      padding: 0.45rem 1rem;
-      border-radius: var(--r);
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
-      border: 1.5px solid transparent;
-      font-family: "Geist", sans-serif;
-      white-space: nowrap;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-h);
-    }
-
-    .btn-ghost {
-      background: var(--bg3);
-      border-color: var(--border2);
-      color: var(--text2);
-    }
-
-    .btn-ghost:hover {
-      background: var(--bg4);
-      color: var(--text);
-    }
-
-    .btn-danger {
-      background: rgba(239, 68, 68, 0.1);
-      border-color: rgba(239, 68, 68, 0.25);
-      color: #f87171;
-    }
-
-    .btn-danger:hover {
-      background: rgba(239, 68, 68, 0.2);
-    }
-
-    .icon-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--text3);
-      transition: all 0.15s;
-    }
-
-    .icon-btn:hover {
-      color: var(--text);
-      background: var(--bg4);
-    }
-
-    /* fn cards grid */
-    .fn-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 0.5rem;
-    }
-
-    .fn-card {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      padding: 0.6rem 0.875rem;
-      display: flex;
-      align-items: center;
-      gap: 0.625rem;
-      transition: border-color 0.15s;
-    }
-
-    .fn-card:hover {
-      border-color: var(--border3);
-    }
-
-    .fn-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .fn-name {
-      font-family: var(--mono);
-      font-size: 0.78rem;
-      color: var(--text2);
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .fn-actions {
-      display: flex;
-      gap: 0.25rem;
-      flex-shrink: 0;
-    }
-
-    /* toolbar */
-    .toolbar {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
-
-    /* modal overlay */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(6px);
-      z-index: 60;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .overlay.open {
-      display: flex;
-    }
-
-    .modal {
-      background: var(--bg2);
-      border: 1px solid var(--border2);
-      border-radius: var(--r2);
-      padding: 1.25rem;
-      width: 360px;
-      max-width: calc(100vw - 2rem);
-      position: relative;
-    }
-
-    .modal h3 {
-      font-size: 0.9375rem;
-      font-weight: 800;
-      color: var(--text);
-      margin-bottom: 1rem;
-      letter-spacing: -0.02em;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 0.875rem;
-      right: 0.875rem;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--text3);
-      transition: color 0.15s;
-    }
-
-    .modal-close:hover {
-      color: var(--text);
-    }
-
-    /* style btns */
-    .style-row {
-      display: flex;
-      gap: 0.375rem;
-      flex-wrap: wrap;
-    }
-
-    .style-btn {
-      padding: 0.35rem 0.75rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background: var(--bg3);
-      border: 1.5px solid var(--border2);
-      color: var(--text2);
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .style-btn:hover {
-      background: var(--bg4);
-      color: var(--text);
-    }
-
-    .style-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-
-    /* fn search list */
-    #function-list li {
-      padding: 0.5rem;
-      border-radius: var(--r);
-      font-family: var(--mono);
-      font-size: 0.8rem;
-      color: var(--text2);
-      cursor: pointer;
-      transition: all 0.15s;
-      display: block;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    #function-list li:hover {
-      background: var(--accent-dim);
-      color: var(--text);
-    }
-
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 1rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    footer p {
-      font-size: 0.7rem;
-      color: var(--text3);
-    }
-
-    .foot-links {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .foot-links a {
-      font-size: 0.7rem;
-      color: var(--text3);
-      text-decoration: none;
-      transition: color 0.15s;
-    }
-
-    .foot-links a:hover {
-      color: var(--text2);
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
+      #ldr img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        animation: ldrb 0.75s ease-in-out infinite alternate;
       }
 
-      to {
-        opacity: 1;
-        transform: none;
+      #ldr p {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--text2);
       }
-    }
 
-    .fu {
-      animation: fadeUp 0.26s ease both;
-    }
+      @keyframes ldrb {
+        to {
+          transform: translateY(-8px);
+        }
+      }
 
-    .fd1 {
-      animation-delay: 0.05s;
-    }
+      #toasts {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        pointer-events: none;
+      }
 
-    .fd2 {
-      animation-delay: 0.1s;
-    }
+      .toast {
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 0.875rem;
+        border-radius: var(--r);
 
-    @media (max-width: 640px) {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text);
+
+        position: relative;
+        overflow: hidden;
+
+        /* MATCHES YOUR CARD SYSTEM */
+        background:
+          radial-gradient(
+            120% 120% at 0% 0%,
+            rgba(88, 101, 242, 0.14),
+            transparent 65%
+          ),
+          var(--bg3);
+
+        border: 1px solid var(--border);
+
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+
+        animation: tin 0.25s ease both;
+      }
+
+      /* success */
+      .toast.s {
+        border-left: 3px solid #22c55e;
+      }
+
+      /* error */
+      .toast.e {
+        border-left: 3px solid #ef4444;
+      }
+
+      .tbar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.3);
+        animation: tbar 4s linear forwards;
+      }
+
+      @keyframes tin {
+        from {
+          opacity: 0;
+          transform: translateX(12px);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      @keyframes tbar {
+        to {
+          width: 0;
+        }
+      }
+
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        border-bottom: 1px solid var(--border);
+        background: rgba(7, 8, 15, 0.88);
+        backdrop-filter: blur(18px);
+        height: 52px;
+        display: flex;
+        align-items: center;
+        padding: 0 1.5rem;
+        gap: 1rem;
+      }
+
+      html.light nav {
+        background: rgba(241, 242, 249, 0.9);
+      }
+
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+      }
+
+      .nav-logo img {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+      }
+
+      .nav-logo span {
+        font-weight: 800;
+        font-size: 0.9375rem;
+        color: var(--text);
+        letter-spacing: -0.02em;
+      }
+
+      .spacer {
+        flex: 1;
+      }
+
+      .tog {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .tog-lbl {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .tog-track {
+        width: 34px;
+        height: 19px;
+        border-radius: 999px;
+        background: var(--border2);
+        position: relative;
+        transition: background 0.2s;
+        flex-shrink: 0;
+      }
+
+      .tog-track.on {
+        background: var(--accent);
+      }
+
+      .tog-thumb {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #fff;
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        transition: transform 0.2s;
+      }
+
+      .tog-track.on .tog-thumb {
+        transform: translateX(15px);
+      }
+
+      .hero {
+        max-width: 1060px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 2.25rem 1.5rem 1.75rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-size: 0.6875rem;
+        font-family: var(--mono);
+        color: var(--accent);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+
       .hero h1 {
-        font-size: 1.375rem;
+        font-size: 1.625rem;
+        font-weight: 900;
+        letter-spacing: -0.035em;
+        line-height: 1.1;
+        color: var(--text);
+        margin-bottom: 0.4rem;
       }
 
+      .hero p {
+        font-size: 0.875rem;
+        color: var(--text2);
+        line-height: 1.6;
+        max-width: 440px;
+      }
+
+      main {
+        flex: 1;
+        max-width: 1060px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 1.75rem 1.5rem;
+      }
+
+      .card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--r2);
+      }
+
+      .card-hdr {
+        padding: 0.625rem 1rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        background: var(--bg3);
+        border-radius: var(--r2) var(--r2) 0 0;
+      }
+
+      .card-hdr-title {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text3);
+      }
+
+      .card-body {
+        padding: 1rem;
+      }
+
+      .code-area {
+        width: 100%;
+        min-height: 200px;
+        padding: 0.75rem 0.875rem;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
+        color: var(--text);
+        font-family: var(--mono);
+        font-size: 0.7875rem;
+        line-height: 1.8;
+        resize: vertical;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+
+      .code-area:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent-dim);
+      }
+
+      .code-area::placeholder {
+        color: var(--text3);
+      }
+
+      .finput {
+        padding: 0.45rem 0.7rem;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
+        color: var(--text);
+        font-family: "Geist", sans-serif;
+        font-size: 0.8rem;
+        outline: none;
+        transition: border-color 0.15s;
+        width: 100%;
+      }
+
+      .finput:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent-dim);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.45rem 1rem;
+        border-radius: var(--r);
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s;
+        border: 1.5px solid transparent;
+        font-family: "Geist", sans-serif;
+        white-space: nowrap;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-h);
+      }
+
+      .btn-ghost {
+        background: var(--bg3);
+        border-color: var(--border2);
+        color: var(--text2);
+      }
+
+      .btn-ghost:hover {
+        background: var(--bg4);
+        color: var(--text);
+      }
+
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.25);
+        color: #f87171;
+      }
+
+      .btn-danger:hover {
+        background: rgba(239, 68, 68, 0.2);
+      }
+
+      .icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text3);
+        transition: all 0.15s;
+      }
+
+      .icon-btn:hover {
+        color: var(--text);
+        background: var(--bg4);
+      }
+
+      /* fn cards grid */
       .fn-grid {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 0.5rem;
       }
-    }
 
-    /* pickr override */
-    .pcr-app {
-      z-index: 9999 !important;
-    }
-  </style>
-</head>
+      .fn-card {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 0.6rem 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        transition: border-color 0.15s;
+      }
 
-<body>
-  <div id="ldr">
-    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" alt="" />
-    <p id="ldrtxt">Loading</p>
-  </div>
-  <div id="toasts"></div>
+      .fn-card:hover {
+        border-color: var(--border3);
+      }
 
-  <nav>
-    <a href="/" class="nav-logo"><img src="https://bdtools.netlify.app/images/bdfd_logo.png"
-        onerror="this.style.display = 'none'" alt="" /><span>BDTools</span></a>
-    <div class="spacer"></div>
-    <div class="tog" onclick="toggleTheme()">
-      <span class="tog-lbl">Dark</span>
-      <div class="tog-track on" id="tog">
-        <div class="tog-thumb"></div>
-      </div>
+      .fn-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .fn-name {
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        color: var(--text2);
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .fn-actions {
+        display: flex;
+        gap: 0.25rem;
+        flex-shrink: 0;
+      }
+
+      /* toolbar */
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+      }
+
+      /* modal overlay */
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(6px);
+        z-index: 60;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .overlay.open {
+        display: flex;
+      }
+
+      .modal {
+        background: var(--bg2);
+        border: 1px solid var(--border2);
+        border-radius: var(--r2);
+        padding: 1.25rem;
+        width: 360px;
+        max-width: calc(100vw - 2rem);
+        position: relative;
+      }
+
+      .modal h3 {
+        font-size: 0.9375rem;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 1rem;
+        letter-spacing: -0.02em;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 0.875rem;
+        right: 0.875rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text3);
+        transition: color 0.15s;
+      }
+
+      .modal-close:hover {
+        color: var(--text);
+      }
+
+      /* style btns */
+      .style-row {
+        display: flex;
+        gap: 0.375rem;
+        flex-wrap: wrap;
+      }
+
+      .style-btn {
+        padding: 0.35rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: var(--bg3);
+        border: 1.5px solid var(--border2);
+        color: var(--text2);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+
+      .style-btn:hover {
+        background: var(--bg4);
+        color: var(--text);
+      }
+
+      .style-btn.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+
+      /* fn search list */
+      #function-list li {
+        padding: 0.5rem;
+        border-radius: var(--r);
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        color: var(--text2);
+        cursor: pointer;
+        transition: all 0.15s;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      #function-list li:hover {
+        background: var(--accent-dim);
+        color: var(--text);
+      }
+
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      footer p {
+        font-size: 0.7rem;
+        color: var(--text3);
+      }
+
+      .foot-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .foot-links a {
+        font-size: 0.7rem;
+        color: var(--text3);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+
+      .foot-links a:hover {
+        color: var(--text2);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .fu {
+        animation: fadeUp 0.26s ease both;
+      }
+
+      .fd1 {
+        animation-delay: 0.05s;
+      }
+
+      .fd2 {
+        animation-delay: 0.1s;
+      }
+
+      @media (max-width: 640px) {
+        .hero h1 {
+          font-size: 1.375rem;
+        }
+
+        .fn-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* pickr override */
+      .pcr-app {
+        z-index: 9999 !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="ldr">
+      <img src="https://bdtools.netlify.app/images/bdfd_logo.png" alt="" />
+      <p id="ldrtxt">Loading</p>
     </div>
-  </nav>
+    <div id="toasts"></div>
 
-  <div class="border-b border-[#1e2130]">
-    <div class="max-w-[1080px] mx-auto px-6 py-10 fu">
-      <div class="flex items-start gap-4">
-        <div
-          class="w-11 h-11 flex-shrink-0 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center">
-          <svg class="w-5 h-5 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-              d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-          </svg>
+    <nav>
+      <a href="/" class="nav-logo"
+        ><img
+          src="https://bdtools.netlify.app/images/bdfd_logo.png"
+          onerror="this.style.display = 'none'"
+          alt=""
+        /><span>BDTools</span></a
+      >
+      <div class="spacer"></div>
+      <div class="tog" onclick="toggleTheme()">
+        <span class="tog-lbl">Dark</span>
+        <div class="tog-track on" id="tog">
+          <div class="tog-thumb"></div>
         </div>
+      </div>
+    </nav>
 
-        <!-- Text Content -->
-        <div>
-          <h1 class="text-2xl font-black text-white tracking-tight dt">
-            Code Highlighter
-          </h1>
+    <div class="border-b border-[#1e2130]">
+      <div class="max-w-[1080px] mx-auto px-6 py-10 fu">
+        <div class="flex items-start gap-4">
+          <div
+            class="w-11 h-11 flex-shrink-0 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
+          >
+            <svg
+              class="w-5 h-5 text-[#5865F2]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+              />
+            </svg>
+          </div>
 
-          <p class="text-gray-400 text-sm mt-1 dt2">
-            Highlight different functions and text using unique colors for a
-            better BDFD coding experience.
-          </p>
+          <!-- Text Content -->
+          <div>
+            <h1 class="text-2xl font-black text-white tracking-tight dt">
+              Code Highlighter
+            </h1>
 
-          <div class="flex flex-wrap gap-1.5 mt-3">
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">JavaScript</span>
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">HTML</span>
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">Tailwind
-              CSS</span>
+            <p class="text-gray-400 text-sm mt-1 dt2">
+              Highlight different functions and text using unique colors for a
+              better BDFD coding experience.
+            </p>
+
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >JavaScript</span
+              >
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >HTML</span
+              >
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >Tailwind CSS</span
+              >
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <main>
-    <!-- Toolbar -->
-    <div class="toolbar fu fd1">
-      <button class="btn btn-primary" id="add-function-btn">
-        + Add Function
-      </button>
-      <button class="btn btn-ghost" id="import-theme-btn">
-        ↑ Import Theme
-      </button>
-      <div style="flex: 1"></div>
-      <button class="btn btn-danger" id="delete-all">Delete All</button>
-      <button class="btn btn-primary" id="generate-code-btn">
-        Generate JSON
-      </button>
-    </div>
-
-    <!-- Fn cards -->
-    <div class="fn-grid fu fd1" id="functions-list"></div>
-
-    <!-- Output -->
-    <div class="card" style="margin-top: 1rem" class="fu fd2">
-      <div class="card-hdr">
-        <span class="card-hdr-title">Generated JSON Output</span>
-        <button class="icon-btn" id="copy-output" title="Copy">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <rect x="9" y="9" width="13" height="13" rx="2" />
-            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-          </svg>
+    <main>
+      <!-- Toolbar -->
+      <div class="toolbar fu fd1">
+        <button class="btn btn-primary" id="add-function-btn">
+          + Add Function
+        </button>
+        <button class="btn btn-ghost" id="import-theme-btn">
+          ↑ Import Theme
+        </button>
+        <div style="flex: 1"></div>
+        <button class="btn btn-danger" id="delete-all">Delete All</button>
+        <button class="btn btn-primary" id="generate-code-btn">
+          Generate JSON
         </button>
       </div>
-      <div class="card-body">
-        <textarea id="output-text" class="code-area" style="min-height: 180px" readonly
-          placeholder="Press 'Generate JSON' to build your theme output…"></textarea>
-      </div>
-    </div>
-  </main>
 
-  <!-- EDIT MODAL -->
-  <div class="overlay" id="edit-modal">
-    <div class="modal">
-      <button class="modal-close" id="close-modal">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-      </button>
-      <h3>Edit Highlight</h3>
-      <div style="margin-bottom: 0.875rem">
-        <span style="
+      <!-- Fn cards -->
+      <div class="fn-grid fu fd1" id="functions-list"></div>
+
+      <!-- Output -->
+      <div class="card" style="margin-top: 1rem" class="fu fd2">
+        <div class="card-hdr">
+          <span class="card-hdr-title">Generated JSON Output</span>
+          <button class="icon-btn" id="copy-output" title="Copy">
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" />
+              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+            </svg>
+          </button>
+        </div>
+        <div class="card-body">
+          <textarea
+            id="output-text"
+            class="code-area"
+            style="min-height: 180px"
+            readonly
+            placeholder="Press 'Generate JSON' to build your theme output…"
+          ></textarea>
+        </div>
+      </div>
+    </main>
+
+    <!-- EDIT MODAL -->
+    <div class="overlay" id="edit-modal">
+      <div class="modal">
+        <button class="modal-close" id="close-modal">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Edit Highlight</h3>
+        <div style="margin-bottom: 0.875rem">
+          <span
+            style="
               font-size: 0.6875rem;
               font-weight: 700;
               text-transform: uppercase;
@@ -793,24 +838,36 @@
               color: var(--text3);
               display: block;
               margin-bottom: 0.5rem;
-            ">Color</span>
-        <div style="display: flex; align-items: center; gap: 0.75rem">
-          <div id="color-picker" style="
+            "
+            >Color</span
+          >
+          <div style="display: flex; align-items: center; gap: 0.75rem">
+            <div
+              id="color-picker"
+              style="
                 width: 36px;
                 height: 36px;
                 border-radius: 8px;
                 cursor: pointer;
                 border: 1.5px solid var(--border2);
-              "></div>
-          <input type="text" id="hex-input" class="finput" style="
+              "
+            ></div>
+            <input
+              type="text"
+              id="hex-input"
+              class="finput"
+              style="
                 width: 110px;
                 font-family: var(--mono);
                 text-transform: uppercase;
-              " placeholder="#FFFFFF" />
+              "
+              placeholder="#FFFFFF"
+            />
+          </div>
         </div>
-      </div>
-      <div style="margin-bottom: 0.875rem">
-        <span style="
+        <div style="margin-bottom: 0.875rem">
+          <span
+            style="
               font-size: 0.6875rem;
               font-weight: 700;
               text-transform: uppercase;
@@ -818,16 +875,19 @@
               color: var(--text3);
               display: block;
               margin-bottom: 0.5rem;
-            ">Style</span>
-        <div class="style-row">
-          <button class="style-btn" data-style="0">Normal</button>
-          <button class="style-btn" data-style="2">Italic</button>
-          <button class="style-btn" data-style="1">Bold</button>
-          <button class="style-btn" data-style="3">Bold+Italic</button>
+            "
+            >Style</span
+          >
+          <div class="style-row">
+            <button class="style-btn" data-style="0">Normal</button>
+            <button class="style-btn" data-style="2">Italic</button>
+            <button class="style-btn" data-style="1">Bold</button>
+            <button class="style-btn" data-style="3">Bold+Italic</button>
+          </div>
         </div>
-      </div>
-      <div style="margin-bottom: 1rem">
-        <span style="
+        <div style="margin-bottom: 1rem">
+          <span
+            style="
               font-size: 0.6875rem;
               font-weight: 700;
               text-transform: uppercase;
@@ -835,76 +895,98 @@
               color: var(--text3);
               display: block;
               margin-bottom: 0.5rem;
-            ">Preview</span>
-        <div id="preview" style="
+            "
+            >Preview</span
+          >
+          <div
+            id="preview"
+            style="
               padding: 0.625rem 0.875rem;
               background: var(--bg);
               border: 1.5px solid var(--border);
               border-radius: var(--r);
               font-family: var(--mono);
               font-size: 0.875rem;
-            ">
-          Sample Text
+            "
+          >
+            Sample Text
+          </div>
+        </div>
+        <button class="btn btn-primary" id="save-settings" style="width: 100%">
+          Save Settings
+        </button>
+      </div>
+    </div>
+
+    <!-- DELETE CONFIRM MODAL -->
+    <div class="overlay" id="delete-modal">
+      <div class="modal">
+        <h3>Confirm Deletion</h3>
+        <p
+          style="
+            font-size: 0.875rem;
+            color: var(--text2);
+            margin-bottom: 1.25rem;
+            line-height: 1.5;
+          "
+        >
+          Are you sure you want to delete this function highlight?
+        </p>
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
+          <button class="btn btn-ghost" id="cancel-delete">Cancel</button>
+          <button class="btn btn-danger" id="confirm-delete">Delete</button>
         </div>
       </div>
-      <button class="btn btn-primary" id="save-settings" style="width: 100%">
-        Save Settings
-      </button>
     </div>
-  </div>
 
-  <!-- DELETE CONFIRM MODAL -->
-  <div class="overlay" id="delete-modal">
-    <div class="modal">
-      <h3>Confirm Deletion</h3>
-      <p style="
+    <!-- DELETE ALL CONFIRM -->
+    <div class="overlay" id="delete-all-modal">
+      <div class="modal">
+        <h3>Reset Theme</h3>
+        <p
+          style="
             font-size: 0.875rem;
             color: var(--text2);
             margin-bottom: 1.25rem;
             line-height: 1.5;
-          ">
-        Are you sure you want to delete this function highlight?
-      </p>
-      <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
-        <button class="btn btn-ghost" id="cancel-delete">Cancel</button>
-        <button class="btn btn-danger" id="confirm-delete">Delete</button>
+          "
+        >
+          Delete the saved theme and reset to defaults? This cannot be undone.
+        </p>
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
+          <button class="btn btn-ghost" id="cancel-delete-all">Cancel</button>
+          <button class="btn btn-danger" id="confirm-delete-all">Reset</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- DELETE ALL CONFIRM -->
-  <div class="overlay" id="delete-all-modal">
-    <div class="modal">
-      <h3>Reset Theme</h3>
-      <p style="
-            font-size: 0.875rem;
-            color: var(--text2);
-            margin-bottom: 1.25rem;
-            line-height: 1.5;
-          ">
-        Delete the saved theme and reset to defaults? This cannot be undone.
-      </p>
-      <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
-        <button class="btn btn-ghost" id="cancel-delete-all">Cancel</button>
-        <button class="btn btn-danger" id="confirm-delete-all">Reset</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ADD FUNCTION MODAL -->
-  <div class="overlay" id="add-function-overlay">
-    <div class="modal" style="width: 420px">
-      <button class="modal-close" id="cancel-add-function">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-      </button>
-      <h3>Add Function</h3>
-      <div style="position: relative; margin-bottom: 1rem">
-        <input type="text" id="function-search" class="finput" placeholder="Search functions (300+ available)…"
-          style="width: 100%; padding-left: 2.25rem" />
-        <svg style="
+    <!-- ADD FUNCTION MODAL -->
+    <div class="overlay" id="add-function-overlay">
+      <div class="modal" style="width: 420px">
+        <button class="modal-close" id="cancel-add-function">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Add Function</h3>
+        <div style="position: relative; margin-bottom: 1rem">
+          <input
+            type="text"
+            id="function-search"
+            class="finput"
+            placeholder="Search functions (300+ available)…"
+            style="width: 100%; padding-left: 2.25rem"
+          />
+          <svg
+            style="
               position: absolute;
               left: 0.75rem;
               top: 50%;
@@ -912,490 +994,529 @@
               width: 16px;
               height: 16px;
               color: var(--text3);
-            " fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.35-4.35" />
-        </svg>
-      </div>
-      <div id="function-list" style="
+            "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+        </div>
+        <div
+          id="function-list"
+          style="
             max-height: 50vh;
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: var(--border2) var(--bg2);
-          "></div>
+          "
+        ></div>
+      </div>
     </div>
-  </div>
 
-  <!-- IMPORT MODAL -->
-  <div class="overlay" id="import-overlay">
-    <div class="modal" style="width: 420px">
-      <button class="modal-close" id="cancel-import-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-      </button>
-      <h3>Import JSON Theme</h3>
-      <textarea id="import-theme-textarea" class="code-area" style="min-height: 160px; margin-bottom: 0.75rem"
-        placeholder="Paste your JSON theme here…"></textarea>
-      <p id="import-error-msg" style="
+    <!-- IMPORT MODAL -->
+    <div class="overlay" id="import-overlay">
+      <div class="modal" style="width: 420px">
+        <button class="modal-close" id="cancel-import-btn">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Import JSON Theme</h3>
+        <textarea
+          id="import-theme-textarea"
+          class="code-area"
+          style="min-height: 160px; margin-bottom: 0.75rem"
+          placeholder="Paste your JSON theme here…"
+        ></textarea>
+        <p
+          id="import-error-msg"
+          style="
             font-size: 0.8rem;
             color: #f87171;
             margin-bottom: 0.625rem;
             display: none;
-          "></p>
-      <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
-        <button class="btn btn-ghost" id="cancel-import-btn2">Cancel</button>
-        <button class="btn btn-primary" id="apply-import-btn">
-          Apply Theme
-        </button>
+          "
+        ></p>
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
+          <button class="btn btn-ghost" id="cancel-import-btn2">Cancel</button>
+          <button class="btn btn-primary" id="apply-import-btn">
+            Apply Theme
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <footer>
-    <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
-    <div class="foot-links">
-      <a href="/tos">Terms</a><a href="/privacy">Privacy</a><a href="/contact">Contact</a>
-    </div>
-  </footer>
+    <footer>
+      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+      <div class="foot-links">
+        <a href="/tos">Terms</a><a href="/privacy">Privacy</a
+        ><a href="/contact">Contact</a>
+      </div>
+    </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
-  <script>
-    /* ── loader ── */
-    const ldrtxt = document.getElementById("ldrtxt");
-    let dc = 0;
-    const di = setInterval(() => {
-      dc = (dc + 1) % 4;
-      ldrtxt.textContent = "Loading" + ".".repeat(dc);
-    }, 350);
-    window.addEventListener("load", () => {
-      setTimeout(() => {
-        const l = document.getElementById("ldr");
-        l.classList.add("out");
-        setTimeout(() => l.remove(), 400);
-        clearInterval(di);
-      }, 900);
-    });
-    function toast(msg, type = "s") {
-      const box = document.getElementById("toasts");
-      const t = document.createElement("div");
-      t.className = `toast ${type}`;
-      t.style.position = "relative";
-      t.style.overflow = "hidden";
-      t.innerHTML = `<span>${msg}</span><div class="tbar"></div>`;
-      box.appendChild(t);
-      setTimeout(() => t.remove(), 4500);
-    }
-    function toggleTheme() {
-      const h = document.documentElement,
-        t = document.getElementById("tog");
-      const dark = h.classList.toggle("dark");
-      localStorage.setItem("darkMode", dark ? "enabled" : "disabled");
-      t.classList.toggle("on", dark);
-    }
-    (function () {
-      document
-        .getElementById("tog")
-        .classList.toggle(
-          "on",
-          document.documentElement.classList.contains("dark"),
-        );
-    })();
-    window.addEventListener("load", () => {
-      if (!localStorage.getItem("visited")) {
-        toast("Welcome! Auora here 👋", "s");
-        localStorage.setItem("visited", "true");
-      }
-    });
-
-    /* ── Data ── */
-    const baseItems = [
-      { name: "Default Text", color: "#e4e4e7", style: 0 },
-      { name: "Fallback", color: "#cbcbdf", style: 0 },
-      { name: "Numbers", color: "#cbcbdf", style: 0 },
-      { name: "[][]", color: "#ff006e", style: 1 },
-      { name: ";;;", color: "#ff4500", style: 1 },
-      { name: "$nomention", color: "#8b5cf6", style: 0 },
-      { name: "$catch", color: "#8b5cf6", style: 0 },
-      { name: "$else", color: "#8b5cf6", style: 0 },
-      { name: "$elseif", color: "#8b5cf6", style: 0 },
-      { name: "$endif", color: "#8b5cf6", style: 0 },
-      { name: "$error", color: "#8b5cf6", style: 0 },
-      { name: "$if", color: "#8b5cf6", style: 0 },
-    ];
-
-    let allFns = [];
-
-    async function loadFunctions() {
-      try {
-        const res = await fetch('/.netlify/functions/bdfd-functions');
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        allFns = data.map(fn => {
-          const tag = fn.tag || '';
-          return tag.includes('[') ? tag.split('[')[0] + '[]' : tag;
-        }).filter(Boolean).sort();
-        console.log(`[highlighter] ✅ Loaded ${allFns.length} functions from BDFD API`);
-      } catch (err) {
-        console.error('[highlighter] ❌ Failed to load functions from BDFD API:', err.message);
-        toast('Could not load function list — using cached fallback', 'e');
-        // fallback to a small set so the tool still works
-        allFns = ['$nomention', '$catch', '$else', '$elseif', '$endif', '$error', '$if'];
-      }
-    }
-
-    const saved = localStorage.getItem("savedTheme");
-    const theme = {};
-    if (saved) {
-      Object.assign(theme, JSON.parse(saved));
-    } else {
-      baseItems.forEach(
-        (i) => (theme[i.name] = { color: i.color, style: i.style }),
-      );
-    }
-
-    const listEl = document.getElementById("functions-list");
-    let currentFn = null,
-      fnToDelete = null,
-      tempStyle = 0;
-
-    /* ── Render cards ── */
-    function renderList() {
-      listEl.innerHTML = "";
-      Object.keys(theme).forEach((fn, idx) => {
-        const card = document.createElement("div");
-        card.className = "fn-card";
-        const dot = document.createElement("div");
-        dot.className = "fn-dot";
-        dot.style.background = theme[fn].color;
-        const name = document.createElement("span");
-        name.className = "fn-name";
-        name.title = fn;
-        name.textContent = fn;
-        const actions = document.createElement("div");
-        actions.className = "fn-actions";
-        const editBtn = document.createElement("button");
-        editBtn.className = "icon-btn";
-        editBtn.dataset.fn = fn;
-        editBtn.innerHTML =
-          '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
-        editBtn.addEventListener("click", () => openEdit(fn));
-        actions.appendChild(editBtn);
-        if (idx >= 5) {
-          const delBtn = document.createElement("button");
-          delBtn.className = "icon-btn";
-          delBtn.dataset.fn = fn;
-          delBtn.style.color = "#f87171";
-          delBtn.innerHTML =
-            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>';
-          delBtn.addEventListener("click", () => {
-            fnToDelete = fn;
-            document.getElementById("delete-modal").classList.add("open");
-          });
-          actions.appendChild(delBtn);
-        }
-        card.append(dot, name, actions);
-        listEl.appendChild(card);
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
+    <script>
+      /* ── loader ── */
+      const ldrtxt = document.getElementById("ldrtxt");
+      let dc = 0;
+      const di = setInterval(() => {
+        dc = (dc + 1) % 4;
+        ldrtxt.textContent = "Loading" + ".".repeat(dc);
+      }, 350);
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          const l = document.getElementById("ldr");
+          l.classList.add("out");
+          setTimeout(() => l.remove(), 400);
+          clearInterval(di);
+        }, 900);
       });
-    }
-
-    /* ── Pickr ── */
-    const pickr = Pickr.create({
-      el: "#color-picker",
-      theme: "classic",
-      default: "#8b5cf6",
-      components: {
-        preview: true,
-        opacity: false,
-        hue: true,
-        interaction: { hex: true, input: true, save: false },
-      },
-    });
-    pickr.on("change", (color) => {
-      const hex = color.toHEXA().toString();
-      document.getElementById("hex-input").value = hex;
-      if (currentFn) {
-        theme[currentFn].color = hex;
-        updatePreview();
+      function toast(msg, type = "s") {
+        const box = document.getElementById("toasts");
+        const t = document.createElement("div");
+        t.className = `toast ${type}`;
+        t.style.position = "relative";
+        t.style.overflow = "hidden";
+        t.innerHTML = `<span>${msg}</span><div class="tbar"></div>`;
+        box.appendChild(t);
+        setTimeout(() => t.remove(), 4500);
       }
-    });
-    document.getElementById("hex-input").addEventListener("input", (e) => {
-      if (!currentFn) return;
-      let val = e.target.value.toUpperCase().trim();
-      if (!val.startsWith("#")) val = "#" + val;
-      if (val.length > 7) val = val.slice(0, 7);
-      if (/^#[0-9A-F]{6}$/i.test(val)) {
-        theme[currentFn].color = val;
-        pickr.setColor(val);
-        updatePreview();
+      function toggleTheme() {
+        const h = document.documentElement,
+          t = document.getElementById("tog");
+        const dark = h.classList.toggle("dark");
+        localStorage.setItem("darkMode", dark ? "enabled" : "disabled");
+        t.classList.toggle("on", dark);
       }
-    });
-
-    /* ── Edit modal ── */
-    function openEdit(fn) {
-      currentFn = fn;
-      tempStyle = theme[fn]?.style || 0;
-      pickr.setColor(theme[fn]?.color || "#8b5cf6");
-      document.getElementById("hex-input").value =
-        theme[fn]?.color || "#8b5cf6";
-      updateStyleBtns();
-      updatePreview();
-      document.getElementById("edit-modal").classList.add("open");
-    }
-    function updatePreview() {
-      const p = document.getElementById("preview");
-      p.style.color = theme[currentFn]?.color || "#fff";
-      p.style.fontWeight =
-        tempStyle === 1 || tempStyle === 3 ? "bold" : "normal";
-      p.style.fontStyle =
-        tempStyle === 2 || tempStyle === 3 ? "italic" : "normal";
-    }
-    function updateStyleBtns() {
-      document
-        .querySelectorAll(".style-btn")
-        .forEach((b) =>
-          b.classList.toggle(
-            "active",
-            parseInt(b.dataset.style) === tempStyle,
-          ),
-        );
-    }
-    document.querySelectorAll(".style-btn").forEach((b) =>
-      b.addEventListener("click", () => {
-        if (!currentFn) return;
-        tempStyle = parseInt(b.dataset.style);
-        updateStyleBtns();
-        updatePreview();
-      }),
-    );
-    document.getElementById("close-modal").addEventListener("click", () => {
-      document.getElementById("edit-modal").classList.remove("open");
-      currentFn = null;
-    });
-    document.getElementById("edit-modal").addEventListener("click", (e) => {
-      if (e.target === document.getElementById("edit-modal")) {
-        document.getElementById("edit-modal").classList.remove("open");
-        currentFn = null;
-      }
-    });
-    document.getElementById("save-settings").addEventListener("click", () => {
-      if (!currentFn) return;
-      theme[currentFn].style = tempStyle;
-      localStorage.setItem("savedTheme", JSON.stringify(theme));
-      renderList();
-      document.getElementById("edit-modal").classList.remove("open");
-      toast(`"${currentFn}" updated`, "s");
-      currentFn = null;
-      tempStyle = 0;
-    });
-
-    /* ── Delete ── */
-    document.getElementById("cancel-delete").addEventListener("click", () => {
-      document.getElementById("delete-modal").classList.remove("open");
-      fnToDelete = null;
-    });
-    document
-      .getElementById("confirm-delete")
-      .addEventListener("click", () => {
-        if (fnToDelete) {
-          delete theme[fnToDelete];
-          renderList();
-          toast(`"${fnToDelete}" removed`, "s");
-          fnToDelete = null;
+      (function () {
+        document
+          .getElementById("tog")
+          .classList.toggle(
+            "on",
+            document.documentElement.classList.contains("dark"),
+          );
+      })();
+      window.addEventListener("load", () => {
+        if (!localStorage.getItem("visited")) {
+          toast("Welcome! Auora here 👋", "s");
+          localStorage.setItem("visited", "true");
         }
-        document.getElementById("delete-modal").classList.remove("open");
       });
-    document
-      .getElementById("delete-all")
-      .addEventListener("click", () =>
-        document.getElementById("delete-all-modal").classList.add("open"),
-      );
-    document
-      .getElementById("cancel-delete-all")
-      .addEventListener("click", () =>
-        document.getElementById("delete-all-modal").classList.remove("open"),
-      );
-    document
-      .getElementById("confirm-delete-all")
-      .addEventListener("click", () => {
-        localStorage.removeItem("savedTheme");
-        Object.keys(theme).forEach((k) => delete theme[k]);
+
+      /* ── Data ── */
+      const baseItems = [
+        { name: "Default Text", color: "#e4e4e7", style: 0 },
+        { name: "Fallback", color: "#cbcbdf", style: 0 },
+        { name: "Numbers", color: "#cbcbdf", style: 0 },
+        { name: "[][]", color: "#ff006e", style: 1 },
+        { name: ";;;", color: "#ff4500", style: 1 },
+        { name: "$nomention", color: "#8b5cf6", style: 0 },
+        { name: "$catch", color: "#8b5cf6", style: 0 },
+        { name: "$else", color: "#8b5cf6", style: 0 },
+        { name: "$elseif", color: "#8b5cf6", style: 0 },
+        { name: "$endif", color: "#8b5cf6", style: 0 },
+        { name: "$error", color: "#8b5cf6", style: 0 },
+        { name: "$if", color: "#8b5cf6", style: 0 },
+      ];
+
+      let allFns = [];
+
+      async function loadFunctions() {
+        try {
+          const res = await fetch("/.netlify/functions/bdfd-functions");
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          allFns = data
+            .map((fn) => {
+              const tag = fn.tag || "";
+              return tag.includes("[") ? tag.split("[")[0] + "[]" : tag;
+            })
+            .filter(Boolean)
+            .sort();
+          console.log(
+            `[highlighter] ✅ Loaded ${allFns.length} functions from BDFD API`,
+          );
+        } catch (err) {
+          console.error(
+            "[highlighter] ❌ Failed to load functions from BDFD API:",
+            err.message,
+          );
+          toast("Could not load function list — using cached fallback", "e");
+          // fallback to a small set so the tool still works
+          allFns = [
+            "$nomention",
+            "$catch",
+            "$else",
+            "$elseif",
+            "$endif",
+            "$error",
+            "$if",
+          ];
+        }
+      }
+
+      const saved = localStorage.getItem("savedTheme");
+      const theme = {};
+      if (saved) {
+        Object.assign(theme, JSON.parse(saved));
+      } else {
         baseItems.forEach(
           (i) => (theme[i.name] = { color: i.color, style: i.style }),
         );
-        renderList();
-        document.getElementById("delete-all-modal").classList.remove("open");
-        toast("Theme reset to defaults", "s");
-      });
-
-    /* ── Add function ── */
-    const addOverlay = document.getElementById("add-function-overlay");
-    const fnSearch = document.getElementById("function-search");
-    const fnList = document.getElementById("function-list");
-    document.getElementById('add-function-btn').addEventListener('click', async () => {
-      if (allFns.length === 0) {
-        await loadFunctions();
       }
-      fnSearch.value = '';
-      renderFnSearch();
-      addOverlay.classList.add('open');
-      fnSearch.focus();
-    });
-    document
-      .getElementById("cancel-add-function")
-      .addEventListener("click", () => addOverlay.classList.remove("open"));
-    function renderFnSearch() {
-      fnList.innerHTML = "";
-      const q = fnSearch.value.toLowerCase();
-      allFns
-        .filter((fn) => fn.toLowerCase().includes(q))
-        .forEach((fn) => {
-          const clean = fn.replace(/\[\]$/, "");
-          if (theme[clean]) return;
-          const li = document.createElement("li");
-          li.textContent = fn;
-          li.addEventListener("click", () => {
-            theme[clean] = { color: "#8b5cf6", style: 0 };
-            renderList();
-            localStorage.setItem("savedTheme", JSON.stringify(theme));
-            addOverlay.classList.remove("open");
-            toast(`"${fn}" added`, "s");
-          });
-          fnList.appendChild(li);
-        });
-    }
-    fnSearch.addEventListener("input", renderFnSearch);
 
-    /* ── Import ── */
-    function uint32ToHex(u) {
-      const r = (u >> 16) & 0xff,
-        g = (u >> 8) & 0xff,
-        b = u & 0xff;
-      return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
-    }
-    document
-      .getElementById("import-theme-btn")
-      .addEventListener("click", () => {
-        document.getElementById("import-overlay").classList.add("open");
+      const listEl = document.getElementById("functions-list");
+      let currentFn = null,
+        fnToDelete = null,
+        tempStyle = 0;
+
+      /* ── Render cards ── */
+      function renderList() {
+        listEl.innerHTML = "";
+        Object.keys(theme).forEach((fn, idx) => {
+          const card = document.createElement("div");
+          card.className = "fn-card";
+          const dot = document.createElement("div");
+          dot.className = "fn-dot";
+          dot.style.background = theme[fn].color;
+          const name = document.createElement("span");
+          name.className = "fn-name";
+          name.title = fn;
+          name.textContent = fn;
+          const actions = document.createElement("div");
+          actions.className = "fn-actions";
+          const editBtn = document.createElement("button");
+          editBtn.className = "icon-btn";
+          editBtn.dataset.fn = fn;
+          editBtn.innerHTML =
+            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+          editBtn.addEventListener("click", () => openEdit(fn));
+          actions.appendChild(editBtn);
+          if (idx >= 5) {
+            const delBtn = document.createElement("button");
+            delBtn.className = "icon-btn";
+            delBtn.dataset.fn = fn;
+            delBtn.style.color = "#f87171";
+            delBtn.innerHTML =
+              '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>';
+            delBtn.addEventListener("click", () => {
+              fnToDelete = fn;
+              document.getElementById("delete-modal").classList.add("open");
+            });
+            actions.appendChild(delBtn);
+          }
+          card.append(dot, name, actions);
+          listEl.appendChild(card);
+        });
+      }
+
+      /* ── Pickr ── */
+      const pickr = Pickr.create({
+        el: "#color-picker",
+        theme: "classic",
+        default: "#8b5cf6",
+        components: {
+          preview: true,
+          opacity: false,
+          hue: true,
+          interaction: { hex: true, input: true, save: false },
+        },
       });
-    document
-      .getElementById("cancel-import-btn")
-      .addEventListener("click", () =>
-        document.getElementById("import-overlay").classList.remove("open"),
+      pickr.on("change", (color) => {
+        const hex = color.toHEXA().toString();
+        document.getElementById("hex-input").value = hex;
+        if (currentFn) {
+          theme[currentFn].color = hex;
+          updatePreview();
+        }
+      });
+      document.getElementById("hex-input").addEventListener("input", (e) => {
+        if (!currentFn) return;
+        let val = e.target.value.toUpperCase().trim();
+        if (!val.startsWith("#")) val = "#" + val;
+        if (val.length > 7) val = val.slice(0, 7);
+        if (/^#[0-9A-F]{6}$/i.test(val)) {
+          theme[currentFn].color = val;
+          pickr.setColor(val);
+          updatePreview();
+        }
+      });
+
+      /* ── Edit modal ── */
+      function openEdit(fn) {
+        currentFn = fn;
+        tempStyle = theme[fn]?.style || 0;
+        pickr.setColor(theme[fn]?.color || "#8b5cf6");
+        document.getElementById("hex-input").value =
+          theme[fn]?.color || "#8b5cf6";
+        updateStyleBtns();
+        updatePreview();
+        document.getElementById("edit-modal").classList.add("open");
+      }
+      function updatePreview() {
+        const p = document.getElementById("preview");
+        p.style.color = theme[currentFn]?.color || "#fff";
+        p.style.fontWeight =
+          tempStyle === 1 || tempStyle === 3 ? "bold" : "normal";
+        p.style.fontStyle =
+          tempStyle === 2 || tempStyle === 3 ? "italic" : "normal";
+      }
+      function updateStyleBtns() {
+        document
+          .querySelectorAll(".style-btn")
+          .forEach((b) =>
+            b.classList.toggle(
+              "active",
+              parseInt(b.dataset.style) === tempStyle,
+            ),
+          );
+      }
+      document.querySelectorAll(".style-btn").forEach((b) =>
+        b.addEventListener("click", () => {
+          if (!currentFn) return;
+          tempStyle = parseInt(b.dataset.style);
+          updateStyleBtns();
+          updatePreview();
+        }),
       );
-    document
-      .getElementById("cancel-import-btn2")
-      .addEventListener("click", () =>
-        document.getElementById("import-overlay").classList.remove("open"),
-      );
-    document
-      .getElementById("apply-import-btn")
-      .addEventListener("click", () => {
-        const text = document
-          .getElementById("import-theme-textarea")
-          .value.trim();
-        const errEl = document.getElementById("import-error-msg");
-        if (!text) {
-          errEl.textContent = "Please paste a JSON theme.";
-          errEl.style.display = "block";
-          return;
+      document.getElementById("close-modal").addEventListener("click", () => {
+        document.getElementById("edit-modal").classList.remove("open");
+        currentFn = null;
+      });
+      document.getElementById("edit-modal").addEventListener("click", (e) => {
+        if (e.target === document.getElementById("edit-modal")) {
+          document.getElementById("edit-modal").classList.remove("open");
+          currentFn = null;
         }
-        let imp;
-        try {
-          imp = JSON.parse(text);
-        } catch {
-          errEl.textContent = "Invalid JSON.";
-          errEl.style.display = "block";
-          return;
-        }
-        const keyMap = {
-          defaultTextHighlight: "Default Text",
-          fallbackHighlight: "Fallback",
-          numberHighlight: "Numbers",
-          bracketHighlight: "[][]",
-          semicolonHighlight: ";;;",
-        };
-        Object.keys(theme).forEach((k) => delete theme[k]);
-        for (const [k, v] of Object.entries(imp)) {
-          if (k === "functionsHighlights") continue;
-          if (keyMap[k] && v && typeof v.color === "number")
-            theme[keyMap[k]] = {
-              color: uint32ToHex(v.color),
-              style: v.style || 0,
-            };
-        }
-        if (imp.functionsHighlights) {
-          for (const [fn, v] of Object.entries(imp.functionsHighlights)) {
-            if (v && typeof v.color === "number")
-              theme[fn] = {
+      });
+      document.getElementById("save-settings").addEventListener("click", () => {
+        if (!currentFn) return;
+        theme[currentFn].style = tempStyle;
+        localStorage.setItem("savedTheme", JSON.stringify(theme));
+        renderList();
+        document.getElementById("edit-modal").classList.remove("open");
+        toast(`"${currentFn}" updated`, "s");
+        currentFn = null;
+        tempStyle = 0;
+      });
+
+      /* ── Delete ── */
+      document.getElementById("cancel-delete").addEventListener("click", () => {
+        document.getElementById("delete-modal").classList.remove("open");
+        fnToDelete = null;
+      });
+      document
+        .getElementById("confirm-delete")
+        .addEventListener("click", () => {
+          if (fnToDelete) {
+            delete theme[fnToDelete];
+            renderList();
+            toast(`"${fnToDelete}" removed`, "s");
+            fnToDelete = null;
+          }
+          document.getElementById("delete-modal").classList.remove("open");
+        });
+      document
+        .getElementById("delete-all")
+        .addEventListener("click", () =>
+          document.getElementById("delete-all-modal").classList.add("open"),
+        );
+      document
+        .getElementById("cancel-delete-all")
+        .addEventListener("click", () =>
+          document.getElementById("delete-all-modal").classList.remove("open"),
+        );
+      document
+        .getElementById("confirm-delete-all")
+        .addEventListener("click", () => {
+          localStorage.removeItem("savedTheme");
+          Object.keys(theme).forEach((k) => delete theme[k]);
+          baseItems.forEach(
+            (i) => (theme[i.name] = { color: i.color, style: i.style }),
+          );
+          renderList();
+          document.getElementById("delete-all-modal").classList.remove("open");
+          toast("Theme reset to defaults", "s");
+        });
+
+      /* ── Add function ── */
+      const addOverlay = document.getElementById("add-function-overlay");
+      const fnSearch = document.getElementById("function-search");
+      const fnList = document.getElementById("function-list");
+      document
+        .getElementById("add-function-btn")
+        .addEventListener("click", async () => {
+          if (allFns.length === 0) {
+            await loadFunctions();
+          }
+          fnSearch.value = "";
+          renderFnSearch();
+          addOverlay.classList.add("open");
+          fnSearch.focus();
+        });
+      document
+        .getElementById("cancel-add-function")
+        .addEventListener("click", () => addOverlay.classList.remove("open"));
+      function renderFnSearch() {
+        fnList.innerHTML = "";
+        const q = fnSearch.value.toLowerCase();
+        allFns
+          .filter((fn) => fn.toLowerCase().includes(q))
+          .forEach((fn) => {
+            const clean = fn.replace(/\[\]$/, "");
+            if (theme[clean]) return;
+            const li = document.createElement("li");
+            li.textContent = fn;
+            li.addEventListener("click", () => {
+              theme[clean] = { color: "#8b5cf6", style: 0 };
+              renderList();
+              localStorage.setItem("savedTheme", JSON.stringify(theme));
+              addOverlay.classList.remove("open");
+              toast(`"${fn}" added`, "s");
+            });
+            fnList.appendChild(li);
+          });
+      }
+      fnSearch.addEventListener("input", renderFnSearch);
+
+      /* ── Import ── */
+      function uint32ToHex(u) {
+        const r = (u >> 16) & 0xff,
+          g = (u >> 8) & 0xff,
+          b = u & 0xff;
+        return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+      }
+      document
+        .getElementById("import-theme-btn")
+        .addEventListener("click", () => {
+          document.getElementById("import-overlay").classList.add("open");
+        });
+      document
+        .getElementById("cancel-import-btn")
+        .addEventListener("click", () =>
+          document.getElementById("import-overlay").classList.remove("open"),
+        );
+      document
+        .getElementById("cancel-import-btn2")
+        .addEventListener("click", () =>
+          document.getElementById("import-overlay").classList.remove("open"),
+        );
+      document
+        .getElementById("apply-import-btn")
+        .addEventListener("click", () => {
+          const text = document
+            .getElementById("import-theme-textarea")
+            .value.trim();
+          const errEl = document.getElementById("import-error-msg");
+          if (!text) {
+            errEl.textContent = "Please paste a JSON theme.";
+            errEl.style.display = "block";
+            return;
+          }
+          let imp;
+          try {
+            imp = JSON.parse(text);
+          } catch {
+            errEl.textContent = "Invalid JSON.";
+            errEl.style.display = "block";
+            return;
+          }
+          const keyMap = {
+            defaultTextHighlight: "Default Text",
+            fallbackHighlight: "Fallback",
+            numberHighlight: "Numbers",
+            bracketHighlight: "[][]",
+            semicolonHighlight: ";;;",
+          };
+          Object.keys(theme).forEach((k) => delete theme[k]);
+          for (const [k, v] of Object.entries(imp)) {
+            if (k === "functionsHighlights") continue;
+            if (keyMap[k] && v && typeof v.color === "number")
+              theme[keyMap[k]] = {
                 color: uint32ToHex(v.color),
                 style: v.style || 0,
               };
           }
-        }
-        renderList();
-        localStorage.setItem("savedTheme", JSON.stringify(theme));
-        toast("Theme imported", "s");
-        document.getElementById("import-overlay").classList.remove("open");
-      });
-
-    /* ── Generate JSON ── */
-    function hexToUInt32(hex) {
-      return parseInt(hex.replace("#", "0xFF"), 16) >>> 0;
-    }
-    document
-      .getElementById("generate-code-btn")
-      .addEventListener("click", () => {
-        const baseKeys = [
-          "defaultTextHighlight",
-          "fallbackHighlight",
-          "numberHighlight",
-          "bracketHighlight",
-          "semicolonHighlight",
-        ];
-        const out = {};
-        for (let i = 0; i < 5; i++) {
-          const n = baseItems[i].name;
-          if (theme[n])
-            out[baseKeys[i]] = {
-              color: hexToUInt32(theme[n].color),
-              style: theme[n].style,
-            };
-        }
-        const fh = {};
-        Object.keys(theme).forEach((fn) => {
-          if (fn === ";;;") return;
-          if (!baseItems.slice(0, 4).some((i) => i.name === fn))
-            fh[fn] = {
-              color: hexToUInt32(theme[fn].color),
-              style: theme[fn].style,
-            };
+          if (imp.functionsHighlights) {
+            for (const [fn, v] of Object.entries(imp.functionsHighlights)) {
+              if (v && typeof v.color === "number")
+                theme[fn] = {
+                  color: uint32ToHex(v.color),
+                  style: v.style || 0,
+                };
+            }
+          }
+          renderList();
+          localStorage.setItem("savedTheme", JSON.stringify(theme));
+          toast("Theme imported", "s");
+          document.getElementById("import-overlay").classList.remove("open");
         });
-        out.functionsHighlights = fh;
-        document.getElementById("output-text").value = JSON.stringify(
-          out,
-          null,
-          2,
-        );
-        toast("JSON generated", "s");
-      });
 
-    /* ── Copy ── */
-    document.getElementById("copy-output").addEventListener("click", () => {
-      const v = document.getElementById("output-text").value;
-      if (!v) {
-        toast("Nothing to copy", "e");
-        return;
+      /* ── Generate JSON ── */
+      function hexToUInt32(hex) {
+        return parseInt(hex.replace("#", "0xFF"), 16) >>> 0;
       }
-      navigator.clipboard
-        .writeText(v)
-        .then(() => toast("Copied", "s"))
-        .catch(() => toast("Copy failed", "e"));
-    });
-    loadFunctions();
-    renderList();
-  </script>
-</body>
+      document
+        .getElementById("generate-code-btn")
+        .addEventListener("click", () => {
+          const baseKeys = [
+            "defaultTextHighlight",
+            "fallbackHighlight",
+            "numberHighlight",
+            "bracketHighlight",
+            "semicolonHighlight",
+          ];
+          const out = {};
+          for (let i = 0; i < 5; i++) {
+            const n = baseItems[i].name;
+            if (theme[n])
+              out[baseKeys[i]] = {
+                color: hexToUInt32(theme[n].color),
+                style: theme[n].style,
+              };
+          }
+          const fh = {};
+          Object.keys(theme).forEach((fn) => {
+            if (fn === ";;;") return;
+            if (!baseItems.slice(0, 4).some((i) => i.name === fn))
+              fh[fn] = {
+                color: hexToUInt32(theme[fn].color),
+                style: theme[fn].style,
+              };
+          });
+          out.functionsHighlights = fh;
+          document.getElementById("output-text").value = JSON.stringify(
+            out,
+            null,
+            2,
+          );
+          toast("JSON generated", "s");
+        });
 
+      /* ── Copy ── */
+      document.getElementById("copy-output").addEventListener("click", () => {
+        const v = document.getElementById("output-text").value;
+        if (!v) {
+          toast("Nothing to copy", "e");
+          return;
+        }
+        navigator.clipboard
+          .writeText(v)
+          .then(() => toast("Copied", "s"))
+          .catch(() => toast("Copy failed", "e"));
+      });
+      loadFunctions();
+      renderList();
+    </script>
+  </body>
 </html>

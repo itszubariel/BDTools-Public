@@ -1,331 +1,520 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="dark">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Terms & Privacy</title>
-  <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap"
-    rel="stylesheet" />
-  <script>tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Geist', 'sans-serif'], mono: ['Geist Mono', 'monospace'] } } } }</script>
-  <style>
-    body {
-      font-family: 'Geist', sans-serif;
-    }
-
-    .tog-track {
-      width: 40px;
-      height: 22px;
-      border-radius: 999px;
-      background: #1e2130;
-      position: relative;
-      cursor: pointer;
-      transition: background .2s;
-      flex-shrink: 0;
-    }
-
-    .tog-track.on {
-      background: #5865F2;
-    }
-
-    .tog-thumb {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: #fff;
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      transition: transform .2s;
-    }
-
-    .tog-track.on .tog-thumb {
-      transform: translateX(18px);
-    }
-
-    html.light body {
-      background: #f4f5fa !important;
-      color: #0f1117 !important;
-    }
-
-    html.light nav {
-      background: rgba(244, 245, 250, .92) !important;
-      border-color: #e2e4ef !important;
-    }
-
-    html.light .dark-surface {
-      background: #fff !important;
-      border-color: #e2e4ef !important;
-    }
-
-    html.light .dark-surface-2 {
-      background: #f4f5fa !important;
-    }
-
-    html.light .dark-text {
-      color: #0f1117 !important;
-    }
-
-    html.light .dark-text-2 {
-      color: #4b5563 !important;
-    }
-
-    html.light .dark-text-3 {
-      color: #6b7280 !important;
-    }
-
-    html.light .dark-border {
-      border-color: #e2e4ef !important;
-    }
-
-    .tab-btn {
-      transition: background .15s, color .15s, border-color .15s;
-    }
-
-    .tab-btn.active {
-      background: #5865F2 !important;
-      color: #fff !important;
-      border-color: #5865F2 !important;
-    }
-
-    .section-card {
-      border-left: 3px solid #5865F2;
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px)
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Terms & Privacy</title>
+    <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Geist", "sans-serif"],
+              mono: ["Geist Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Geist", sans-serif;
       }
 
-      to {
-        opacity: 1;
-        transform: translateY(0)
+      .tog-track {
+        width: 40px;
+        height: 22px;
+        border-radius: 999px;
+        background: #5865f2;
+        position: relative;
+        cursor: pointer;
+        transition: background 0.2s;
+        flex-shrink: 0;
       }
-    }
 
-    .fu {
-      animation: fadeUp .3s ease both;
-    }
-  </style>
-</head>
+      .tog-track.on {
+        background: #5865f2;
+      }
 
-<body class="bg-[#080a10] text-gray-100 min-h-screen flex flex-col">
+      .tog-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #fff;
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        transition: transform 0.2s;
+      }
 
-  <nav class="sticky top-0 z-50 border-b border-[#1e2130] bg-[#080a10]/90 backdrop-blur-xl">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-2.5">
-        <img src="/images/bdfd_logo.png" alt="BDTools" class="w-7 h-7 rounded-lg" onerror="this.style.display='none'" />
-        <span class="font-bold text-white tracking-tight">BDTools</span>
-      </a>
-      <div class="flex items-center gap-3">
-        <span class="text-xs text-gray-500 hidden sm:block select-none">Dark Mode</span>
-        <div id="themeToggle" class="tog-track on" onclick="toggleTheme()">
-          <div class="tog-thumb"></div>
+      .tog-track.on .tog-thumb {
+        transform: translateX(18px);
+      }
+
+      html.light body {
+        background: #f4f5fa !important;
+        color: #0f1117 !important;
+      }
+
+      html.light nav {
+        background: rgba(244, 245, 250, 0.92) !important;
+        border-color: #e2e4ef !important;
+      }
+
+      html.light .dark-surface {
+        background: #fff !important;
+        border-color: #e2e4ef !important;
+      }
+
+      html.light .dark-surface-2 {
+        background: #f4f5fa !important;
+      }
+
+      html.light .dark-text {
+        color: #0f1117 !important;
+      }
+
+      html.light .dark-text-2 {
+        color: #4b5563 !important;
+      }
+
+      html.light .dark-text-3 {
+        color: #6b7280 !important;
+      }
+
+      html.light .dark-border {
+        border-color: #e2e4ef !important;
+      }
+
+      html.light footer {
+        background: #f4f5fa !important;
+        border-color: #e2e4ef !important;
+      }
+
+      html.light #tabPrivacy.active {
+        background: #5865f2 !important;
+        color: #fff !important;
+        border-color: #5865f2 !important;
+      }
+
+      html.light #tabTos.active {
+        background: #5865f2 !important;
+        color: #fff !important;
+        border-color: #5865f2 !important;
+      }
+
+      html.light .section-card {
+        border-left: 3px solid #5865f2 !important;
+      }
+
+      html.light .lowerNav {
+        background: rgba(244, 245, 250, 0.92) !important;
+        border-color: #e2e4ef !important;
+      }
+
+      .tab-btn {
+        transition:
+          background 0.15s,
+          color 0.15s,
+          border-color 0.15s;
+      }
+
+      .tab-btn.active {
+        background: #5865f2 !important;
+        color: #fff !important;
+        border-color: #5865f2 !important;
+      }
+
+      .section-card {
+        border-left: 3px solid #5865f2 !important;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fu {
+        animation: fadeUp 0.3s ease both;
+      }
+    </style>
+  </head>
+
+  <body class="bg-[#080a10] text-gray-100 min-h-screen flex flex-col">
+    <nav
+      class="sticky top-0 z-50 border-b"
+      style="border-color: #1e2130; background: #080a10/90; backdrop-blur: 10px"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4"
+      >
+        <a href="/" class="flex items-center gap-2.5 group flex-shrink-0">
+          <img
+            src="/images/bdfd_logo.png"
+            alt="BDTools"
+            class="w-7 h-7 rounded-lg"
+            onerror="this.style.display = 'none'"
+          />
+          <span class="font-bold tracking-tight t1">BDTools</span>
+        </a>
+        <div class="flex items-center gap-3">
+          <span
+            id="themeLabel"
+            class="text-xs text-gray-500 hidden sm:block select-none"
+            >Dark Mode</span
+          >
+          <div id="themeToggle" class="tog-track on" onclick="toggleTheme()">
+            <div class="tog-thumb"></div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="lowerNav border-b border-[#1e2130]">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
+        <p
+          class="text-xs font-mono text-[#5865F2] uppercase tracking-widest mb-3"
+        >
+          // legal
+        </p>
+        <h1
+          class="text-3xl font-black text-white tracking-tight dark-text mb-4"
+        >
+          Terms &amp; Privacy
+        </h1>
+        <div class="flex gap-2">
+          <button
+            id="tabTos"
+            onclick="showTab('tos')"
+            class="tab-btn active px-4 py-1.5 text-sm font-semibold rounded-xl bg-[#1e2130] text-gray-300 border border-[#2e3350] dark-surface dark-border"
+          >
+            Terms of Service
+          </button>
+          <button
+            id="tabPrivacy"
+            onclick="showTab('privacy')"
+            class="tab-btn px-4 py-1.5 text-sm font-semibold rounded-xl bg-[#1e2130] text-gray-300 border border-[#2e3350] dark-surface dark-border"
+          >
+            Privacy Policy
+          </button>
         </div>
       </div>
     </div>
-  </nav>
 
-  <div class="border-b border-[#1e2130]">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
-      <p class="text-xs font-mono text-[#5865F2] uppercase tracking-widest mb-3">// legal</p>
-      <h1 class="text-3xl font-black text-white tracking-tight dark-text mb-4">Terms &amp; Privacy</h1>
-      <div class="flex gap-2">
-        <button id="tabTos" onclick="showTab('tos')"
-          class="tab-btn active px-4 py-1.5 text-sm font-semibold rounded-xl bg-[#1e2130] text-gray-300 border border-[#2e3350] dark-surface dark-border">
-          Terms of Service
-        </button>
-        <button id="tabPrivacy" onclick="showTab('privacy')"
-          class="tab-btn px-4 py-1.5 text-sm font-semibold rounded-xl bg-[#1e2130] text-gray-300 border border-[#2e3350] dark-surface dark-border">
-          Privacy Policy
-        </button>
-      </div>
-    </div>
-  </div>
+    <main class="flex-1 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+      <!-- TOS -->
+      <div id="paneTos" class="space-y-6 fu">
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Acceptance of Terms
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            By using BDTools, you agree to these Terms of Service. If you do not
+            agree with any part of these terms, you must stop using the platform
+            immediately.
+          </p>
+        </div>
 
-  <main class="flex-1 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            User Responsibilities
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed mb-3">
+            You agree not to misuse the tools or attempt to exploit BDTools or
+            its services. This includes but is not limited to:
+          </p>
+          <ul class="space-y-1.5 text-sm text-gray-400 dark-text-3">
+            <li class="flex items-start gap-2">
+              <span class="text-[#5865F2] mt-0.5">▸</span> Attempting to bypass
+              rate limits or authentication
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#5865F2] mt-0.5">▸</span> Scraping or automated
+              abuse of any endpoint
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#5865F2] mt-0.5">▸</span> Using the platform
+              for illegal or harmful purposes
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#5865F2] mt-0.5">▸</span> Sharing your API key
+              or allowing unauthorized access
+            </li>
+          </ul>
+        </div>
 
-    <!-- TOS -->
-    <div id="paneTos" class="space-y-6 fu">
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            API &amp; Security
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            API keys must be kept private. BDTools is not responsible for misuse
+            of keys that have been shared or exposed. Keys may expire or be
+            revoked at any time for security or abuse.
+          </p>
+        </div>
 
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">Acceptance of Terms</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
-          By using BDTools, you agree to these Terms of Service. If you do not agree with any part of these terms, you
-          must stop using the platform immediately.
-        </p>
-      </div>
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Service Availability
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            BDTools is provided “as is” without warranties of any kind. We do
+            not guarantee that the service will be uninterrupted, error-free, or
+            always available.
+          </p>
+        </div>
 
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">User Responsibilities</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed mb-3">
-          You agree not to misuse the tools or attempt to exploit BDTools or its services. This includes but is not
-          limited to:
-        </p>
-        <ul class="space-y-1.5 text-sm text-gray-400 dark-text-3">
-          <li class="flex items-start gap-2"><span class="text-[#5865F2] mt-0.5">▸</span> Attempting to bypass rate
-            limits or authentication</li>
-          <li class="flex items-start gap-2"><span class="text-[#5865F2] mt-0.5">▸</span> Scraping or automated abuse of
-            any endpoint</li>
-          <li class="flex items-start gap-2"><span class="text-[#5865F2] mt-0.5">▸</span> Using the platform for illegal
-            or harmful purposes</li>
-          <li class="flex items-start gap-2"><span class="text-[#5865F2] mt-0.5">▸</span> Sharing your API key or
-            allowing unauthorized access</li>
-        </ul>
-      </div>
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Limitation of Liability
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            BDTools and its creators are not responsible for any damages, data
+            loss, or issues arising from the use or inability to use the
+            platform.
+          </p>
+        </div>
 
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">API &amp; Security</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
-          API keys must be kept private. BDTools is not responsible for misuse of keys that have been shared or exposed.
-          Keys may expire or be revoked at any time for security or abuse.
-        </p>
-      </div>
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Termination
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            We reserve the right to suspend or terminate access to BDTools at
+            any time, without notice, if these terms are violated.
+          </p>
+        </div>
 
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">Service Availability</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
-          BDTools is provided “as is” without warranties of any kind. We do not guarantee that the service will be
-          uninterrupted, error-free, or always available.
-        </p>
-      </div>
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Changes to Terms
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            We may update these terms at any time. Continued usage of BDTools
+            after changes are made implies acceptance of the updated terms. We
+            encourage you to review this page periodically.
+          </p>
+        </div>
 
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">Limitation of Liability</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
-          BDTools and its creators are not responsible for any damages, data loss, or issues arising from the use or
-          inability to use the platform.
-        </p>
-      </div>
-
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">Termination</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
-          We reserve the right to suspend or terminate access to BDTools at any time, without notice, if these terms are
-          violated.
-        </p>
-      </div>
-
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">Changes to Terms</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
-          We may update these terms at any time. Continued usage of BDTools after changes are made implies acceptance of
-          the updated terms. We encourage you to review this page periodically.
-        </p>
-      </div>
-
-      <div class="bg-[#5865F2]/5 border border-[#5865F2]/15 rounded-xl p-4 text-xs text-gray-500 dark-text-3 font-mono">
-        Note: This is a community-made tool and is not affiliated with BDFD directly.
-      </div>
-
-    </div>
-
-    <!-- PRIVACY -->
-    <div id="panePrivacy" class="space-y-6 fu hidden">
-
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">Data Collection</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
-          BDTools collects minimal data required for functionality. This may include API request metadata, tool usage
-          analytics, and information you voluntarily provide through forms or interactions with the platform.
-        </p>
-      </div>
-
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">Cookies &amp; Local Storage</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
-          We use your browser’s <code class="font-mono text-[#818cf8]">localStorage</code> to save preferences such as
-          theme settings and temporary session data. No tracking cookies or third-party advertising cookies are used.
-        </p>
-      </div>
-
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">API Keys</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
-          API keys are stored locally in your browser and are never intentionally shared. You are responsible for
-          keeping your API keys secure. If a key is exposed or misused, it may be revoked or expired.
-        </p>
+        <div
+          class="bg-[#5865F2]/5 border border-[#5865F2]/15 rounded-xl p-4 text-xs text-gray-500 dark-text-3 font-mono"
+        >
+          Note: This is a community-made tool and is not affiliated with BDFD
+          directly.
+        </div>
       </div>
 
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">Data Usage</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
-          Collected data is used to improve performance, reliability, and features of BDTools. We do not sell, rent, or
-          share your personal data with third parties.
-        </p>
+      <!-- PRIVACY -->
+      <div id="panePrivacy" class="space-y-6 fu hidden">
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Data Collection
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            BDTools collects minimal data required for functionality. This may
+            include API request metadata, tool usage analytics, and information
+            you voluntarily provide through forms or interactions with the
+            platform.
+          </p>
+        </div>
+
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Cookies &amp; Local Storage
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            We use your browser’s
+            <code class="font-mono text-[#818cf8]">localStorage</code> to save
+            preferences such as theme settings and temporary session data. No
+            tracking cookies or third-party advertising cookies are used.
+          </p>
+        </div>
+
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">API Keys</h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            API keys are stored locally in your browser and are never
+            intentionally shared. You are responsible for keeping your API keys
+            secure. If a key is exposed or misused, it may be revoked or
+            expired.
+          </p>
+        </div>
+
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Data Usage
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            Collected data is used to improve performance, reliability, and
+            features of BDTools. We do not sell, rent, or share your personal
+            data with third parties.
+          </p>
+        </div>
+
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Third-Party Services
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            Some features may rely on third-party services (such as APIs or
+            Discord webhooks). Any data sent through these services is subject
+            to their respective privacy policies.
+          </p>
+        </div>
+
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Data Security
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            We take reasonable measures to protect your data. However, no method
+            of transmission or storage is completely secure, and we cannot
+            guarantee absolute security.
+          </p>
+        </div>
+
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            User Responsibility
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            You are responsible for how you use BDTools and for any data you
+            choose to submit. Do not share sensitive or confidential information
+            through the platform.
+          </p>
+        </div>
+
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Policy Updates
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            This Privacy Policy may be updated at any time. Continued use of
+            BDTools after changes means you accept the updated policy. We
+            recommend reviewing this page periodically.
+          </p>
+        </div>
+
+        <div
+          class="bg-[#5865F2]/5 border border-[#5865F2]/15 rounded-xl p-4 text-xs text-gray-500 dark-text-3 font-mono"
+        >
+          Note: This is a community-made tool and is not affiliated with BDFD
+          directly.
+        </div>
       </div>
+    </main>
 
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">Third-Party Services</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
-          Some features may rely on third-party services (such as APIs or Discord webhooks). Any data sent through these
-          services is subject to their respective privacy policies.
-        </p>
+    <footer class="border-t border-[#1e2130] bg-[#080a10]">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3"
+      >
+        <span class="text-sm text-gray-600"
+          >© 2026 BDTools. All rights reserved.</span
+        >
+        <div class="flex items-center gap-4 text-xs text-gray-600">
+          <a href="/tos" class="hover:text-gray-400 transition-colors"
+            >Terms of Service</a
+          >
+          <a href="/privacy" class="hover:text-gray-400 transition-colors"
+            >Privacy Policy</a
+          >
+          <a href="/contact" class="hover:text-gray-400 transition-colors"
+            >Contact</a
+          >
+        </div>
       </div>
+    </footer>
 
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">Data Security</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
-          We take reasonable measures to protect your data. However, no method of transmission or storage is completely
-          secure, and we cannot guarantee absolute security.
-        </p>
-      </div>
+    <script>
+      function showTab(tab) {
+        document
+          .getElementById("paneTos")
+          .classList.toggle("hidden", tab !== "tos");
+        document
+          .getElementById("panePrivacy")
+          .classList.toggle("hidden", tab !== "privacy");
+        document
+          .getElementById("tabTos")
+          .classList.toggle("active", tab === "tos");
+        document
+          .getElementById("tabPrivacy")
+          .classList.toggle("active", tab === "privacy");
+      }
+      // check if URL is /privacy to auto-open that tab
+      if (location.pathname.includes("privacy")) showTab("privacy");
 
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">User Responsibility</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
-          You are responsible for how you use BDTools and for any data you choose to submit. Do not share sensitive or
-          confidential information through the platform.
-        </p>
-      </div>
+      function toggleTheme() {
+        const html = document.documentElement;
+        const toggle = document.getElementById("themeToggle");
+        const label = document.getElementById("themeLabel");
+        const isLight = html.classList.contains("light");
 
-      <div class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card">
-        <h2 class="text-lg font-bold text-white dark-text mb-2">Policy Updates</h2>
-        <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
-          This Privacy Policy may be updated at any time. Continued use of BDTools after changes means you accept the
-          updated policy. We recommend reviewing this page periodically.
-        </p>
-      </div>
+        if (isLight) {
+          html.classList.replace("light", "dark");
+          toggle.classList.add("on");
+          label.textContent = "Dark Mode";
+        } else {
+          html.classList.replace("dark", "light");
+          toggle.classList.remove("on");
+          label.textContent = "Light Mode";
+        }
+        localStorage.setItem("theme", isLight ? "dark" : "light");
+      }
 
-      <div class="bg-[#5865F2]/5 border border-[#5865F2]/15 rounded-xl p-4 text-xs text-gray-500 dark-text-3 font-mono">
-        Note: This is a community-made tool and is not affiliated with BDFD directly.
-      </div>
-
-    </div>
-
-  </main>
-
-  <footer class="border-t border-[#1e2130] bg-[#080a10]">
-    <div
-      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <span class="text-sm text-gray-600">© 2026 BDTools. All rights reserved.</span>
-      <div class="flex items-center gap-4 text-xs text-gray-600">
-        <a href="/tos" class="hover:text-gray-400 transition-colors">Terms of Service</a>
-        <a href="/privacy" class="hover:text-gray-400 transition-colors">Privacy Policy</a>
-        <a href="/contact" class="hover:text-gray-400 transition-colors">Contact</a>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    function toggleTheme() {
-      const h = document.documentElement, t = document.getElementById('themeToggle');
-      if (h.classList.contains('dark')) { h.classList.replace('dark', 'light'); t.classList.remove('on'); }
-      else { h.classList.replace('light', 'dark'); t.classList.add('on'); }
-    }
-    function showTab(tab) {
-      document.getElementById('paneTos').classList.toggle('hidden', tab !== 'tos');
-      document.getElementById('panePrivacy').classList.toggle('hidden', tab !== 'privacy');
-      document.getElementById('tabTos').classList.toggle('active', tab === 'tos');
-      document.getElementById('tabPrivacy').classList.toggle('active', tab === 'privacy');
-    }
-    // check if URL is /privacy to auto-open that tab
-    if (location.pathname.includes('privacy')) showTab('privacy');
-  </script>
-</body>
-
+      /* ── Apply saved preference on load ── */
+      (function () {
+        const saved = localStorage.getItem("theme");
+        if (saved === "light") {
+          document.documentElement.classList.replace("dark", "light");
+          document.getElementById("themeToggle").classList.remove("on");
+          document.getElementById("themeLabel").textContent = "Light Mode";
+        }
+      })();
+    </script>
+  </body>
 </html>

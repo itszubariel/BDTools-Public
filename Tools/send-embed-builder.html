@@ -1,1078 +1,1343 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="dark">
-
-<head>
-  <script>(function () { localStorage.getItem('darkMode') === 'enabled' ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark'); })()</script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BDTools | Send Embed Builder</title>
-  <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
-    rel="stylesheet" />
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
-
-    body {
-      font-family: 'Geist', sans-serif;
-      background: #07080f;
-      color: #f0eff8;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    :root {
-      --bg: #07080f;
-      --bg2: #0d0f1a;
-      --bg3: #12141f;
-      --bg4: #181a28;
-      --bg5: #1e2133;
-      --border: #1e2133;
-      --border2: #252840;
-      --accent: #5865f2;
-      --accent-h: #4752c4;
-      --text: #f0eff8;
-      --text2: #8b8aa8;
-      --text3: #45435e;
-      --mono: 'Geist Mono', monospace;
-      --r: 10px;
-      --r2: 14px;
-    }
-
-    html.light body {
-      background: #f1f2f9;
-      color: #0d0f1a;
-    }
-
-    html.light {
-      --bg: #f1f2f9;
-      --bg2: #ffffff;
-      --bg3: #e8e9f2;
-      --bg4: #dfe0ec;
-      --border: #dcdde8;
-      --border2: #d0d1de;
-      --text: #0d0f1a;
-      --text2: #54526e;
-      --text3: #a0a0b8;
-    }
-
-    #ldr {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: .875rem;
-      transition: opacity .4s;
-    }
-
-    #ldr.out {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    #ldr img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      animation: ldrb .75s ease-in-out infinite alternate;
-    }
-
-    #ldr p {
-      font-size: .8125rem;
-      font-weight: 600;
-      color: var(--text2);
-    }
-
-    #output-text {
-      pointer-events: none;
-    }
-
-    @keyframes ldrb {
-      to {
-        transform: translateY(-8px)
+  <head>
+    <script>
+      (function () {
+        localStorage.getItem("darkMode") === "enabled"
+          ? document.documentElement.classList.add("dark")
+          : document.documentElement.classList.remove("dark");
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BDTools | Send Embed Builder</title>
+    <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-    }
 
-    #toasts {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: .4rem;
-      pointer-events: none;
-    }
+      body {
+        font-family: "Geist", sans-serif;
+        background: #07080f;
+        color: #f0eff8;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        -webkit-font-smoothing: antialiased;
+      }
 
-    .toast {
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      padding: .625rem .875rem;
-      border-radius: var(--r);
+      :root {
+        --bg: #07080f;
+        --bg2: #0d0f1a;
+        --bg3: #12141f;
+        --bg4: #181a28;
+        --bg5: #1e2133;
+        --border: #1e2133;
+        --border2: #252840;
+        --accent: #5865f2;
+        --accent-h: #4752c4;
+        --text: #f0eff8;
+        --text2: #8b8aa8;
+        --text3: #45435e;
+        --mono: "Geist Mono", monospace;
+        --r: 10px;
+        --r2: 14px;
+      }
 
-      font-size: .8rem;
-      font-weight: 600;
-      color: var(--text);
+      html.light body {
+        background: #f1f2f9;
+        color: #0d0f1a;
+      }
 
-      position: relative;
-      overflow: hidden;
+      html.light {
+        --bg: #f1f2f9;
+        --bg2: #ffffff;
+        --bg3: #e8e9f2;
+        --bg4: #dfe0ec;
+        --border: #dcdde8;
+        --border2: #d0d1de;
+        --text: #0d0f1a;
+        --text2: #54526e;
+        --text3: #a0a0b8;
+      }
 
-      /* MATCHES YOUR CARD SYSTEM */
-      background:
-        radial-gradient(120% 120% at 0% 0%, rgba(88, 101, 242, 0.14), transparent 65%),
-        var(--bg3);
+      #ldr {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.875rem;
+        transition: opacity 0.4s;
+      }
 
-      border: 1px solid var(--border);
-
-      box-shadow: 0 6px 24px rgba(0, 0, 0, .35);
-
-      animation: tin .25s ease both;
-    }
-
-    /* success */
-    .toast.s {
-      border-left: 3px solid #22c55e;
-    }
-
-    /* error */
-    .toast.e {
-      border-left: 3px solid #ef4444;
-    }
-
-    .tbar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 2px;
-      width: 100%;
-      background: rgba(255, 255, 255, .3);
-      animation: tbar 4s linear forwards;
-    }
-
-    @keyframes tin {
-      from {
+      #ldr.out {
         opacity: 0;
-        transform: translateX(12px)
+        pointer-events: none;
       }
 
-      to {
-        opacity: 1;
-        transform: none
+      #ldr img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        animation: ldrb 0.75s ease-in-out infinite alternate;
       }
-    }
 
-    @keyframes tbar {
-      to {
-        width: 0
+      #ldr p {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--text2);
       }
-    }
 
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      border-bottom: 1px solid var(--border);
-      background: rgba(7, 8, 15, .88);
-      backdrop-filter: blur(18px);
-      height: 52px;
-      display: flex;
-      align-items: center;
-      padding: 0 1.5rem;
-      gap: 1rem;
-    }
+      #output-text {
+        pointer-events: none;
+      }
 
-    html.light nav {
-      background: rgba(241, 242, 249, .9);
-    }
+      @keyframes ldrb {
+        to {
+          transform: translateY(-8px);
+        }
+      }
 
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      text-decoration: none;
-    }
+      #toasts {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        pointer-events: none;
+      }
 
-    .nav-logo img {
-      width: 26px;
-      height: 26px;
-      border-radius: 7px;
-    }
+      .toast {
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 0.875rem;
+        border-radius: var(--r);
 
-    .nav-logo span {
-      font-weight: 800;
-      font-size: .9375rem;
-      color: var(--text);
-      letter-spacing: -.02em;
-    }
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text);
 
-    .spacer {
-      flex: 1;
-    }
+        position: relative;
+        overflow: hidden;
 
-    .tog {
-      display: flex;
-      align-items: center;
-      gap: .4rem;
-      cursor: pointer;
-      user-select: none;
-    }
+        /* MATCHES YOUR CARD SYSTEM */
+        background:
+          radial-gradient(
+            120% 120% at 0% 0%,
+            rgba(88, 101, 242, 0.14),
+            transparent 65%
+          ),
+          var(--bg3);
 
-    .tog-lbl {
-      font-size: .7rem;
-      font-weight: 600;
-      color: var(--text3);
-      text-transform: uppercase;
-      letter-spacing: .03em;
-    }
+        border: 1px solid var(--border);
 
-    .tog-track {
-      width: 34px;
-      height: 19px;
-      border-radius: 999px;
-      background: var(--border2);
-      position: relative;
-      transition: background .2s;
-      flex-shrink: 0;
-    }
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
 
-    .tog-track.on {
-      background: var(--accent);
-    }
+        animation: tin 0.25s ease both;
+      }
 
-    .tog-thumb {
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      background: #fff;
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      transition: transform .2s;
-    }
+      /* success */
+      .toast.s {
+        border-left: 3px solid #22c55e;
+      }
 
-    .tog-track.on .tog-thumb {
-      transform: translateX(15px);
-    }
+      /* error */
+      .toast.e {
+        border-left: 3px solid #ef4444;
+      }
 
-    .hero {
-      max-width: 1080px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 2.25rem 1.5rem 1.75rem;
-      border-bottom: 1px solid var(--border);
-    }
+      .tbar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.3);
+        animation: tbar 4s linear forwards;
+      }
 
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: .375rem;
-      font-size: .6875rem;
-      font-family: var(--mono);
-      color: var(--accent);
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      margin-bottom: .75rem;
-    }
+      @keyframes tin {
+        from {
+          opacity: 0;
+          transform: translateX(12px);
+        }
 
-    .hero h1 {
-      font-size: 1.625rem;
-      font-weight: 900;
-      letter-spacing: -.035em;
-      line-height: 1.1;
-      color: var(--text);
-      margin-bottom: .4rem;
-    }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
 
-    .hero p {
-      font-size: .875rem;
-      color: var(--text2);
-      line-height: 1.6;
-      max-width: 500px;
-    }
+      @keyframes tbar {
+        to {
+          width: 0;
+        }
+      }
 
-    main {
-      flex: 1;
-      max-width: 1080px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 1.75rem 1.5rem;
-    }
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        border-bottom: 1px solid var(--border);
+        background: rgba(7, 8, 15, 0.88);
+        backdrop-filter: blur(18px);
+        height: 52px;
+        display: flex;
+        align-items: center;
+        padding: 0 1.5rem;
+        gap: 1rem;
+      }
 
-    .layout {
-      display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 1.25rem;
-    }
+      html.light nav {
+        background: rgba(241, 242, 249, 0.9);
+      }
 
-    @media(max-width:900px) {
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+      }
+
+      .nav-logo img {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+      }
+
+      .nav-logo span {
+        font-weight: 800;
+        font-size: 0.9375rem;
+        color: var(--text);
+        letter-spacing: -0.02em;
+      }
+
+      .spacer {
+        flex: 1;
+      }
+
+      .tog {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .tog-lbl {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .tog-track {
+        width: 34px;
+        height: 19px;
+        border-radius: 999px;
+        background: var(--border2);
+        position: relative;
+        transition: background 0.2s;
+        flex-shrink: 0;
+      }
+
+      .tog-track.on {
+        background: var(--accent);
+      }
+
+      .tog-thumb {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #fff;
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        transition: transform 0.2s;
+      }
+
+      .tog-track.on .tog-thumb {
+        transform: translateX(15px);
+      }
+
+      .hero {
+        max-width: 1080px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 2.25rem 1.5rem 1.75rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-size: 0.6875rem;
+        font-family: var(--mono);
+        color: var(--accent);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+
+      .hero h1 {
+        font-size: 1.625rem;
+        font-weight: 900;
+        letter-spacing: -0.035em;
+        line-height: 1.1;
+        color: var(--text);
+        margin-bottom: 0.4rem;
+      }
+
+      .hero p {
+        font-size: 0.875rem;
+        color: var(--text2);
+        line-height: 1.6;
+        max-width: 500px;
+      }
+
+      main {
+        flex: 1;
+        max-width: 1080px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 1.75rem 1.5rem;
+      }
+
       .layout {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 1.25rem;
       }
-    }
 
-    .card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: var(--r2);
-      margin-bottom: .875rem;
-    }
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
 
-    .card:last-child {
-      margin-bottom: 0;
-    }
+      .card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--r2);
+        margin-bottom: 0.875rem;
+      }
 
-    .card-hdr {
-      padding: .625rem 1rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--bg3);
-      border-radius: var(--r2) var(--r2) 0 0;
-    }
+      .card:last-child {
+        margin-bottom: 0;
+      }
 
-    .card-hdr-title {
-      font-size: .6875rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      color: var(--text3);
-    }
+      .card-hdr {
+        padding: 0.625rem 1rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--bg3);
+        border-radius: var(--r2) var(--r2) 0 0;
+      }
 
-    .card-body {
-      padding: 1rem;
-    }
+      .card-hdr-title {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text3);
+      }
 
-    .section {
-      margin-bottom: .75rem;
-    }
+      .card-body {
+        padding: 1rem;
+      }
 
-    .section:last-child {
-      margin-bottom: 0;
-    }
+      .section {
+        margin-bottom: 0.75rem;
+      }
 
-    .slabel {
-      font-size: .6875rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      color: var(--text3);
-      display: block;
-      margin-bottom: .4rem;
-    }
+      .section:last-child {
+        margin-bottom: 0;
+      }
 
-    .finput {
-      width: 100%;
-      padding: .45rem .7rem;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: var(--r);
-      color: var(--text);
-      font-family: 'Geist', sans-serif;
-      font-size: .8rem;
-      outline: none;
-      transition: border-color .15s;
-    }
+      .slabel {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text3);
+        display: block;
+        margin-bottom: 0.4rem;
+      }
 
-    .finput:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent-dim);
-    }
+      .finput {
+        width: 100%;
+        padding: 0.45rem 0.7rem;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
+        color: var(--text);
+        font-family: "Geist", sans-serif;
+        font-size: 0.8rem;
+        outline: none;
+        transition: border-color 0.15s;
+      }
 
-    .finput::placeholder {
-      color: var(--text3);
-    }
+      .finput:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent-dim);
+      }
 
-    textarea.finput {
-      resize: vertical;
-      line-height: 1.6;
-    }
+      .finput::placeholder {
+        color: var(--text3);
+      }
 
-    .g2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: .5rem;
-    }
+      textarea.finput {
+        resize: vertical;
+        line-height: 1.6;
+      }
 
-    .g3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: .5rem;
-    }
+      .g2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+      }
 
-    @media(max-width:600px) {
-
-      .g2,
       .g3 {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .chk {
-      display: flex;
-      align-items: center;
-      gap: .4rem;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .chk input[type=checkbox] {
-      appearance: none;
-      -webkit-appearance: none;
-      width: .9375rem;
-      height: .9375rem;
-      border-radius: 4px;
-      border: 1.5px solid var(--border2);
-      background: var(--bg);
-      cursor: pointer;
-      transition: all .15s;
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .chk input[type=checkbox]:checked {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .chk input[type=checkbox]:checked::after {
-      content: '';
-      position: absolute;
-      left: 3px;
-      top: 1px;
-      width: 4px;
-      height: 7px;
-      border: 1.5px solid #fff;
-      border-top: none;
-      border-left: none;
-      transform: rotate(45deg);
-    }
-
-    .chk span {
-      font-size: .8rem;
-      color: var(--text2);
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .3rem;
-      padding: .4rem .875rem;
-      border-radius: var(--r);
-      font-size: .7875rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all .15s;
-      border: 1.5px solid transparent;
-      font-family: 'Geist', sans-serif;
-      white-space: nowrap;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-h);
-    }
-
-    .btn-ghost {
-      background: var(--bg3);
-      border-color: var(--border2);
-      color: var(--text2);
-    }
-
-    .btn-ghost:hover {
-      background: var(--bg4);
-      color: var(--text);
-    }
-
-    .btn-full {
-      width: 100%;
-      justify-content: center;
-    }
-
-    .out-area {
-      width: 100%;
-      min-height: 120px;
-      padding: .75rem .875rem;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: var(--r);
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: .75rem;
-      line-height: 1.8;
-      resize: vertical;
-      outline: none;
-    }
-
-    .preview-wrap {
-      background: #2b2d31;
-      border-radius: var(--r2);
-      padding: 1rem;
-    }
-
-    .preview-msg {
-      display: flex;
-      align-items: flex-start;
-      gap: .75rem;
-    }
-
-    .preview-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .preview-content {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .preview-meta {
-      display: flex;
-      align-items: center;
-      gap: .375rem;
-      margin-bottom: .25rem;
-    }
-
-    .preview-name {
-      font-size: .875rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .preview-badge {
-      background: #5865f2;
-      color: #fff;
-      font-size: .6rem;
-      padding: .1rem .3rem;
-      border-radius: 3px;
-      font-weight: 700;
-    }
-
-    .preview-time {
-      font-size: .75rem;
-      color: #72767d;
-    }
-
-    .preview-embed {
-      border-radius: 4px;
-      overflow: hidden;
-      display: flex;
-      margin-top: .25rem;
-    }
-
-    .embed-pill {
-      width: 4px;
-      flex-shrink: 0;
-    }
-
-    .embed-body {
-      padding: .75rem;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .embed-author {
-      font-size: .75rem;
-      font-weight: 600;
-      color: #dbdee1;
-      display: flex;
-      align-items: center;
-      gap: .375rem;
-      margin-bottom: .25rem;
-    }
-
-    .embed-author img {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-    }
-
-    .embed-title {
-      font-size: .9375rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: .25rem;
-    }
-
-    .embed-desc {
-      font-size: .8rem;
-      color: #dbdee1;
-      line-height: 1.5;
-      white-space: pre-wrap;
-    }
-
-    .embed-image img {
-      width: 100%;
-      border-radius: 4px;
-      margin-top: .375rem;
-    }
-
-    .embed-thumb {
-      position: absolute;
-      top: .75rem;
-      right: .75rem;
-      width: 72px;
-      height: 72px;
-      border-radius: 4px;
-      object-fit: cover;
-    }
-
-    .embed-footer {
-      font-size: .6875rem;
-      color: #949ba4;
-      margin-top: .375rem;
-      display: flex;
-      align-items: center;
-      gap: .3rem;
-    }
-
-    .embed-footer img {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-    }
-
-    /* param table */
-    .param-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .78rem;
-    }
-
-    .param-table th {
-      text-align: left;
-      padding: .375rem .5rem;
-      font-size: .6875rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: var(--text3);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .param-table td {
-      padding: .375rem .5rem;
-      border-bottom: 1px solid var(--border);
-      color: var(--text2);
-      vertical-align: top;
-    }
-
-    .param-table td:first-child {
-      font-family: var(--mono);
-      color: var(--accent);
-      font-size: .75rem;
-      white-space: nowrap;
-    }
-
-    .right-panel {
-      position: sticky;
-      top: 68px;
-      max-height: calc(100vh - 80px);
-      overflow-y: auto;
-      scrollbar-width: thin;
-    }
-
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 1rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: .5rem;
-    }
-
-    footer p {
-      font-size: .7rem;
-      color: var(--text3);
-    }
-
-    .foot-links {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .foot-links a {
-      font-size: .7rem;
-      color: var(--text3);
-      text-decoration: none;
-      transition: color .15s;
-    }
-
-    .foot-links a:hover {
-      color: var(--text2);
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(8px)
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 0.5rem;
       }
 
-      to {
-        opacity: 1;
-        transform: none
+      @media (max-width: 600px) {
+        .g2,
+        .g3 {
+          grid-template-columns: 1fr;
+        }
       }
-    }
 
-    .fu {
-      animation: fadeUp .26s ease both;
-    }
+      .chk {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        user-select: none;
+      }
 
-    .fd1 {
-      animation-delay: .05s
-    }
+      .chk input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 0.9375rem;
+        height: 0.9375rem;
+        border-radius: 4px;
+        border: 1.5px solid var(--border2);
+        background: var(--bg);
+        cursor: pointer;
+        transition: all 0.15s;
+        position: relative;
+        flex-shrink: 0;
+      }
 
-    .fd2 {
-      animation-delay: .1s
-    }
-  </style>
-</head>
+      .chk input[type="checkbox"]:checked {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
 
-<body>
-  <div id="ldr"><img src="https://bdtools.netlify.app/images/bdfd_logo.png" alt="" />
-    <p id="ldrtxt">Loading</p>
-  </div>
-  <div id="toasts"></div>
+      .chk input[type="checkbox"]:checked::after {
+        content: "";
+        position: absolute;
+        left: 3px;
+        top: 1px;
+        width: 4px;
+        height: 7px;
+        border: 1.5px solid #fff;
+        border-top: none;
+        border-left: none;
+        transform: rotate(45deg);
+      }
 
-  <nav>
-    <a href="/" class="nav-logo"><img src="https://bdtools.netlify.app/images/bdfd_logo.png"
-        onerror="this.style.display='none'" alt="" /><span>BDTools</span></a>
-    <div class="spacer"></div>
-    <div class="tog" onclick="toggleTheme()"><span class="tog-lbl">Dark</span>
-      <div class="tog-track on" id="tog">
-        <div class="tog-thumb"></div>
+      .chk span {
+        font-size: 0.8rem;
+        color: var(--text2);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.4rem 0.875rem;
+        border-radius: var(--r);
+        font-size: 0.7875rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s;
+        border: 1.5px solid transparent;
+        font-family: "Geist", sans-serif;
+        white-space: nowrap;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-h);
+      }
+
+      .btn-ghost {
+        background: var(--bg3);
+        border-color: var(--border2);
+        color: var(--text2);
+      }
+
+      .btn-ghost:hover {
+        background: var(--bg4);
+        color: var(--text);
+      }
+
+      .btn-full {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .out-area {
+        width: 100%;
+        min-height: 120px;
+        padding: 0.75rem 0.875rem;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
+        color: var(--text);
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        line-height: 1.8;
+        resize: vertical;
+        outline: none;
+      }
+
+      .preview-wrap {
+        background: #2b2d31;
+        border-radius: var(--r2);
+        padding: 1rem;
+      }
+
+      .preview-msg {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .preview-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .preview-content {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .preview-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .preview-name {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .preview-badge {
+        background: #5865f2;
+        color: #fff;
+        font-size: 0.6rem;
+        padding: 0.1rem 0.3rem;
+        border-radius: 3px;
+        font-weight: 700;
+      }
+
+      .preview-time {
+        font-size: 0.75rem;
+        color: #72767d;
+      }
+
+      .preview-embed {
+        border-radius: 4px;
+        overflow: hidden;
+        display: flex;
+        margin-top: 0.25rem;
+      }
+
+      .embed-pill {
+        width: 4px;
+        flex-shrink: 0;
+      }
+
+      .embed-body {
+        padding: 0.75rem;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .embed-author {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #dbdee1;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .embed-author img {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+      }
+
+      .embed-title {
+        font-size: 0.9375rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0.25rem;
+      }
+
+      .embed-desc {
+        font-size: 0.8rem;
+        color: #dbdee1;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+
+      .embed-image img {
+        width: 100%;
+        border-radius: 4px;
+        margin-top: 0.375rem;
+      }
+
+      .embed-thumb {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        width: 72px;
+        height: 72px;
+        border-radius: 4px;
+        object-fit: cover;
+      }
+
+      .embed-footer {
+        font-size: 0.6875rem;
+        color: #949ba4;
+        margin-top: 0.375rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .embed-footer img {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+      }
+
+      /* param table */
+      .param-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.78rem;
+      }
+
+      .param-table th {
+        text-align: left;
+        padding: 0.375rem 0.5rem;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text3);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .param-table td {
+        padding: 0.375rem 0.5rem;
+        border-bottom: 1px solid var(--border);
+        color: var(--text2);
+        vertical-align: top;
+      }
+
+      .param-table td:first-child {
+        font-family: var(--mono);
+        color: var(--accent);
+        font-size: 0.75rem;
+        white-space: nowrap;
+      }
+
+      .right-panel {
+        position: sticky;
+        top: 68px;
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+        scrollbar-width: thin;
+      }
+
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      footer p {
+        font-size: 0.7rem;
+        color: var(--text3);
+      }
+
+      .foot-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .foot-links a {
+        font-size: 0.7rem;
+        color: var(--text3);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+
+      .foot-links a:hover {
+        color: var(--text2);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .fu {
+        animation: fadeUp 0.26s ease both;
+      }
+
+      .fd1 {
+        animation-delay: 0.05s;
+      }
+
+      .fd2 {
+        animation-delay: 0.1s;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="ldr">
+      <img src="https://bdtools.netlify.app/images/bdfd_logo.png" alt="" />
+      <p id="ldrtxt">Loading</p>
+    </div>
+    <div id="toasts"></div>
+
+    <nav>
+      <a href="/" class="nav-logo"
+        ><img
+          src="https://bdtools.netlify.app/images/bdfd_logo.png"
+          onerror="this.style.display = 'none'"
+          alt=""
+        /><span>BDTools</span></a
+      >
+      <div class="spacer"></div>
+      <div class="tog" onclick="toggleTheme()">
+        <span class="tog-lbl">Dark</span>
+        <div class="tog-track on" id="tog">
+          <div class="tog-thumb"></div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="border-b border-[#1e2130]">
+      <div class="max-w-[1080px] mx-auto px-6 py-10 fu">
+        <div class="flex items-start gap-4">
+          <div
+            class="w-11 h-11 flex-shrink-0 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
+          >
+            <svg
+              class="w-5 h-5 text-[#5865F2]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+
+          <!-- Text Content -->
+          <div>
+            <h1 class="text-2xl font-black text-white tracking-tight dark-text">
+              Send Embed Builder
+            </h1>
+
+            <p class="text-gray-400 text-sm mt-1 dark-text-2">
+              Build
+              <code class="font-mono text-[#818cf8]">$sendEmbedMessage</code>
+              function using simple fillouts and get a live preview.
+            </p>
+
+            <div class="flex flex-wrap gap-1.5 mt-1">
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >JavaScript</span
+              >
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >HTML</span
+              >
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >Tailwind CSS</span
+              >
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </nav>
 
-  <div class="border-b border-[#1e2130]">
-    <div class="max-w-[1080px] mx-auto px-6 py-10 fu">
-
-      <div class="flex items-start gap-4">
-        <div
-          class="w-11 h-11 flex-shrink-0 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center">
-          <svg class="w-5 h-5 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-        </div>
-
-        <!-- Text Content -->
+    <main>
+      <div class="layout">
+        <!-- LEFT -->
         <div>
-          <h1 class="text-2xl font-black text-white tracking-tight dark-text">
-            Send Embed Builder
-          </h1>
-
-          <p class="text-gray-400 text-sm mt-1 dark-text-2">
-            Build <code class="font-mono text-[#818cf8]">$sendEmbedMessage</code> function using simple fillouts and get
-            a live preview.
-          </p>
-
-          <div class="flex flex-wrap gap-1.5 mt-1">
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">JavaScript</span>
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">HTML</span>
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">Tailwind
-              CSS</span>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-  </div>
-
-  <main>
-    <div class="layout">
-      <!-- LEFT -->
-      <div>
-        <!-- Channel + Content -->
-        <div class="card fu fd1">
-          <div class="card-hdr">
-            <span class="card-hdr-title">Destination</span>
-            <button class="btn btn-ghost" id="clear-input">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-              </svg>
-              Clear All
-            </button>
-          </div>
-          <div class="card-body">
-            <div class="g2">
-              <div class="section"><span class="slabel">Channel ID <span style="color:#ef4444">*</span></span><input
-                  id="channelID-input" class="finput" placeholder="Channel ID (required)" /></div>
-              <div class="section"><span class="slabel">Content</span><input id="content-input" class="finput"
-                  placeholder="Text above the embed" /></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Author -->
-        <div class="card fu fd1">
-          <div class="card-hdr"><span class="card-hdr-title">Author</span></div>
-          <div class="card-body">
-            <div class="g2">
-              <div class="section"><span class="slabel">Name</span><input id="author-input" class="finput"
-                  placeholder="Author name" /></div>
-              <div class="section"><span class="slabel">Icon URL</span><input id="author-icon-input" class="finput"
-                  placeholder="https://…" /></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Title -->
-        <div class="card fu fd1">
-          <div class="card-hdr"><span class="card-hdr-title">Title</span></div>
-          <div class="card-body">
-            <div class="g2">
-              <div class="section"><span class="slabel">Title</span><input id="title-input" class="finput"
-                  placeholder="Embed title" /></div>
-              <div class="section"><span class="slabel">Title URL</span><input id="title-url-input" class="finput"
-                  placeholder="https://…" /></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Description -->
-        <div class="card fu fd1">
-          <div class="card-hdr"><span class="card-hdr-title">Description</span></div>
-          <div class="card-body">
-            <textarea id="description-input" class="finput" rows="4" placeholder="Embed description…"></textarea>
-          </div>
-        </div>
-
-        <!-- Media + Style -->
-        <div class="card fu fd1">
-          <div class="card-hdr"><span class="card-hdr-title">Media &amp; Style</span></div>
-          <div class="card-body">
-            <div class="g3">
-              <div class="section"><span class="slabel">Thumbnail URL</span><input id="thumbnail-input" class="finput"
-                  placeholder="https://…" /></div>
-              <div class="section"><span class="slabel">Image URL</span><input id="image-input" class="finput"
-                  placeholder="https://…" /></div>
-              <div class="section"><span class="slabel">Colour (hex)</span><input id="color-input" class="finput"
-                  placeholder="#5865F2" /></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="card fu fd1">
-          <div class="card-hdr"><span class="card-hdr-title">Footer</span></div>
-          <div class="card-body">
-            <div class="g2">
-              <div class="section"><span class="slabel">Footer Text</span><input id="footer-input" class="finput"
-                  placeholder="Footer text" /></div>
-              <div class="section"><span class="slabel">Footer Icon URL</span><input id="footer-icon-input"
-                  class="finput" placeholder="https://…" /></div>
-            </div>
-            <div style="display:flex;gap:1.25rem;margin-top:.625rem;">
-              <label class="chk"><input type="checkbox" id="timestamp-input" /><span>Add Timestamp</span></label>
-              <label class="chk"><input type="checkbox" id="messageID-input" /><span>Return Message ID</span></label>
-            </div>
-          </div>
-        </div>
-
-        <!-- Generate + output -->
-        <div class="card fu fd2">
-          <div class="card-hdr">
-            <span class="card-hdr-title">Output</span>
-          </div>
-          <div class="card-body">
-            <button class="btn btn-primary btn-full" id="replace-btn" style="margin-bottom:.75rem;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polygon points="5 3 19 12 5 21 5 3" />
-              </svg>
-              Generate Code
-            </button>
-            <textarea id="output-text" class="out-area" readonly
-              placeholder="Your $sendEmbedMessage[] code will appear here…"></textarea>
-            <div style="display:flex;justify-content:flex-end;margin-top:.5rem;">
-              <button class="btn btn-ghost" id="copy-output">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                  <rect x="9" y="9" width="13" height="13" rx="2" />
-                  <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+          <!-- Channel + Content -->
+          <div class="card fu fd1">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Destination</span>
+              <button class="btn btn-ghost" id="clear-input">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                >
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
                 </svg>
-                Copy Output
+                Clear All
               </button>
             </div>
+            <div class="card-body">
+              <div class="g2">
+                <div class="section">
+                  <span class="slabel"
+                    >Channel ID <span style="color: #ef4444">*</span></span
+                  ><input
+                    id="channelID-input"
+                    class="finput"
+                    placeholder="Channel ID (required)"
+                  />
+                </div>
+                <div class="section">
+                  <span class="slabel">Content</span
+                  ><input
+                    id="content-input"
+                    class="finput"
+                    placeholder="Text above the embed"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <!-- RIGHT -->
-      <div class="right-panel fu fd2">
-        <!-- Preview -->
-        <div class="card">
-          <div class="card-hdr"><span class="card-hdr-title">Live Preview</span></div>
-          <div class="card-body">
-            <div class="preview-wrap">
-              <div id="embed-preview"></div>
+          <!-- Author -->
+          <div class="card fu fd1">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Author</span>
+            </div>
+            <div class="card-body">
+              <div class="g2">
+                <div class="section">
+                  <span class="slabel">Name</span
+                  ><input
+                    id="author-input"
+                    class="finput"
+                    placeholder="Author name"
+                  />
+                </div>
+                <div class="section">
+                  <span class="slabel">Icon URL</span
+                  ><input
+                    id="author-icon-input"
+                    class="finput"
+                    placeholder="https://…"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Title -->
+          <div class="card fu fd1">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Title</span>
+            </div>
+            <div class="card-body">
+              <div class="g2">
+                <div class="section">
+                  <span class="slabel">Title</span
+                  ><input
+                    id="title-input"
+                    class="finput"
+                    placeholder="Embed title"
+                  />
+                </div>
+                <div class="section">
+                  <span class="slabel">Title URL</span
+                  ><input
+                    id="title-url-input"
+                    class="finput"
+                    placeholder="https://…"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="card fu fd1">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Description</span>
+            </div>
+            <div class="card-body">
+              <textarea
+                id="description-input"
+                class="finput"
+                rows="4"
+                placeholder="Embed description…"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Media + Style -->
+          <div class="card fu fd1">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Media &amp; Style</span>
+            </div>
+            <div class="card-body">
+              <div class="g3">
+                <div class="section">
+                  <span class="slabel">Thumbnail URL</span
+                  ><input
+                    id="thumbnail-input"
+                    class="finput"
+                    placeholder="https://…"
+                  />
+                </div>
+                <div class="section">
+                  <span class="slabel">Image URL</span
+                  ><input
+                    id="image-input"
+                    class="finput"
+                    placeholder="https://…"
+                  />
+                </div>
+                <div class="section">
+                  <span class="slabel">Colour (hex)</span
+                  ><input
+                    id="color-input"
+                    class="finput"
+                    placeholder="#5865F2"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="card fu fd1">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Footer</span>
+            </div>
+            <div class="card-body">
+              <div class="g2">
+                <div class="section">
+                  <span class="slabel">Footer Text</span
+                  ><input
+                    id="footer-input"
+                    class="finput"
+                    placeholder="Footer text"
+                  />
+                </div>
+                <div class="section">
+                  <span class="slabel">Footer Icon URL</span
+                  ><input
+                    id="footer-icon-input"
+                    class="finput"
+                    placeholder="https://…"
+                  />
+                </div>
+              </div>
+              <div style="display: flex; gap: 1.25rem; margin-top: 0.625rem">
+                <label class="chk"
+                  ><input type="checkbox" id="timestamp-input" /><span
+                    >Add Timestamp</span
+                  ></label
+                >
+                <label class="chk"
+                  ><input type="checkbox" id="messageID-input" /><span
+                    >Return Message ID</span
+                  ></label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Generate + output -->
+          <div class="card fu fd2">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Output</span>
+            </div>
+            <div class="card-body">
+              <button
+                class="btn btn-primary btn-full"
+                id="replace-btn"
+                style="margin-bottom: 0.75rem"
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+                Generate Code
+              </button>
+              <textarea
+                id="output-text"
+                class="out-area"
+                readonly
+                placeholder="Your $sendEmbedMessage[] code will appear here…"
+              ></textarea>
+              <div
+                style="
+                  display: flex;
+                  justify-content: flex-end;
+                  margin-top: 0.5rem;
+                "
+              >
+                <button class="btn btn-ghost" id="copy-output">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" />
+                    <path
+                      d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"
+                    />
+                  </svg>
+                  Copy Output
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        <!-- Param reference -->
-        <div class="card" style="margin-top:.875rem;">
-          <div class="card-hdr"><span class="card-hdr-title">Parameter Reference</span></div>
-          <div class="card-body" style="overflow-x:auto;">
-            <table class="param-table">
-              <tr>
-                <th>Param</th>
-                <th>Type</th>
-              </tr>
 
-              <tr>
-                <td>Channel ID</td>
-                <td>Snowflake, required</td>
-              </tr>
-              <tr>
-                <td>Content</td>
-                <td>String, optional</td>
-              </tr>
+        <!-- RIGHT -->
+        <div class="right-panel fu fd2">
+          <!-- Preview -->
+          <div class="card">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Live Preview</span>
+            </div>
+            <div class="card-body">
+              <div class="preview-wrap">
+                <div id="embed-preview"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Param reference -->
+          <div class="card" style="margin-top: 0.875rem">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Parameter Reference</span>
+            </div>
+            <div class="card-body" style="overflow-x: auto">
+              <table class="param-table">
+                <tr>
+                  <th>Param</th>
+                  <th>Type</th>
+                </tr>
 
-              <tr>
-                <td>Author Name</td>
-                <td>String, optional</td>
-              </tr>
-              <tr>
-                <td>Author Icon URL</td>
-                <td>URL, optional</td>
-              </tr>
+                <tr>
+                  <td>Channel ID</td>
+                  <td>Snowflake, required</td>
+                </tr>
+                <tr>
+                  <td>Content</td>
+                  <td>String, optional</td>
+                </tr>
 
-              <tr>
-                <td>Title</td>
-                <td>String, optional</td>
-              </tr>
-              <tr>
-                <td>Title URL</td>
-                <td>URL, optional</td>
-              </tr>
+                <tr>
+                  <td>Author Name</td>
+                  <td>String, optional</td>
+                </tr>
+                <tr>
+                  <td>Author Icon URL</td>
+                  <td>URL, optional</td>
+                </tr>
 
-              <tr>
-                <td>Description</td>
-                <td>String, optional</td>
-              </tr>
+                <tr>
+                  <td>Title</td>
+                  <td>String, optional</td>
+                </tr>
+                <tr>
+                  <td>Title URL</td>
+                  <td>URL, optional</td>
+                </tr>
 
-              <tr>
-                <td>Thumbnail URL</td>
-                <td>URL, optional</td>
-              </tr>
-              <tr>
-                <td>Image URL</td>
-                <td>URL, optional</td>
-              </tr>
-              <tr>
-                <td>Color</td>
-                <td>Hex/int, optional</td>
-              </tr>
+                <tr>
+                  <td>Description</td>
+                  <td>String, optional</td>
+                </tr>
 
-              <tr>
-                <td>Footer Text</td>
-                <td>String, optional</td>
-              </tr>
-              <tr>
-                <td>Footer Icon URL</td>
-                <td>URL, optional</td>
-              </tr>
+                <tr>
+                  <td>Thumbnail URL</td>
+                  <td>URL, optional</td>
+                </tr>
+                <tr>
+                  <td>Image URL</td>
+                  <td>URL, optional</td>
+                </tr>
+                <tr>
+                  <td>Color</td>
+                  <td>Hex/int, optional</td>
+                </tr>
 
-              <tr>
-                <td>Timestamp</td>
-                <td>Boolean, yes / no</td>
-              </tr>
-              <tr>
-                <td>Return Message ID</td>
-                <td>Boolean, yes / no</td>
-              </tr>
-            </table>
+                <tr>
+                  <td>Footer Text</td>
+                  <td>String, optional</td>
+                </tr>
+                <tr>
+                  <td>Footer Icon URL</td>
+                  <td>URL, optional</td>
+                </tr>
+
+                <tr>
+                  <td>Timestamp</td>
+                  <td>Boolean, yes / no</td>
+                </tr>
+                <tr>
+                  <td>Return Message ID</td>
+                  <td>Boolean, yes / no</td>
+                </tr>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </main>
+    </main>
 
-  <footer>
-    <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
-    <div class="foot-links"><a href="/tos">Terms</a><a href="/privacy">Privacy</a><a href="/contact">Contact</a></div>
-  </footer>
+    <footer>
+      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+      <div class="foot-links">
+        <a href="/tos">Terms</a><a href="/privacy">Privacy</a
+        ><a href="/contact">Contact</a>
+      </div>
+    </footer>
 
-  <script>
-    const ldrtxt = document.getElementById('ldrtxt'); let dc = 0;
-    const di = setInterval(() => { dc = (dc + 1) % 4; ldrtxt.textContent = 'Loading' + '.'.repeat(dc); }, 350);
-    window.addEventListener('load', () => { setTimeout(() => { const l = document.getElementById('ldr'); l.classList.add('out'); setTimeout(() => l.remove(), 400); clearInterval(di); }, 900); });
-    function toast(msg, type = 's') { const box = document.getElementById('toasts'); const t = document.createElement('div'); t.className = `toast ${type}`; t.style.position = 'relative'; t.style.overflow = 'hidden'; t.innerHTML = `<span>${msg}</span><div class="tbar"></div>`; box.appendChild(t); setTimeout(() => t.remove(), 4500); }
-    function toggleTheme() { const h = document.documentElement, t = document.getElementById('tog'); const dark = h.classList.toggle('dark'); localStorage.setItem('darkMode', dark ? 'enabled' : 'disabled'); t.classList.toggle('on', dark); }
-    (function () { document.getElementById('tog').classList.toggle('on', document.documentElement.classList.contains('dark')); })();
-    window.addEventListener('load', () => { if (!localStorage.getItem('visited')) { toast("Welcome! Auora here 👋", 's'); localStorage.setItem('visited', 'true'); } });
+    <script>
+      const ldrtxt = document.getElementById("ldrtxt");
+      let dc = 0;
+      const di = setInterval(() => {
+        dc = (dc + 1) % 4;
+        ldrtxt.textContent = "Loading" + ".".repeat(dc);
+      }, 350);
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          const l = document.getElementById("ldr");
+          l.classList.add("out");
+          setTimeout(() => l.remove(), 400);
+          clearInterval(di);
+        }, 900);
+      });
+      function toast(msg, type = "s") {
+        const box = document.getElementById("toasts");
+        const t = document.createElement("div");
+        t.className = `toast ${type}`;
+        t.style.position = "relative";
+        t.style.overflow = "hidden";
+        t.innerHTML = `<span>${msg}</span><div class="tbar"></div>`;
+        box.appendChild(t);
+        setTimeout(() => t.remove(), 4500);
+      }
+      function toggleTheme() {
+        const h = document.documentElement,
+          t = document.getElementById("tog");
+        const dark = h.classList.toggle("dark");
+        localStorage.setItem("darkMode", dark ? "enabled" : "disabled");
+        t.classList.toggle("on", dark);
+      }
+      (function () {
+        document
+          .getElementById("tog")
+          .classList.toggle(
+            "on",
+            document.documentElement.classList.contains("dark"),
+          );
+      })();
+      window.addEventListener("load", () => {
+        if (!localStorage.getItem("visited")) {
+          toast("Welcome! Auora here 👋", "s");
+          localStorage.setItem("visited", "true");
+        }
+      });
 
-    /* EXACT original sanitize */
-    function sanitizeInput(str) { return str.replace(/\\/g, '\\\\').replace(/\$/g, '%{DOL}%').replace(/;/g, '\\;').replace(/]/g, '\\]'); }
+      /* EXACT original sanitize */
+      function sanitizeInput(str) {
+        return str
+          .replace(/\\/g, "\\\\")
+          .replace(/\$/g, "%{DOL}%")
+          .replace(/;/g, "\\;")
+          .replace(/]/g, "\\]");
+      }
 
-    /* EXACT original generateEmbedCode */
-    function generateEmbedCode() {
-      const channelID = sanitizeInput(document.getElementById('channelID-input').value.trim());
-      const content = sanitizeInput(document.getElementById('content-input').value.trim());
-      const title = sanitizeInput(document.getElementById('title-input').value.trim());
-      const titleURL = sanitizeInput(document.getElementById('title-url-input').value.trim());
-      const description = sanitizeInput(document.getElementById('description-input').value.trim());
-      const color = sanitizeInput(document.getElementById('color-input').value.trim());
-      const author = sanitizeInput(document.getElementById('author-input').value.trim());
-      const authorIcon = sanitizeInput(document.getElementById('author-icon-input').value.trim());
-      const footer = sanitizeInput(document.getElementById('footer-input').value.trim());
-      const footerIcon = sanitizeInput(document.getElementById('footer-icon-input').value.trim());
-      const thumbnail = sanitizeInput(document.getElementById('thumbnail-input').value.trim());
-      const image = sanitizeInput(document.getElementById('image-input').value.trim());
-      const ts = document.getElementById('timestamp-input')?.checked ? 'yes' : 'no';
-      const retID = document.getElementById('messageID-input')?.checked ? 'yes' : 'no';
-      if (!channelID) { toast('Channel ID is required', 'e'); return ''; }
-      if (!author && authorIcon) { toast("Can't have Author Icon without Author Name", 'e'); return ''; }
-      if (!title && titleURL) { toast("Can't have Title URL without Title", 'e'); return ''; }
-      if (!footer && footerIcon) { toast("Can't have Footer Icon without Footer text", 'e'); return ''; }
-      return `$sendEmbedMessage[${channelID};${content};${title};${titleURL};${description};${color};${author};${authorIcon};${footer};${footerIcon};${thumbnail};${image};${ts};${retID}]`;
-    }
+      /* EXACT original generateEmbedCode */
+      function generateEmbedCode() {
+        const channelID = sanitizeInput(
+          document.getElementById("channelID-input").value.trim(),
+        );
+        const content = sanitizeInput(
+          document.getElementById("content-input").value.trim(),
+        );
+        const title = sanitizeInput(
+          document.getElementById("title-input").value.trim(),
+        );
+        const titleURL = sanitizeInput(
+          document.getElementById("title-url-input").value.trim(),
+        );
+        const description = sanitizeInput(
+          document.getElementById("description-input").value.trim(),
+        );
+        const color = sanitizeInput(
+          document.getElementById("color-input").value.trim(),
+        );
+        const author = sanitizeInput(
+          document.getElementById("author-input").value.trim(),
+        );
+        const authorIcon = sanitizeInput(
+          document.getElementById("author-icon-input").value.trim(),
+        );
+        const footer = sanitizeInput(
+          document.getElementById("footer-input").value.trim(),
+        );
+        const footerIcon = sanitizeInput(
+          document.getElementById("footer-icon-input").value.trim(),
+        );
+        const thumbnail = sanitizeInput(
+          document.getElementById("thumbnail-input").value.trim(),
+        );
+        const image = sanitizeInput(
+          document.getElementById("image-input").value.trim(),
+        );
+        const ts = document.getElementById("timestamp-input")?.checked
+          ? "yes"
+          : "no";
+        const retID = document.getElementById("messageID-input")?.checked
+          ? "yes"
+          : "no";
+        if (!channelID) {
+          toast("Channel ID is required", "e");
+          return "";
+        }
+        if (!author && authorIcon) {
+          toast("Can't have Author Icon without Author Name", "e");
+          return "";
+        }
+        if (!title && titleURL) {
+          toast("Can't have Title URL without Title", "e");
+          return "";
+        }
+        if (!footer && footerIcon) {
+          toast("Can't have Footer Icon without Footer text", "e");
+          return "";
+        }
+        return `$sendEmbedMessage[${channelID};${content};${title};${titleURL};${description};${color};${author};${authorIcon};${footer};${footerIcon};${thumbnail};${image};${ts};${retID}]`;
+      }
 
-    /* EXACT original updatePreview */
-    function updatePreview() {
-      const author = document.getElementById('author-input').value.trim();
-      const authorIcon = document.getElementById('author-icon-input').value.trim();
-      const title = document.getElementById('title-input').value.trim();
-      const titleURL = document.getElementById('title-url-input').value.trim();
-      const description = document.getElementById('description-input').value.trim();
-      const thumbnail = document.getElementById('thumbnail-input').value.trim();
-      const image = document.getElementById('image-input').value.trim();
-      const color = document.getElementById('color-input').value.trim() || '#ffffff';
-      const footer = document.getElementById('footer-input').value.trim();
-      const footerIcon = document.getElementById('footer-icon-input').value.trim();
-      const ts = document.getElementById('timestamp-input')?.checked;
-      const botAvatarURL = 'https://auora.live/auora_logo.png';
-      const botName = 'Auora';
-      const now = new Date(); const dateStr = 'Today at ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-      const hasContent = author || title || description || footer || image || thumbnail;
-      document.getElementById('embed-preview').innerHTML = `
+      /* EXACT original updatePreview */
+      function updatePreview() {
+        const author = document.getElementById("author-input").value.trim();
+        const authorIcon = document
+          .getElementById("author-icon-input")
+          .value.trim();
+        const title = document.getElementById("title-input").value.trim();
+        const titleURL = document
+          .getElementById("title-url-input")
+          .value.trim();
+        const description = document
+          .getElementById("description-input")
+          .value.trim();
+        const thumbnail = document
+          .getElementById("thumbnail-input")
+          .value.trim();
+        const image = document.getElementById("image-input").value.trim();
+        const color =
+          document.getElementById("color-input").value.trim() || "#ffffff";
+        const footer = document.getElementById("footer-input").value.trim();
+        const footerIcon = document
+          .getElementById("footer-icon-input")
+          .value.trim();
+        const ts = document.getElementById("timestamp-input")?.checked;
+        const botAvatarURL = "https://auora.live/auora_logo.png";
+        const botName = "Auora";
+        const now = new Date();
+        const dateStr =
+          "Today at " +
+          now.toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+          });
+        const hasContent =
+          author || title || description || footer || image || thumbnail;
+        document.getElementById("embed-preview").innerHTML = `
     <div class="preview-msg">
       <img src="${botAvatarURL}" class="preview-avatar" onerror="this.style.display='none'"/>
       <div class="preview-content">
@@ -1081,46 +1346,94 @@
           <span class="preview-badge">BOT</span>
           <span class="preview-time">${dateStr}</span>
         </div>
-        ${hasContent ? `
+        ${
+          hasContent
+            ? `
         <div class="preview-embed">
           <div class="embed-pill" style="background:${color}"></div>
-          <div class="embed-body" style="position:relative;padding-right:${thumbnail ? '88px' : '.75rem'}">
-            ${author ? `<div class="embed-author">${authorIcon ? `<img src="${authorIcon}" onerror="this.style.display='none'">` : ''}${author}</div>` : ''}
-            ${title ? `<div class="embed-title">${titleURL ? `<a href="${titleURL}" style="color:#00aff4;text-decoration:none">${title}</a>` : title}</div>` : ''}
-            ${description ? `<div class="embed-desc">${description}</div>` : ''}
-            ${image ? `<div class="embed-image"><img src="${image}" onerror="this.style.display='none'"></div>` : ''}
-            ${footer || ts ? `<div class="embed-footer">${footerIcon ? `<img src="${footerIcon}" onerror="this.style.display='none'">` : ''}${footer}${footer && ts ? ' · ' : ''}${ts ? dateStr : ''}</div>` : ''}
-            ${thumbnail ? `<img src="${thumbnail}" class="embed-thumb" onerror="this.style.display='none'">` : ''}
+          <div class="embed-body" style="position:relative;padding-right:${thumbnail ? "88px" : ".75rem"}">
+            ${author ? `<div class="embed-author">${authorIcon ? `<img src="${authorIcon}" onerror="this.style.display='none'">` : ""}${author}</div>` : ""}
+            ${title ? `<div class="embed-title">${titleURL ? `<a href="${titleURL}" style="color:#00aff4;text-decoration:none">${title}</a>` : title}</div>` : ""}
+            ${description ? `<div class="embed-desc">${description}</div>` : ""}
+            ${image ? `<div class="embed-image"><img src="${image}" onerror="this.style.display='none'"></div>` : ""}
+            ${footer || ts ? `<div class="embed-footer">${footerIcon ? `<img src="${footerIcon}" onerror="this.style.display='none'">` : ""}${footer}${footer && ts ? " · " : ""}${ts ? dateStr : ""}</div>` : ""}
+            ${thumbnail ? `<img src="${thumbnail}" class="embed-thumb" onerror="this.style.display='none'">` : ""}
           </div>
-        </div>`: '<p style="font-size:.8rem;color:#72767d;font-style:italic">Fill in the form to see a preview…</p>'}
+        </div>`
+            : '<p style="font-size:.8rem;color:#72767d;font-style:italic">Fill in the form to see a preview…</p>'
+        }
       </div>
     </div>`;
-    }
+      }
 
-    /* listeners */
-    ['author-input', 'author-icon-input', 'title-input', 'title-url-input', 'description-input', 'thumbnail-input', 'image-input', 'color-input', 'footer-input', 'footer-icon-input', 'timestamp-input'].forEach(id => {
-      const el = document.getElementById(id); if (!el) return;
-      el.addEventListener('input', updatePreview);
-      if (el.type === 'checkbox') el.addEventListener('change', updatePreview);
-    });
+      /* listeners */
+      [
+        "author-input",
+        "author-icon-input",
+        "title-input",
+        "title-url-input",
+        "description-input",
+        "thumbnail-input",
+        "image-input",
+        "color-input",
+        "footer-input",
+        "footer-icon-input",
+        "timestamp-input",
+      ].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("input", updatePreview);
+        if (el.type === "checkbox")
+          el.addEventListener("change", updatePreview);
+      });
 
-    document.getElementById('replace-btn').addEventListener('click', () => {
-      const code = generateEmbedCode();
-      if (code) { document.getElementById('output-text').value = code; toast('Code generated', 's'); updatePreview(); }
-    });
-    document.getElementById('copy-output').addEventListener('click', () => {
-      const v = document.getElementById('output-text').value;
-      if (!v) { toast('Nothing to copy', 'e'); return; }
-      navigator.clipboard.writeText(v).then(() => toast('Copied', 's')).catch(() => toast('Copy failed', 'e'));
-    });
-    document.getElementById('clear-input').addEventListener('click', () => {
-      ['channelID-input', 'content-input', 'author-input', 'author-icon-input', 'title-input', 'title-url-input', 'description-input', 'thumbnail-input', 'image-input', 'color-input', 'footer-input', 'footer-icon-input'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-      ['timestamp-input', 'messageID-input'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
-      document.getElementById('output-text').value = ''; toast('Cleared', 's'); updatePreview();
-    });
+      document.getElementById("replace-btn").addEventListener("click", () => {
+        const code = generateEmbedCode();
+        if (code) {
+          document.getElementById("output-text").value = code;
+          toast("Code generated", "s");
+          updatePreview();
+        }
+      });
+      document.getElementById("copy-output").addEventListener("click", () => {
+        const v = document.getElementById("output-text").value;
+        if (!v) {
+          toast("Nothing to copy", "e");
+          return;
+        }
+        navigator.clipboard
+          .writeText(v)
+          .then(() => toast("Copied", "s"))
+          .catch(() => toast("Copy failed", "e"));
+      });
+      document.getElementById("clear-input").addEventListener("click", () => {
+        [
+          "channelID-input",
+          "content-input",
+          "author-input",
+          "author-icon-input",
+          "title-input",
+          "title-url-input",
+          "description-input",
+          "thumbnail-input",
+          "image-input",
+          "color-input",
+          "footer-input",
+          "footer-icon-input",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+        ["timestamp-input", "messageID-input"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.checked = false;
+        });
+        document.getElementById("output-text").value = "";
+        toast("Cleared", "s");
+        updatePreview();
+      });
 
-    updatePreview();
-  </script>
-</body>
-
+      updatePreview();
+    </script>
+  </body>
 </html>

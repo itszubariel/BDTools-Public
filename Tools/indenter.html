@@ -1,689 +1,819 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="dark">
-
-<head>
-  <script>(function () { localStorage.getItem('darkMode') === 'enabled' ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark'); })()</script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BDTools | Code Indenter</title>
-  <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
-    rel="stylesheet" />
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
-
-    body {
-      font-family: 'Geist', sans-serif;
-      background: #07080f;
-      color: #f0eff8;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    :root {
-      --bg: #07080f;
-      --bg2: #0d0f1a;
-      --bg3: #12141f;
-      --bg4: #181a28;
-      --bg5: #1e2133;
-      --border: #1e2133;
-      --border2: #252840;
-      --accent: #5865f2;
-      --accent-h: #4752c4;
-      --text: #f0eff8;
-      --text2: #8b8aa8;
-      --text3: #45435e;
-      --mono: 'Geist Mono', monospace;
-      --r: 10px;
-      --r2: 14px;
-    }
-
-    html.light body {
-      background: #f1f2f9;
-      color: #0d0f1a;
-    }
-
-    html.light {
-      --bg: #f1f2f9;
-      --bg2: #ffffff;
-      --bg3: #e8e9f2;
-      --bg4: #dfe0ec;
-      --border: #dcdde8;
-      --border2: #d0d1de;
-      --text: #0d0f1a;
-      --text2: #54526e;
-      --text3: #a0a0b8;
-    }
-
-    #ldr {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: .875rem;
-      transition: opacity .4s;
-    }
-
-    #ldr.out {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    #ldr img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      animation: ldrb .75s ease-in-out infinite alternate;
-    }
-
-    #ldr p {
-      font-size: .8125rem;
-      font-weight: 600;
-      color: var(--text2);
-    }
-
-    #outputArea {
-      pointer-events: none;
-    }
-
-    @keyframes ldrb {
-      to {
-        transform: translateY(-8px)
+  <head>
+    <script>
+      (function () {
+        localStorage.getItem("darkMode") === "enabled"
+          ? document.documentElement.classList.add("dark")
+          : document.documentElement.classList.remove("dark");
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BDTools | Code Indenter</title>
+    <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-    }
 
-    #toasts {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: .4rem;
-      pointer-events: none;
-    }
+      body {
+        font-family: "Geist", sans-serif;
+        background: #07080f;
+        color: #f0eff8;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        -webkit-font-smoothing: antialiased;
+      }
 
-    .toast {
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      padding: .625rem .875rem;
-      border-radius: var(--r);
+      :root {
+        --bg: #07080f;
+        --bg2: #0d0f1a;
+        --bg3: #12141f;
+        --bg4: #181a28;
+        --bg5: #1e2133;
+        --border: #1e2133;
+        --border2: #252840;
+        --accent: #5865f2;
+        --accent-h: #4752c4;
+        --text: #f0eff8;
+        --text2: #8b8aa8;
+        --text3: #45435e;
+        --mono: "Geist Mono", monospace;
+        --r: 10px;
+        --r2: 14px;
+      }
 
-      font-size: .8rem;
-      font-weight: 600;
-      color: var(--text);
+      html.light body {
+        background: #f1f2f9;
+        color: #0d0f1a;
+      }
 
-      position: relative;
-      overflow: hidden;
+      html.light {
+        --bg: #f1f2f9;
+        --bg2: #ffffff;
+        --bg3: #e8e9f2;
+        --bg4: #dfe0ec;
+        --border: #dcdde8;
+        --border2: #d0d1de;
+        --text: #0d0f1a;
+        --text2: #54526e;
+        --text3: #a0a0b8;
+      }
 
-      /* MATCHES YOUR CARD SYSTEM */
-      background:
-        radial-gradient(120% 120% at 0% 0%, rgba(88, 101, 242, 0.14), transparent 65%),
-        var(--bg3);
+      #ldr {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.875rem;
+        transition: opacity 0.4s;
+      }
 
-      border: 1px solid var(--border);
-
-      box-shadow: 0 6px 24px rgba(0, 0, 0, .35);
-
-      animation: tin .25s ease both;
-    }
-
-    /* success */
-    .toast.s {
-      border-left: 3px solid #22c55e;
-    }
-
-    /* error */
-    .toast.e {
-      border-left: 3px solid #ef4444;
-    }
-
-    .tbar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 2px;
-      width: 100%;
-      background: rgba(255, 255, 255, .3);
-      animation: tbar 4s linear forwards;
-    }
-
-    @keyframes tin {
-      from {
+      #ldr.out {
         opacity: 0;
-        transform: translateX(12px)
+        pointer-events: none;
       }
 
-      to {
-        opacity: 1;
-        transform: none
-      }
-    }
-
-    @keyframes tbar {
-      to {
-        width: 0
-      }
-    }
-
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      border-bottom: 1px solid var(--border);
-      background: rgba(7, 8, 15, .88);
-      backdrop-filter: blur(18px);
-      height: 52px;
-      display: flex;
-      align-items: center;
-      padding: 0 1.5rem;
-      gap: 1rem;
-    }
-
-    html.light nav {
-      background: rgba(241, 242, 249, .9);
-    }
-
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      text-decoration: none;
-    }
-
-    .nav-logo img {
-      width: 26px;
-      height: 26px;
-      border-radius: 7px;
-    }
-
-    .nav-logo span {
-      font-weight: 800;
-      font-size: .9375rem;
-      color: var(--text);
-      letter-spacing: -.02em;
-    }
-
-    .spacer {
-      flex: 1;
-    }
-
-    .tog {
-      display: flex;
-      align-items: center;
-      gap: .4rem;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .tog-lbl {
-      font-size: .7rem;
-      font-weight: 600;
-      color: var(--text3);
-      text-transform: uppercase;
-      letter-spacing: .03em;
-    }
-
-    .tog-track {
-      width: 34px;
-      height: 19px;
-      border-radius: 999px;
-      background: var(--border2);
-      position: relative;
-      transition: background .2s;
-    }
-
-    .tog-track.on {
-      background: var(--accent);
-    }
-
-    .tog-thumb {
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      background: #fff;
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      transition: transform .2s;
-    }
-
-    .tog-track.on .tog-thumb {
-      transform: translateX(15px);
-    }
-
-    .hero {
-      max-width: 900px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 2.25rem 1.5rem 1.75rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: .375rem;
-      font-size: .6875rem;
-      font-family: var(--mono);
-      color: var(--accent);
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      margin-bottom: .75rem;
-    }
-
-    .hero h1 {
-      font-size: 1.625rem;
-      font-weight: 900;
-      letter-spacing: -.035em;
-      line-height: 1.1;
-      color: var(--text);
-      margin-bottom: .4rem;
-    }
-
-    .hero p {
-      font-size: .875rem;
-      color: var(--text2);
-      line-height: 1.6;
-      max-width: 440px;
-    }
-
-    main {
-      flex: 1;
-      max-width: 900px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 1.75rem 1.5rem;
-    }
-
-    .card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: var(--r2);
-    }
-
-    .card-hdr {
-      padding: .625rem 1rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--bg3);
-      border-radius: var(--r2) var(--r2) 0 0;
-    }
-
-    .card-hdr-title {
-      font-size: .6875rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      color: var(--text2);
-    }
-
-    .card-body {
-      padding: 1rem;
-    }
-
-    .code-area {
-      width: 100%;
-      min-height: 260px;
-      padding: .75rem .875rem;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: var(--r);
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: .7875rem;
-      line-height: 1.8;
-      resize: vertical;
-      outline: none;
-      transition: border-color .15s;
-    }
-
-    .code-area:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent-dim);
-    }
-
-    .code-area::placeholder {
-      color: var(--text3);
-    }
-
-    .finput {
-      padding: .4rem .625rem;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: var(--r);
-      color: var(--text);
-      font-family: 'Geist', sans-serif;
-      font-size: .8rem;
-      outline: none;
-      transition: border-color .15s;
-    }
-
-    .finput:focus {
-      border-color: var(--accent);
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .375rem;
-      padding: .5rem 1.25rem;
-      border-radius: var(--r);
-      font-size: .8125rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all .15s;
-      border: 1.5px solid transparent;
-      font-family: 'Geist', sans-serif;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-h);
-    }
-
-    .btn-ghost {
-      background: var(--bg3);
-      border-color: var(--border2);
-      color: var(--text2);
-    }
-
-    .btn-ghost:hover {
-      background: var(--bg4);
-      color: var(--text);
-    }
-
-    .icon-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--text3);
-      transition: all .15s;
-    }
-
-    .icon-btn:hover {
-      color: var(--text);
-      background: var(--bg4);
-    }
-
-    .toolbar {
-      display: flex;
-      align-items: center;
-      gap: .625rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-      padding: .625rem .875rem;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: var(--r2);
-    }
-
-    .toolbar label {
-      font-size: .7875rem;
-      color: var(--text2);
-      font-weight: 500;
-    }
-
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 1rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: .5rem;
-    }
-
-    footer p {
-      font-size: .7rem;
-      color: var(--text3);
-    }
-
-    .foot-links {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .foot-links a {
-      font-size: .7rem;
-      color: var(--text3);
-      text-decoration: none;
-      transition: color .15s;
-    }
-
-    .foot-links a:hover {
-      color: var(--text2);
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(8px)
+      #ldr img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        animation: ldrb 0.75s ease-in-out infinite alternate;
       }
 
-      to {
-        opacity: 1;
-        transform: none
+      #ldr p {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--text2);
       }
-    }
 
-    .fu {
-      animation: fadeUp .26s ease both;
-    }
+      #outputArea {
+        pointer-events: none;
+      }
 
-    .fd1 {
-      animation-delay: .05s
-    }
+      @keyframes ldrb {
+        to {
+          transform: translateY(-8px);
+        }
+      }
 
-    .fd2 {
-      animation-delay: .1s
-    }
+      #toasts {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        pointer-events: none;
+      }
 
-    .g2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
+      .toast {
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 0.875rem;
+        border-radius: var(--r);
 
-    @media(max-width:640px) {
-      .g2 {
-        grid-template-columns: 1fr;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text);
+
+        position: relative;
+        overflow: hidden;
+
+        /* MATCHES YOUR CARD SYSTEM */
+        background:
+          radial-gradient(
+            120% 120% at 0% 0%,
+            rgba(88, 101, 242, 0.14),
+            transparent 65%
+          ),
+          var(--bg3);
+
+        border: 1px solid var(--border);
+
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+
+        animation: tin 0.25s ease both;
+      }
+
+      /* success */
+      .toast.s {
+        border-left: 3px solid #22c55e;
+      }
+
+      /* error */
+      .toast.e {
+        border-left: 3px solid #ef4444;
+      }
+
+      .tbar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.3);
+        animation: tbar 4s linear forwards;
+      }
+
+      @keyframes tin {
+        from {
+          opacity: 0;
+          transform: translateX(12px);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      @keyframes tbar {
+        to {
+          width: 0;
+        }
+      }
+
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        border-bottom: 1px solid var(--border);
+        background: rgba(7, 8, 15, 0.88);
+        backdrop-filter: blur(18px);
+        height: 52px;
+        display: flex;
+        align-items: center;
+        padding: 0 1.5rem;
+        gap: 1rem;
+      }
+
+      html.light nav {
+        background: rgba(241, 242, 249, 0.9);
+      }
+
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+      }
+
+      .nav-logo img {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+      }
+
+      .nav-logo span {
+        font-weight: 800;
+        font-size: 0.9375rem;
+        color: var(--text);
+        letter-spacing: -0.02em;
+      }
+
+      .spacer {
+        flex: 1;
+      }
+
+      .tog {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .tog-lbl {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .tog-track {
+        width: 34px;
+        height: 19px;
+        border-radius: 999px;
+        background: var(--border2);
+        position: relative;
+        transition: background 0.2s;
+      }
+
+      .tog-track.on {
+        background: var(--accent);
+      }
+
+      .tog-thumb {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #fff;
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        transition: transform 0.2s;
+      }
+
+      .tog-track.on .tog-thumb {
+        transform: translateX(15px);
+      }
+
+      .hero {
+        max-width: 900px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 2.25rem 1.5rem 1.75rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-size: 0.6875rem;
+        font-family: var(--mono);
+        color: var(--accent);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
       }
 
       .hero h1 {
-        font-size: 1.375rem;
+        font-size: 1.625rem;
+        font-weight: 900;
+        letter-spacing: -0.035em;
+        line-height: 1.1;
+        color: var(--text);
+        margin-bottom: 0.4rem;
       }
-    }
-  </style>
-</head>
 
-<body>
-  <div id="ldr"><img src="https://bdtools.netlify.app/images/bdfd_logo.png" alt="" />
-    <p id="ldrtxt">Loading</p>
-  </div>
-  <div id="toasts"></div>
+      .hero p {
+        font-size: 0.875rem;
+        color: var(--text2);
+        line-height: 1.6;
+        max-width: 440px;
+      }
 
-  <nav>
-    <a href="/" class="nav-logo"><img src="https://bdtools.netlify.app/images/bdfd_logo.png"
-        onerror="this.style.display='none'" alt="" /><span>BDTools</span></a>
-    <div class="spacer"></div>
-    <div class="tog" onclick="toggleTheme()"><span class="tog-lbl">Dark</span>
-      <div class="tog-track on" id="tog">
-        <div class="tog-thumb"></div>
-      </div>
+      main {
+        flex: 1;
+        max-width: 900px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 1.75rem 1.5rem;
+      }
+
+      .card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--r2);
+      }
+
+      .card-hdr {
+        padding: 0.625rem 1rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--bg3);
+        border-radius: var(--r2) var(--r2) 0 0;
+      }
+
+      .card-hdr-title {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text2);
+      }
+
+      .card-body {
+        padding: 1rem;
+      }
+
+      .code-area {
+        width: 100%;
+        min-height: 260px;
+        padding: 0.75rem 0.875rem;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
+        color: var(--text);
+        font-family: var(--mono);
+        font-size: 0.7875rem;
+        line-height: 1.8;
+        resize: vertical;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+
+      .code-area:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent-dim);
+      }
+
+      .code-area::placeholder {
+        color: var(--text3);
+      }
+
+      .finput {
+        padding: 0.4rem 0.625rem;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
+        color: var(--text);
+        font-family: "Geist", sans-serif;
+        font-size: 0.8rem;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+
+      .finput:focus {
+        border-color: var(--accent);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 1.25rem;
+        border-radius: var(--r);
+        font-size: 0.8125rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s;
+        border: 1.5px solid transparent;
+        font-family: "Geist", sans-serif;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-h);
+      }
+
+      .btn-ghost {
+        background: var(--bg3);
+        border-color: var(--border2);
+        color: var(--text2);
+      }
+
+      .btn-ghost:hover {
+        background: var(--bg4);
+        color: var(--text);
+      }
+
+      .icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text3);
+        transition: all 0.15s;
+      }
+
+      .icon-btn:hover {
+        color: var(--text);
+        background: var(--bg4);
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+        padding: 0.625rem 0.875rem;
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: var(--r2);
+      }
+
+      .toolbar label {
+        font-size: 0.7875rem;
+        color: var(--text2);
+        font-weight: 500;
+      }
+
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      footer p {
+        font-size: 0.7rem;
+        color: var(--text3);
+      }
+
+      .foot-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .foot-links a {
+        font-size: 0.7rem;
+        color: var(--text3);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+
+      .foot-links a:hover {
+        color: var(--text2);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .fu {
+        animation: fadeUp 0.26s ease both;
+      }
+
+      .fd1 {
+        animation-delay: 0.05s;
+      }
+
+      .fd2 {
+        animation-delay: 0.1s;
+      }
+
+      .g2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      @media (max-width: 640px) {
+        .g2 {
+          grid-template-columns: 1fr;
+        }
+
+        .hero h1 {
+          font-size: 1.375rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="ldr">
+      <img src="https://bdtools.netlify.app/images/bdfd_logo.png" alt="" />
+      <p id="ldrtxt">Loading</p>
     </div>
-  </nav>
+    <div id="toasts"></div>
 
-  <div class="border-b border-[#1e2130]">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
-      <div class="flex items-start gap-4">
-        <div
-          class="w-11 h-11 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center flex-shrink-0">
-          <svg class="w-5 h-5 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h10M4 18h16" />
-          </svg>
-        </div>
-        <div>
-          <h1 class="text-2xl font-black text-white tracking-tight dark-text">Code Indenter</h1>
-          <p class="text-gray-400 text-sm mt-1 dark-text-2">Automatically indent and clean up your BDFD command scripts
-            for better readability.</p>
-          <div class="flex flex-wrap gap-1.5 mt-3">
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">JavaScript</span>
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">HTML</span>
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">Tailwind
-              CSS</span>
-          </div>
+    <nav>
+      <a href="/" class="nav-logo"
+        ><img
+          src="https://bdtools.netlify.app/images/bdfd_logo.png"
+          onerror="this.style.display = 'none'"
+          alt=""
+        /><span>BDTools</span></a
+      >
+      <div class="spacer"></div>
+      <div class="tog" onclick="toggleTheme()">
+        <span class="tog-lbl">Dark</span>
+        <div class="tog-track on" id="tog">
+          <div class="tog-thumb"></div>
         </div>
       </div>
-    </div>
-  </div>
+    </nav>
 
-  <main>
-    <!-- Toolbar -->
-    <div class="toolbar fu fd1">
-      <label>Indent size:</label>
-      <select id="indentSize" class="finput">
-        <option value="2">2 spaces</option>
-        <option value="4" selected>4 spaces</option>
-        <option value="tab">Tab</option>
-      </select>
-      <div style="flex:1;"></div>
-      <button class="btn btn-primary" id="indent-btn">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="12" x2="15" y2="12" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
-        Indent Code
-      </button>
-      <button class="btn btn-ghost" id="clear-btn">Clear</button>
-    </div>
-
-    <div class="g2 fu fd1">
-      <div class="card">
-        <div class="card-hdr">
-          <span class="card-hdr-title">Input</span>
-
-          <div style="display:flex;align-items:center;gap:.5rem;">
-
-            <!-- Lines display -->
-            <span style="
-      display: inline-flex;
-      align-items: center;
-      gap: .35rem;
-      padding: .2rem .5rem;
-      border-radius: 6px;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      font-size: .6875rem;
-      color: var(--text3);
-      font-family: var(--mono);
-      margin-bottom: .25rem;
-    ">
-              <span id="inlines" style="color:var(--text);">0</span>
-            </span>
-
-          </div>
-        </div>
-        <div class="card-body"><textarea id="inputArea" class="code-area" placeholder="Paste your BDFD code here…"
-            oninput="updateCount()"></textarea></div>
-      </div>
-      <div class="card">
-        <div class="card-hdr">
-          <span class="card-hdr-title">Indented Output</span>
-          <button class="icon-btn" id="copy-btn" title="Copy">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <rect x="9" y="9" width="13" height="13" rx="2" />
-              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+    <div class="border-b border-[#1e2130]">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
+        <div class="flex items-start gap-4">
+          <div
+            class="w-11 h-11 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center flex-shrink-0"
+          >
+            <svg
+              class="w-5 h-5 text-[#5865F2]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M4 6h16M4 12h10M4 18h16"
+              />
             </svg>
-          </button>
+          </div>
+          <div>
+            <h1 class="text-2xl font-black text-white tracking-tight dark-text">
+              Code Indenter
+            </h1>
+            <p class="text-gray-400 text-sm mt-1 dark-text-2">
+              Automatically indent and clean up your BDFD command scripts for
+              better readability.
+            </p>
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >JavaScript</span
+              >
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >HTML</span
+              >
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >Tailwind CSS</span
+              >
+            </div>
+          </div>
         </div>
-        <div class="card-body"><textarea id="outputArea" class="code-area" readonly
-            placeholder="Indented output will appear here…"></textarea></div>
       </div>
     </div>
-  </main>
 
-  <footer>
-    <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
-    <div class="foot-links"><a href="/tos">Terms</a><a href="/privacy">Privacy</a><a href="/contact">Contact</a></div>
-  </footer>
+    <main>
+      <!-- Toolbar -->
+      <div class="toolbar fu fd1">
+        <label>Indent size:</label>
+        <select id="indentSize" class="finput">
+          <option value="2">2 spaces</option>
+          <option value="4" selected>4 spaces</option>
+          <option value="tab">Tab</option>
+        </select>
+        <div style="flex: 1"></div>
+        <button class="btn btn-primary" id="indent-btn">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+          >
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="15" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+          Indent Code
+        </button>
+        <button class="btn btn-ghost" id="clear-btn">Clear</button>
+      </div>
 
-  <script>
-    const ldrtxt = document.getElementById('ldrtxt'); let dc = 0;
-    const di = setInterval(() => { dc = (dc + 1) % 4; ldrtxt.textContent = 'Loading' + '.'.repeat(dc); }, 350);
-    window.addEventListener('load', () => { setTimeout(() => { const l = document.getElementById('ldr'); l.classList.add('out'); setTimeout(() => l.remove(), 400); clearInterval(di); }, 900); });
-    function toast(msg, type = 's') { const box = document.getElementById('toasts'); const t = document.createElement('div'); t.className = `toast ${type}`; t.style.position = 'relative'; t.style.overflow = 'hidden'; t.innerHTML = `<span>${msg}</span><div class="tbar"></div>`; box.appendChild(t); setTimeout(() => t.remove(), 4500); }
-    function toggleTheme() { const h = document.documentElement, t = document.getElementById('tog'); const dark = h.classList.toggle('dark'); localStorage.setItem('darkMode', dark ? 'enabled' : 'disabled'); t.classList.toggle('on', dark); }
-    (function () { document.getElementById('tog').classList.toggle('on', document.documentElement.classList.contains('dark')); })();
+      <div class="g2 fu fd1">
+        <div class="card">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Input</span>
 
-    function updateCount() { const v = document.getElementById('inputArea').value; document.getElementById('inlines').textContent = (v ? v.split('\n').length : 0) + ' lines'; }
+            <div style="display: flex; align-items: center; gap: 0.5rem">
+              <!-- Lines display -->
+              <span
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 0.35rem;
+                  padding: 0.2rem 0.5rem;
+                  border-radius: 6px;
+                  background: var(--bg3);
+                  border: 1px solid var(--border);
+                  font-size: 0.6875rem;
+                  color: var(--text3);
+                  font-family: var(--mono);
+                  margin-bottom: 0.25rem;
+                "
+              >
+                <span id="inlines" style="color: var(--text)">0</span>
+              </span>
+            </div>
+          </div>
+          <div class="card-body">
+            <textarea
+              id="inputArea"
+              class="code-area"
+              placeholder="Paste your BDFD code here…"
+              oninput="updateCount()"
+            ></textarea>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Indented Output</span>
+            <button class="icon-btn" id="copy-btn" title="Copy">
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+              </svg>
+            </button>
+          </div>
+          <div class="card-body">
+            <textarea
+              id="outputArea"
+              class="code-area"
+              readonly
+              placeholder="Indented output will appear here…"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </main>
 
-    function runIndent() {
-      const raw = document.getElementById('inputArea').value;
-      if (!raw.trim()) { toast('Nothing to indent', 'e'); return; }
-      const sizeVal = document.getElementById('indentSize').value;
-      const unit = sizeVal === 'tab' ? '\t' : ' '.repeat(Number(sizeVal));
-      const opens = ['$if[', '$elseif[', '$else', '$loop[', '$try', '$switch[', '$case['];
-      const closes = ['$endif', '$endloop', '$endtry', '$endswitch', '$break'];
-      const mids = ['$elseif[', '$else', '$catch', '$case['];
-      const lines = raw.split('\n');
-      let level = 0;
-      const result = lines.map(line => {
-        const trimmed = line.trim(); const lc = trimmed.toLowerCase();
-        const isClose = closes.some(t => lc.startsWith(t.toLowerCase()));
-        const isMid = mids.some(t => lc.startsWith(t.toLowerCase()));
-        if (isClose || isMid) level = Math.max(0, level - 1);
-        const indented = unit.repeat(level) + trimmed;
-        const isOpen = opens.some(t => lc.startsWith(t.toLowerCase()));
-        if (isOpen || isMid) level++;
-        return indented;
+    <footer>
+      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+      <div class="foot-links">
+        <a href="/tos">Terms</a><a href="/privacy">Privacy</a
+        ><a href="/contact">Contact</a>
+      </div>
+    </footer>
+
+    <script>
+      const ldrtxt = document.getElementById("ldrtxt");
+      let dc = 0;
+      const di = setInterval(() => {
+        dc = (dc + 1) % 4;
+        ldrtxt.textContent = "Loading" + ".".repeat(dc);
+      }, 350);
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          const l = document.getElementById("ldr");
+          l.classList.add("out");
+          setTimeout(() => l.remove(), 400);
+          clearInterval(di);
+        }, 900);
       });
-      document.getElementById('outputArea').value = result.join('\n');
-      toast('Code indented', 's');
-    }
+      function toast(msg, type = "s") {
+        const box = document.getElementById("toasts");
+        const t = document.createElement("div");
+        t.className = `toast ${type}`;
+        t.style.position = "relative";
+        t.style.overflow = "hidden";
+        t.innerHTML = `<span>${msg}</span><div class="tbar"></div>`;
+        box.appendChild(t);
+        setTimeout(() => t.remove(), 4500);
+      }
+      function toggleTheme() {
+        const h = document.documentElement,
+          t = document.getElementById("tog");
+        const dark = h.classList.toggle("dark");
+        localStorage.setItem("darkMode", dark ? "enabled" : "disabled");
+        t.classList.toggle("on", dark);
+      }
+      (function () {
+        document
+          .getElementById("tog")
+          .classList.toggle(
+            "on",
+            document.documentElement.classList.contains("dark"),
+          );
+      })();
 
-    document.getElementById('indent-btn').addEventListener('click', runIndent);
-    document.getElementById('copy-btn').addEventListener('click', () => {
-      const v = document.getElementById('outputArea').value;
-      if (!v) { toast('Nothing to copy', 'e'); return; }
-      navigator.clipboard.writeText(v).then(() => toast('Copied', 's')).catch(() => toast('Copy failed', 'e'));
-    });
-    document.getElementById('clear-btn').addEventListener('click', () => {
-      document.getElementById('inputArea').value = '';
-      document.getElementById('outputArea').value = '';
-      updateCount(); toast('Cleared', 's');
-    });
-  </script>
-</body>
+      function updateCount() {
+        const v = document.getElementById("inputArea").value;
+        document.getElementById("inlines").textContent =
+          (v ? v.split("\n").length : 0) + " lines";
+      }
+
+      function runIndent() {
+        const raw = document.getElementById("inputArea").value;
+        if (!raw.trim()) {
+          toast("Nothing to indent", "e");
+          return;
+        }
+        const sizeVal = document.getElementById("indentSize").value;
+        const unit = sizeVal === "tab" ? "\t" : " ".repeat(Number(sizeVal));
+        const opens = [
+          "$if[",
+          "$elseif[",
+          "$else",
+          "$loop[",
+          "$try",
+          "$switch[",
+          "$case[",
+        ];
+        const closes = [
+          "$endif",
+          "$endloop",
+          "$endtry",
+          "$endswitch",
+          "$break",
+        ];
+        const mids = ["$elseif[", "$else", "$catch", "$case["];
+        const lines = raw.split("\n");
+        let level = 0;
+        const result = lines.map((line) => {
+          const trimmed = line.trim();
+          const lc = trimmed.toLowerCase();
+          const isClose = closes.some((t) => lc.startsWith(t.toLowerCase()));
+          const isMid = mids.some((t) => lc.startsWith(t.toLowerCase()));
+          if (isClose || isMid) level = Math.max(0, level - 1);
+          const indented = unit.repeat(level) + trimmed;
+          const isOpen = opens.some((t) => lc.startsWith(t.toLowerCase()));
+          if (isOpen || isMid) level++;
+          return indented;
+        });
+        document.getElementById("outputArea").value = result.join("\n");
+        toast("Code indented", "s");
+      }
+
+      document
+        .getElementById("indent-btn")
+        .addEventListener("click", runIndent);
+      document.getElementById("copy-btn").addEventListener("click", () => {
+        const v = document.getElementById("outputArea").value;
+        if (!v) {
+          toast("Nothing to copy", "e");
+          return;
+        }
+        navigator.clipboard
+          .writeText(v)
+          .then(() => toast("Copied", "s"))
+          .catch(() => toast("Copy failed", "e"));
+      });
+      document.getElementById("clear-btn").addEventListener("click", () => {
+        document.getElementById("inputArea").value = "";
+        document.getElementById("outputArea").value = "";
+        updateCount();
+        toast("Cleared", "s");
+      });
+    </script>
+  </body>
 </html>

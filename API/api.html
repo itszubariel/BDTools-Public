@@ -144,7 +144,7 @@
       width: 40px;
       height: 22px;
       border-radius: 999px;
-      background: #1e2130;
+      background: #5865F2;
       position: relative;
       cursor: pointer;
       transition: background .2s;
@@ -345,8 +345,13 @@
     }
 
     html.light .code-block {
-      background: #1e1e2e !important;
-      border-color: #2e3350 !important;
+      background: #ececec;
+      border-color: #dbdbdb;
+    }
+
+    html.light .dark-code {
+      background: #ececec;
+      border-color: #dbdbdb;
     }
 
     html.light .input-field {
@@ -388,6 +393,16 @@
       background: #e2e4ef;
       color: #0f1117;
     }
+
+    html.light footer {
+      background: #f4f5fa !important;
+      border-color: #e2e4ef !important;
+    }
+
+    html.light .lowerNav {
+      background: rgba(244, 245, 250, .92) !important;
+      border-color: #e2e4ef !important;
+    }
   </style>
 </head>
 
@@ -398,7 +413,7 @@
     <div class="fu text-center px-6 w-full max-w-sm">
       <img src="/images/bdfd_logo.png" alt="BDTools" class="w-16 h-16 rounded-2xl mx-auto mb-6 shadow-2xl"
         onerror="this.style.display='none'" />
-      <h1 class="text-2xl font-black text-white mb-2 tracking-tight">BDTools API Docs</h1>
+      <h1 class="dark-text text-2xl font-black text-white mb-2 tracking-tight">BDTools API Docs</h1>
       <p class="text-gray-400 text-sm mb-8">Sign in with Discord to access the full API documentation, your personal API
         key, and the interactive tester.</p>
       <button id="loginBtn" onclick="loginDiscord()"
@@ -414,19 +429,22 @@
   </div>
 
   <!-- ── NAV ── -->
-  <nav class="sticky top-0 z-50 border-b border-[#1e2130] bg-[#080a10]/90 backdrop-blur-xl">
+  <nav class="sticky top-0 z-50 border-b" style="border-color:#1e2130;background:#080a10/90">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
-      <a href="/" class="flex items-center gap-2.5 flex-shrink-0">
+      <a href="/" class="flex items-center gap-2.5 group flex-shrink-0">
         <img src="/images/bdfd_logo.png" alt="BDTools" class="w-7 h-7 rounded-lg" onerror="this.style.display='none'" />
-        <span class="font-bold text-white tracking-tight">BDTools</span>
+        <span class="font-bold tracking-tight t1">BDTools</span>
       </a>
       <div id="userInfo" class="hidden items-center gap-2 min-w-0">
         <img id="userAvatar" src="" alt="" class="w-7 h-7 rounded-full flex-shrink-0" />
         <span id="userName" class="font-semibold text-sm hidden sm:block truncate"></span>
         <button onclick="openLogoutModal()"
           class="text-xs text-gray-500 hover:text-red-400 transition-colors ml-1 flex-shrink-0">Logout</button>
+        <span id="themeLabel" class="text-xs text-gray-500 hidden sm:block select-none">Dark Mode</span>
+        <div id="themeToggle" class="tog-track on" onclick="toggleTheme()">
+          <div class="tog-thumb"></div>
+        </div>
       </div>
-    </div>
   </nav>
 
   <!-- ── LOGOUT MODAL ── -->
@@ -448,7 +466,7 @@
   </div>
 
   <!-- ── HERO ── -->
-  <div class="border-b border-[#1e2130]">
+  <div class="lowerNav border-b border-[#1e2130]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
       <p class="text-xs font-mono text-[#5865F2] uppercase tracking-widest mb-3">// reference</p>
       <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight dark-text mb-2">API Documentation</h1>
@@ -518,12 +536,12 @@
           <h2 class="text-base sm:text-lg font-bold text-white dark-text">Your API Key</h2>
         </div>
         <div
-          class="bg-[#060810] border border-[#1e2130] rounded-xl px-4 py-3 flex items-center justify-between gap-3 mb-3 min-w-0">
+          class="dark-code bg-[#060810] border border-[#1e2130] rounded-xl px-4 py-3 flex items-center justify-between gap-3 mb-3 min-w-0">
           <span id="apiKeyDisplay"
             class="font-mono text-sm text-gray-400 tracking-widest truncate min-w-0">Loading…</span>
           <div class="flex items-center gap-2 flex-shrink-0">
             <button onclick="toggleKeyVisibility()" id="toggleKeyBtn"
-              class="text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold whitespace-nowrap">Show</button>
+              class="dark-text dark-surface text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold whitespace-nowrap">Show</button>
             <button onclick="copyApiKey()"
               class="text-xs bg-[#5865F2]/10 hover:bg-[#5865F2]/20 text-[#818cf8] border border-[#5865F2]/20 px-3 py-1.5 rounded-lg transition-colors font-semibold whitespace-nowrap">Copy</button>
           </div>
@@ -546,22 +564,22 @@
         </div>
         <div class="space-y-3">
           <!-- POST -->
-          <div class="bg-[#060810] border border-[#1e2130] rounded-xl p-4">
+          <div class="dark-code bg-[#060810] border border-[#1e2130] rounded-xl p-4">
             <div class="flex items-center gap-2 mb-2">
               <span
                 class="text-[11px] font-mono font-bold bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded flex-shrink-0">POST</span>
-              <code class="font-mono text-sm text-gray-200 break-all">/submit-server</code>
+              <code class="dark-text font-mono text-sm text-gray-200 break-all">/submit-server</code>
             </div>
             <p class="text-xs text-gray-500">Submit your bot's guild list to BDTools. Requires Authorization header.
               Rate limited to 1 request per 5 hours.</p>
           </div>
           <!-- GET -->
-          <div class="bg-[#060810] border border-[#1e2130] rounded-xl p-4">
+          <div class="dark-code bg-[#060810] border border-[#1e2130] rounded-xl p-4">
             <div class="flex items-center justify-between gap-2 mb-2">
               <div class="flex items-center gap-2 min-w-0">
                 <span
                   class="text-[11px] font-mono font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded flex-shrink-0">GET</span>
-                <code class="font-mono text-sm text-gray-200 break-all">/get-servers</code>
+                <code class="dark-text font-mono text-sm text-gray-200 break-all">/get-servers</code>
               </div>
               <!-- Tooltip -->
               <div class="relative group flex-shrink-0">
@@ -599,7 +617,7 @@
             <h2 class="text-base sm:text-lg font-bold text-white dark-text">Example Usage</h2>
           </div>
           <button onclick="copyCode()"
-            class="text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold flex-shrink-0">
+            class="dark-text dark-surface text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold flex-shrink-0">
             Copy Code
           </button>
         </div>
@@ -731,6 +749,34 @@
   </div>
 
   <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const toggle = document.getElementById('themeToggle');
+      const label = document.getElementById('themeLabel');
+      const isLight = html.classList.contains('light');
+
+      if (isLight) {
+        html.classList.replace('light', 'dark');
+        toggle.classList.add('on');
+        label.textContent = 'Dark Mode';
+      } else {
+        html.classList.replace('dark', 'light');
+        toggle.classList.remove('on');
+        label.textContent = 'Light Mode';
+      }
+      localStorage.setItem('theme', isLight ? 'dark' : 'light');
+    }
+
+    /* ── Apply saved preference on load ── */
+    (function () {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'light') {
+        document.documentElement.classList.replace('dark', 'light');
+        document.getElementById('themeToggle').classList.remove('on');
+        document.getElementById('themeLabel').textContent = 'Light Mode';
+      }
+    })();
+
     const DISCORD_CLIENT_ID = '1395739162635800789';
     const REDIRECT_URI = 'https://bdtools.netlify.app/api';
 

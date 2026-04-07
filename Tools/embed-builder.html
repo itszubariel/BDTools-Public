@@ -1,1348 +1,1585 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="dark">
-
-<head>
-  <script>(function () { localStorage.getItem('darkMode') === 'enabled' ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark'); })()</script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BDTools | Embed Builder</title>
-  <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
-    rel="stylesheet" />
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
-
-    body {
-      font-family: 'Geist', sans-serif;
-      background: #07080f;
-      color: #f0eff8;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    :root {
-      --bg: #07080f;
-      --bg2: #0d0f1a;
-      --bg3: #12141f;
-      --bg4: #181a28;
-      --bg5: #1e2133;
-      --border: #1e2133;
-      --border2: #252840;
-      --border3: #2e3150;
-      --accent: #5865f2;
-      --accent-h: #4752c4;
-      --accent-dim: rgba(88, 101, 242, .14);
-      --text: #f0eff8;
-      --text2: #8b8aa8;
-      --text3: #45435e;
-      --mono: 'Geist Mono', monospace;
-      --r: 10px;
-      --r2: 14px;
-    }
-
-    html.light body {
-      background: #f1f2f9;
-      color: #0d0f1a;
-    }
-
-    html.light {
-      --bg: #f1f2f9;
-      --bg2: #ffffff;
-      --bg3: #e8e9f2;
-      --bg4: #dfe0ec;
-      --bg5: #d5d6e8;
-      --border: #dcdde8;
-      --border2: #d0d1de;
-      --border3: #c4c5d4;
-      --text: #0d0f1a;
-      --text2: #54526e;
-      --text3: #a0a0b8;
-    }
-
-    #ldr {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: .875rem;
-      transition: opacity .4s;
-    }
-
-    #ldr.out {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    #ldr img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      animation: ldrb .75s ease-in-out infinite alternate;
-    }
-
-    #ldr p {
-      font-size: .8125rem;
-      font-weight: 600;
-      color: var(--text2);
-    }
-
-    #output-text {
-      pointer-events: none;
-    }
-
-    @keyframes ldrb {
-      to {
-        transform: translateY(-8px)
+  <head>
+    <script>
+      (function () {
+        localStorage.getItem("darkMode") === "enabled"
+          ? document.documentElement.classList.add("dark")
+          : document.documentElement.classList.remove("dark");
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BDTools | Embed Builder</title>
+    <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-    }
 
-    #toasts {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: .4rem;
-      pointer-events: none;
-    }
+      body {
+        font-family: "Geist", sans-serif;
+        background: #07080f;
+        color: #f0eff8;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        -webkit-font-smoothing: antialiased;
+      }
 
-    .toast {
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      padding: .625rem .875rem;
-      border-radius: var(--r);
+      :root {
+        --bg: #07080f;
+        --bg2: #0d0f1a;
+        --bg3: #12141f;
+        --bg4: #181a28;
+        --bg5: #1e2133;
+        --border: #1e2133;
+        --border2: #252840;
+        --border3: #2e3150;
+        --accent: #5865f2;
+        --accent-h: #4752c4;
+        --accent-dim: rgba(88, 101, 242, 0.14);
+        --text: #f0eff8;
+        --text2: #8b8aa8;
+        --text3: #45435e;
+        --mono: "Geist Mono", monospace;
+        --r: 10px;
+        --r2: 14px;
+      }
 
-      font-size: .8rem;
-      font-weight: 600;
-      color: var(--text);
+      html.light body {
+        background: #f1f2f9;
+        color: #0d0f1a;
+      }
 
-      position: relative;
-      overflow: hidden;
+      html.light {
+        --bg: #f1f2f9;
+        --bg2: #ffffff;
+        --bg3: #e8e9f2;
+        --bg4: #dfe0ec;
+        --bg5: #d5d6e8;
+        --border: #dcdde8;
+        --border2: #d0d1de;
+        --border3: #c4c5d4;
+        --text: #0d0f1a;
+        --text2: #54526e;
+        --text3: #a0a0b8;
+      }
 
-      /* MATCHES YOUR CARD SYSTEM */
-      background:
-        radial-gradient(120% 120% at 0% 0%, rgba(88, 101, 242, 0.14), transparent 65%),
-        var(--bg3);
+      #ldr {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.875rem;
+        transition: opacity 0.4s;
+      }
 
-      border: 1px solid var(--border);
-
-      box-shadow: 0 6px 24px rgba(0, 0, 0, .35);
-
-      animation: tin .25s ease both;
-    }
-
-    /* success */
-    .toast.s {
-      border-left: 3px solid #22c55e;
-    }
-
-    /* error */
-    .toast.e {
-      border-left: 3px solid #ef4444;
-    }
-
-    .tbar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 2px;
-      width: 100%;
-      background: rgba(255, 255, 255, .3);
-      animation: tbar 4s linear forwards;
-    }
-
-    @keyframes tin {
-      from {
+      #ldr.out {
         opacity: 0;
-        transform: translateX(12px)
+        pointer-events: none;
       }
 
-      to {
-        opacity: 1;
-        transform: none
+      #ldr img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        animation: ldrb 0.75s ease-in-out infinite alternate;
       }
-    }
 
-    @keyframes tbar {
-      to {
-        width: 0
+      #ldr p {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--text2);
       }
-    }
 
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      border-bottom: 1px solid var(--border);
-      background: rgba(7, 8, 15, .88);
-      backdrop-filter: blur(18px);
-      height: 52px;
-      display: flex;
-      align-items: center;
-      padding: 0 1.5rem;
-      gap: 1rem;
-    }
+      #output-text {
+        pointer-events: none;
+      }
 
-    html.light nav {
-      background: rgba(241, 242, 249, .9);
-    }
+      @keyframes ldrb {
+        to {
+          transform: translateY(-8px);
+        }
+      }
 
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      text-decoration: none;
-    }
+      #toasts {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        pointer-events: none;
+      }
 
-    .nav-logo img {
-      width: 26px;
-      height: 26px;
-      border-radius: 7px;
-    }
+      .toast {
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 0.875rem;
+        border-radius: var(--r);
 
-    .nav-logo span {
-      font-weight: 800;
-      font-size: .9375rem;
-      color: var(--text);
-      letter-spacing: -.02em;
-    }
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text);
 
-    .spacer {
-      flex: 1;
-    }
+        position: relative;
+        overflow: hidden;
 
-    .tog {
-      display: flex;
-      align-items: center;
-      gap: .4rem;
-      cursor: pointer;
-      user-select: none;
-    }
+        /* MATCHES YOUR CARD SYSTEM */
+        background:
+          radial-gradient(
+            120% 120% at 0% 0%,
+            rgba(88, 101, 242, 0.14),
+            transparent 65%
+          ),
+          var(--bg3);
 
-    .tog-lbl {
-      font-size: .7rem;
-      font-weight: 600;
-      color: var(--text3);
-      text-transform: uppercase;
-      letter-spacing: .03em;
-    }
+        border: 1px solid var(--border);
 
-    .tog-track {
-      width: 34px;
-      height: 19px;
-      border-radius: 999px;
-      background: var(--border2);
-      position: relative;
-      transition: background .2s;
-      flex-shrink: 0;
-    }
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
 
-    .tog-track.on {
-      background: var(--accent);
-    }
+        animation: tin 0.25s ease both;
+      }
 
-    .tog-thumb {
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      background: #fff;
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      transition: transform .2s;
-    }
+      /* success */
+      .toast.s {
+        border-left: 3px solid #22c55e;
+      }
 
-    .tog-track.on .tog-thumb {
-      transform: translateX(15px);
-    }
+      /* error */
+      .toast.e {
+        border-left: 3px solid #ef4444;
+      }
 
-    .hero {
-      max-width: 1080px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 2.25rem 1.5rem 1.75rem;
-      border-bottom: 1px solid var(--border);
-    }
+      .tbar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.3);
+        animation: tbar 4s linear forwards;
+      }
 
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: .375rem;
-      font-size: .6875rem;
-      font-family: var(--mono);
-      color: var(--accent);
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      margin-bottom: .75rem;
-    }
+      @keyframes tin {
+        from {
+          opacity: 0;
+          transform: translateX(12px);
+        }
 
-    .hero h1 {
-      font-size: 1.625rem;
-      font-weight: 900;
-      letter-spacing: -.035em;
-      line-height: 1.1;
-      color: var(--text);
-      margin-bottom: .4rem;
-    }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
 
-    .hero p {
-      font-size: .875rem;
-      color: var(--text2);
-      line-height: 1.6;
-      max-width: 480px;
-    }
+      @keyframes tbar {
+        to {
+          width: 0;
+        }
+      }
 
-    main {
-      flex: 1;
-      max-width: 1080px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 1.75rem 1.5rem;
-    }
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        border-bottom: 1px solid var(--border);
+        background: rgba(7, 8, 15, 0.88);
+        backdrop-filter: blur(18px);
+        height: 52px;
+        display: flex;
+        align-items: center;
+        padding: 0 1.5rem;
+        gap: 1rem;
+      }
 
-    .layout {
-      display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 1.25rem;
-    }
+      html.light nav {
+        background: rgba(241, 242, 249, 0.9);
+      }
 
-    @media(max-width:900px) {
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+      }
+
+      .nav-logo img {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+      }
+
+      .nav-logo span {
+        font-weight: 800;
+        font-size: 0.9375rem;
+        color: var(--text);
+        letter-spacing: -0.02em;
+      }
+
+      .spacer {
+        flex: 1;
+      }
+
+      .tog {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .tog-lbl {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .tog-track {
+        width: 34px;
+        height: 19px;
+        border-radius: 999px;
+        background: var(--border2);
+        position: relative;
+        transition: background 0.2s;
+        flex-shrink: 0;
+      }
+
+      .tog-track.on {
+        background: var(--accent);
+      }
+
+      .tog-thumb {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #fff;
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        transition: transform 0.2s;
+      }
+
+      .tog-track.on .tog-thumb {
+        transform: translateX(15px);
+      }
+
+      .hero {
+        max-width: 1080px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 2.25rem 1.5rem 1.75rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-size: 0.6875rem;
+        font-family: var(--mono);
+        color: var(--accent);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+
+      .hero h1 {
+        font-size: 1.625rem;
+        font-weight: 900;
+        letter-spacing: -0.035em;
+        line-height: 1.1;
+        color: var(--text);
+        margin-bottom: 0.4rem;
+      }
+
+      .hero p {
+        font-size: 0.875rem;
+        color: var(--text2);
+        line-height: 1.6;
+        max-width: 480px;
+      }
+
+      main {
+        flex: 1;
+        max-width: 1080px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 1.75rem 1.5rem;
+      }
+
       .layout {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 1.25rem;
       }
-    }
 
-    /* card */
-    .card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: var(--r2);
-      margin-bottom: .875rem;
-    }
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
 
-    .card:last-child {
-      margin-bottom: 0;
-    }
+      /* card */
+      .card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--r2);
+        margin-bottom: 0.875rem;
+      }
 
-    .card-hdr {
-      padding: .625rem 1rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--bg3);
-      border-radius: var(--r2) var(--r2) 0 0;
-    }
+      .card:last-child {
+        margin-bottom: 0;
+      }
 
-    .card-hdr-title {
-      font-size: .6875rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      color: var(--text3);
-    }
+      .card-hdr {
+        padding: 0.625rem 1rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--bg3);
+        border-radius: var(--r2) var(--r2) 0 0;
+      }
 
-    .card-body {
-      padding: 1rem;
-    }
+      .card-hdr-title {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text3);
+      }
 
-    /* section inside card */
-    .section {
-      margin-bottom: .875rem;
-    }
+      .card-body {
+        padding: 1rem;
+      }
 
-    .section:last-child {
-      margin-bottom: 0;
-    }
+      /* section inside card */
+      .section {
+        margin-bottom: 0.875rem;
+      }
 
-    .slabel {
-      font-size: .6875rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      color: var(--text3);
-      display: block;
-      margin-bottom: .4rem;
-    }
+      .section:last-child {
+        margin-bottom: 0;
+      }
 
-    /* inputs */
-    .finput {
-      width: 100%;
-      padding: .45rem .7rem;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: var(--r);
-      color: var(--text);
-      font-family: 'Geist', sans-serif;
-      font-size: .8rem;
-      outline: none;
-      transition: border-color .15s;
-    }
+      .slabel {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text3);
+        display: block;
+        margin-bottom: 0.4rem;
+      }
 
-    .finput:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent-dim);
-    }
+      /* inputs */
+      .finput {
+        width: 100%;
+        padding: 0.45rem 0.7rem;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
+        color: var(--text);
+        font-family: "Geist", sans-serif;
+        font-size: 0.8rem;
+        outline: none;
+        transition: border-color 0.15s;
+      }
 
-    .finput::placeholder {
-      color: var(--text3);
-    }
+      .finput:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent-dim);
+      }
 
-    textarea.finput {
-      resize: vertical;
-      line-height: 1.6;
-    }
+      .finput::placeholder {
+        color: var(--text3);
+      }
 
-    select.finput {
-      cursor: pointer;
-    }
+      textarea.finput {
+        resize: vertical;
+        line-height: 1.6;
+      }
 
-    .g2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: .5rem;
-    }
+      select.finput {
+        cursor: pointer;
+      }
 
-    .g3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: .5rem;
-    }
+      .g2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+      }
 
-    @media(max-width:600px) {
-
-      .g2,
       .g3 {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* checkbox */
-    .chk {
-      display: flex;
-      align-items: center;
-      gap: .4rem;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .chk input[type=checkbox] {
-      appearance: none;
-      -webkit-appearance: none;
-      width: .9375rem;
-      height: .9375rem;
-      border-radius: 4px;
-      border: 1.5px solid var(--border2);
-      background: var(--bg);
-      cursor: pointer;
-      transition: all .15s;
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .chk input[type=checkbox]:checked {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .chk input[type=checkbox]:checked::after {
-      content: '';
-      position: absolute;
-      left: 3px;
-      top: 1px;
-      width: 4px;
-      height: 7px;
-      border: 1.5px solid #fff;
-      border-top: none;
-      border-left: none;
-      transform: rotate(45deg);
-    }
-
-    .chk span {
-      font-size: .8rem;
-      color: var(--text2);
-    }
-
-    /* btn */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .3rem;
-      padding: .4rem .875rem;
-      border-radius: var(--r);
-      font-size: .7875rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all .15s;
-      border: 1.5px solid transparent;
-      font-family: 'Geist', sans-serif;
-      white-space: nowrap;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-h);
-    }
-
-    .btn-ghost {
-      background: var(--bg3);
-      border-color: var(--border2);
-      color: var(--text2);
-    }
-
-    .btn-ghost:hover {
-      background: var(--bg4);
-      color: var(--text);
-    }
-
-    .btn-full {
-      width: 100%;
-      justify-content: center;
-    }
-
-    .icon-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 26px;
-      height: 26px;
-      border-radius: 7px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--text3);
-      transition: all .15s;
-    }
-
-    .icon-btn:hover {
-      color: var(--text);
-      background: var(--bg4);
-    }
-
-    /* comp block */
-    .comp-block {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: var(--r2);
-      padding: .875rem;
-      margin-bottom: .625rem;
-      position: relative;
-    }
-
-    .comp-block-inner {
-      background: var(--bg4);
-      border: 1px solid var(--border2);
-      border-radius: var(--r);
-      padding: .75rem;
-      margin-top: .625rem;
-    }
-
-    .comp-title {
-      font-size: .75rem;
-      font-weight: 700;
-      color: var(--text2);
-      margin-bottom: .625rem;
-    }
-
-    .comp-actions {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: .375rem;
-    }
-
-    /* action bar */
-    .action-bar {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: .5rem;
-      padding: .75rem 1rem;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: var(--r2);
-      margin-bottom: .875rem;
-    }
-
-    /* output */
-    .out-area {
-      width: 100%;
-      min-height: 140px;
-      padding: .75rem .875rem;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: var(--r);
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: .7625rem;
-      line-height: 1.8;
-      resize: vertical;
-      outline: none;
-    }
-
-    /* preview */
-    .preview-wrap {
-      background: #2b2d31;
-      border-radius: var(--r2);
-      padding: 1rem;
-    }
-
-    .preview-msg {
-      display: flex;
-      align-items: flex-start;
-      gap: .75rem;
-    }
-
-    .preview-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .preview-content {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .preview-meta {
-      display: flex;
-      align-items: center;
-      gap: .375rem;
-      margin-bottom: .25rem;
-    }
-
-    .preview-name {
-      font-size: .875rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .preview-badge {
-      background: #5865f2;
-      color: #fff;
-      font-size: .6rem;
-      padding: .1rem .3rem;
-      border-radius: 3px;
-      font-weight: 700;
-    }
-
-    .preview-time {
-      font-size: .75rem;
-      color: #72767d;
-    }
-
-    .preview-embed {
-      border-radius: 4px;
-      overflow: hidden;
-      display: flex;
-      margin-top: .25rem;
-    }
-
-    .embed-pill {
-      width: 4px;
-      flex-shrink: 0;
-    }
-
-    .embed-body {
-      padding: .75rem;
-      flex: 1;
-      min-width: 0;
-      position: relative;
-    }
-
-    .embed-author {
-      font-size: .75rem;
-      font-weight: 600;
-      color: #dbdee1;
-      display: flex;
-      align-items: center;
-      gap: .375rem;
-      margin-bottom: .25rem;
-    }
-
-    .embed-author img {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-    }
-
-    .embed-title {
-      font-size: .9375rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: .25rem;
-    }
-
-    .embed-title a {
-      color: #00aff4;
-      text-decoration: none;
-    }
-
-    .embed-desc {
-      font-size: .8rem;
-      color: #dbdee1;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      margin-bottom: .375rem;
-    }
-
-    .embed-fields {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .375rem;
-      margin-bottom: .375rem;
-    }
-
-    .embed-field-name {
-      font-size: .75rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .embed-field-val {
-      font-size: .75rem;
-      color: #dbdee1;
-    }
-
-    .embed-image img {
-      width: 100%;
-      border-radius: 4px;
-      margin-top: .375rem;
-    }
-
-    .embed-thumb {
-      position: absolute;
-      top: .75rem;
-      right: .75rem;
-      width: 72px;
-      height: 72px;
-      border-radius: 4px;
-      object-fit: cover;
-    }
-
-    .embed-footer {
-      font-size: .6875rem;
-      color: #949ba4;
-      margin-top: .375rem;
-      display: flex;
-      align-items: center;
-      gap: .3rem;
-    }
-
-    .embed-footer img {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-    }
-
-    /* sticky right panel */
-    .param-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .78rem;
-    }
-
-    .param-table th {
-      text-align: left;
-      padding: .375rem .5rem;
-      font-size: .6875rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: var(--text3);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .param-table td {
-      padding: .375rem .5rem;
-      border-bottom: 1px solid var(--border);
-      color: var(--text2);
-      vertical-align: top;
-    }
-
-    .param-table td:first-child {
-      font-family: var(--mono);
-      color: var(--accent);
-      font-size: .75rem;
-      white-space: nowrap;
-    }
-
-    .right-panel {
-      position: sticky;
-      top: 68px;
-      max-height: calc(100vh - 80px);
-      overflow-y: auto;
-      scrollbar-width: thin;
-    }
-
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 1rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: .5rem;
-    }
-
-    footer p {
-      font-size: .7rem;
-      color: var(--text3);
-    }
-
-    .foot-links {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .foot-links a {
-      font-size: .7rem;
-      color: var(--text3);
-      text-decoration: none;
-      transition: color .15s;
-    }
-
-    .foot-links a:hover {
-      color: var(--text2);
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(8px)
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 0.5rem;
       }
 
-      to {
-        opacity: 1;
-        transform: none
-      }
-    }
-
-    .fu {
-      animation: fadeUp .26s ease both;
-    }
-
-    .fd1 {
-      animation-delay: .05s
-    }
-
-    .fd2 {
-      animation-delay: .1s
-    }
-
-    /* fade anim for components */
-    @keyframes compIn {
-      from {
-        opacity: 0;
-        transform: translateY(4px)
+      @media (max-width: 600px) {
+        .g2,
+        .g3 {
+          grid-template-columns: 1fr;
+        }
       }
 
-      to {
-        opacity: 1;
-        transform: none
+      /* checkbox */
+      .chk {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        user-select: none;
       }
-    }
 
-    .comp-block {
-      animation: compIn .2s ease both;
-    }
+      .chk input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 0.9375rem;
+        height: 0.9375rem;
+        border-radius: 4px;
+        border: 1.5px solid var(--border2);
+        background: var(--bg);
+        cursor: pointer;
+        transition: all 0.15s;
+        position: relative;
+        flex-shrink: 0;
+      }
 
-    .hero h1 span {
-      color: var(--accent);
-    }
-  </style>
-</head>
+      .chk input[type="checkbox"]:checked {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
 
-<body>
-  <div id="ldr"><img src="https://bdtools.netlify.app/images/bdfd_logo.png" alt="" />
-    <p id="ldrtxt">Loading</p>
-  </div>
-  <div id="toasts"></div>
+      .chk input[type="checkbox"]:checked::after {
+        content: "";
+        position: absolute;
+        left: 3px;
+        top: 1px;
+        width: 4px;
+        height: 7px;
+        border: 1.5px solid #fff;
+        border-top: none;
+        border-left: none;
+        transform: rotate(45deg);
+      }
 
-  <nav>
-    <a href="/" class="nav-logo"><img src="https://bdtools.netlify.app/images/bdfd_logo.png"
-        onerror="this.style.display='none'" alt="" /><span>BDTools</span></a>
-    <div class="spacer"></div>
-    <div class="tog" onclick="toggleTheme()"><span class="tog-lbl">Dark</span>
-      <div class="tog-track on" id="tog">
-        <div class="tog-thumb"></div>
-      </div>
+      .chk span {
+        font-size: 0.8rem;
+        color: var(--text2);
+      }
+
+      /* btn */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.4rem 0.875rem;
+        border-radius: var(--r);
+        font-size: 0.7875rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s;
+        border: 1.5px solid transparent;
+        font-family: "Geist", sans-serif;
+        white-space: nowrap;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-h);
+      }
+
+      .btn-ghost {
+        background: var(--bg3);
+        border-color: var(--border2);
+        color: var(--text2);
+      }
+
+      .btn-ghost:hover {
+        background: var(--bg4);
+        color: var(--text);
+      }
+
+      .btn-full {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text3);
+        transition: all 0.15s;
+      }
+
+      .icon-btn:hover {
+        color: var(--text);
+        background: var(--bg4);
+      }
+
+      /* comp block */
+      .comp-block {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: var(--r2);
+        padding: 0.875rem;
+        margin-bottom: 0.625rem;
+        position: relative;
+      }
+
+      .comp-block-inner {
+        background: var(--bg4);
+        border: 1px solid var(--border2);
+        border-radius: var(--r);
+        padding: 0.75rem;
+        margin-top: 0.625rem;
+      }
+
+      .comp-title {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text2);
+        margin-bottom: 0.625rem;
+      }
+
+      .comp-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+      }
+
+      /* action bar */
+      .action-bar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: var(--r2);
+        margin-bottom: 0.875rem;
+      }
+
+      /* output */
+      .out-area {
+        width: 100%;
+        min-height: 140px;
+        padding: 0.75rem 0.875rem;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
+        color: var(--text);
+        font-family: var(--mono);
+        font-size: 0.7625rem;
+        line-height: 1.8;
+        resize: vertical;
+        outline: none;
+      }
+
+      /* preview */
+      .preview-wrap {
+        background: #2b2d31;
+        border-radius: var(--r2);
+        padding: 1rem;
+      }
+
+      .preview-msg {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .preview-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .preview-content {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .preview-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .preview-name {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .preview-badge {
+        background: #5865f2;
+        color: #fff;
+        font-size: 0.6rem;
+        padding: 0.1rem 0.3rem;
+        border-radius: 3px;
+        font-weight: 700;
+      }
+
+      .preview-time {
+        font-size: 0.75rem;
+        color: #72767d;
+      }
+
+      .preview-embed {
+        border-radius: 4px;
+        overflow: hidden;
+        display: flex;
+        margin-top: 0.25rem;
+      }
+
+      .embed-pill {
+        width: 4px;
+        flex-shrink: 0;
+      }
+
+      .embed-body {
+        padding: 0.75rem;
+        flex: 1;
+        min-width: 0;
+        position: relative;
+      }
+
+      .embed-author {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #dbdee1;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .embed-author img {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+      }
+
+      .embed-title {
+        font-size: 0.9375rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0.25rem;
+      }
+
+      .embed-title a {
+        color: #00aff4;
+        text-decoration: none;
+      }
+
+      .embed-desc {
+        font-size: 0.8rem;
+        color: #dbdee1;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        margin-bottom: 0.375rem;
+      }
+
+      .embed-fields {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+        margin-bottom: 0.375rem;
+      }
+
+      .embed-field-name {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .embed-field-val {
+        font-size: 0.75rem;
+        color: #dbdee1;
+      }
+
+      .embed-image img {
+        width: 100%;
+        border-radius: 4px;
+        margin-top: 0.375rem;
+      }
+
+      .embed-thumb {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        width: 72px;
+        height: 72px;
+        border-radius: 4px;
+        object-fit: cover;
+      }
+
+      .embed-footer {
+        font-size: 0.6875rem;
+        color: #949ba4;
+        margin-top: 0.375rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .embed-footer img {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+      }
+
+      /* sticky right panel */
+      .param-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.78rem;
+      }
+
+      .param-table th {
+        text-align: left;
+        padding: 0.375rem 0.5rem;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text3);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .param-table td {
+        padding: 0.375rem 0.5rem;
+        border-bottom: 1px solid var(--border);
+        color: var(--text2);
+        vertical-align: top;
+      }
+
+      .param-table td:first-child {
+        font-family: var(--mono);
+        color: var(--accent);
+        font-size: 0.75rem;
+        white-space: nowrap;
+      }
+
+      .right-panel {
+        position: sticky;
+        top: 68px;
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+        scrollbar-width: thin;
+      }
+
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      footer p {
+        font-size: 0.7rem;
+        color: var(--text3);
+      }
+
+      .foot-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .foot-links a {
+        font-size: 0.7rem;
+        color: var(--text3);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+
+      .foot-links a:hover {
+        color: var(--text2);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .fu {
+        animation: fadeUp 0.26s ease both;
+      }
+
+      .fd1 {
+        animation-delay: 0.05s;
+      }
+
+      .fd2 {
+        animation-delay: 0.1s;
+      }
+
+      /* fade anim for components */
+      @keyframes compIn {
+        from {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .comp-block {
+        animation: compIn 0.2s ease both;
+      }
+
+      .hero h1 span {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="ldr">
+      <img src="https://bdtools.netlify.app/images/bdfd_logo.png" alt="" />
+      <p id="ldrtxt">Loading</p>
     </div>
-  </nav>
+    <div id="toasts"></div>
 
-  <div class="border-b border-[#1e2130]">
-    <div class="max-w-[1080px] mx-auto px-6 py-10 fu">
-
-      <div class="flex items-start gap-4">
-        <div
-          class="w-11 h-11 flex-shrink-0 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center">
-          <svg class="w-5 h-5 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-          </svg>
+    <nav>
+      <a href="/" class="nav-logo"
+        ><img
+          src="https://bdtools.netlify.app/images/bdfd_logo.png"
+          onerror="this.style.display = 'none'"
+          alt=""
+        /><span>BDTools</span></a
+      >
+      <div class="spacer"></div>
+      <div class="tog" onclick="toggleTheme()">
+        <span class="tog-lbl">Dark</span>
+        <div class="tog-track on" id="tog">
+          <div class="tog-thumb"></div>
         </div>
-
-        <!-- Text Content -->
-        <div>
-          <h1 class="text-2xl font-black text-white tracking-tight dt">
-            Embed Builder
-            <span class="text-sm font-normal text-gray-500">(Supports Components)</span>
-          </h1>
-
-          <p class="text-gray-400 text-sm mt-1 dt2">
-            Make Embed codes using simple fillouts. Fill out the fields below and click "Generate Embed" to create your
-            BDFD embed code.
-          </p>
-
-          <div class="flex flex-wrap gap-1.5 mt-3">
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">JavaScript</span>
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">HTML</span>
-            <span
-              class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md">Tailwind
-              CSS</span>
-          </div>
-        </div>
-
       </div>
+    </nav>
 
-    </div>
-  </div>
-
-  <main>
-    <div class="layout">
-      <!-- LEFT: form -->
-      <div>
-        <!-- Action bar -->
-        <div class="action-bar fu fd1">
-          <button class="btn btn-ghost" id="clear-input">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+    <div class="border-b border-[#1e2130]">
+      <div class="max-w-[1080px] mx-auto px-6 py-10 fu">
+        <div class="flex items-start gap-4">
+          <div
+            class="w-11 h-11 flex-shrink-0 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
+          >
+            <svg
+              class="w-5 h-5 text-[#5865F2]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+              />
             </svg>
-            Clear All
-          </button>
-          <div style="flex:1;"></div>
-          <button class="btn btn-ghost" id="add-field-btn">+ Field</button>
-          <button class="btn btn-ghost" id="add-button-btn">+ Button</button>
-          <button class="btn btn-ghost" id="add-selectmenu-btn">+ Select Menu</button>
-          <button class="btn btn-ghost" id="add-modal-btn">+ Modal</button>
-        </div>
-
-        <!-- Author -->
-        <div class="card fu fd1">
-          <div class="card-hdr"><span class="card-hdr-title">Author</span></div>
-          <div class="card-body">
-            <div class="g3">
-              <div class="section"><span class="slabel">Name</span><input id="author-input" class="finput"
-                  placeholder="Author name" /></div>
-              <div class="section"><span class="slabel">Icon URL</span><input id="author-icon-input" class="finput"
-                  placeholder="https://…" /></div>
-              <div class="section"><span class="slabel">Author URL</span><input id="author-url-input" class="finput"
-                  placeholder="https://…" /></div>
-            </div>
           </div>
-        </div>
 
-        <!-- Title + Description -->
-        <div class="card fu fd1">
-          <div class="card-hdr"><span class="card-hdr-title">Content</span></div>
-          <div class="card-body">
-            <div class="g2" style="margin-bottom:.625rem;">
-              <div class="section"><span class="slabel">Title</span><input id="title-input" class="finput"
-                  placeholder="Embed title" /></div>
-              <div class="section"><span class="slabel">Title URL</span><input id="title-url-input" class="finput"
-                  placeholder="https://…" /></div>
+          <!-- Text Content -->
+          <div>
+            <h1 class="text-2xl font-black text-white tracking-tight dt">
+              Embed Builder
+              <span class="text-sm font-normal text-gray-500"
+                >(Supports Components)</span
+              >
+            </h1>
+
+            <p class="text-gray-400 text-sm mt-1 dt2">
+              Make Embed codes using simple fillouts. Fill out the fields below
+              and click "Generate Embed" to create your BDFD embed code.
+            </p>
+
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >JavaScript</span
+              >
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >HTML</span
+              >
+              <span
+                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                >Tailwind CSS</span
+              >
             </div>
-            <div class="section"><span class="slabel">Description</span><textarea id="description-input" class="finput"
-                rows="4" placeholder="Embed description…"></textarea></div>
-          </div>
-        </div>
-
-        <!-- Media + Style -->
-        <div class="card fu fd1">
-          <div class="card-hdr"><span class="card-hdr-title">Media &amp; Style</span></div>
-          <div class="card-body">
-            <div class="g3">
-              <div class="section"><span class="slabel">Thumbnail URL</span><input id="thumbnail-input" class="finput"
-                  placeholder="https://…" /></div>
-              <div class="section"><span class="slabel">Image URL</span><input id="image-input" class="finput"
-                  placeholder="https://…" /></div>
-              <div class="section"><span class="slabel">Colour (hex)</span><input id="color-input" class="finput"
-                  placeholder="#5865F2" /></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="card fu fd1">
-          <div class="card-hdr"><span class="card-hdr-title">Footer</span></div>
-          <div class="card-body">
-            <div class="g2">
-              <div class="section"><span class="slabel">Footer Text</span><input id="footer-input" class="finput"
-                  placeholder="Footer text" /></div>
-              <div class="section"><span class="slabel">Footer Icon URL</span><input id="footer-icon-input"
-                  class="finput" placeholder="https://…" /></div>
-            </div>
-            <div style="margin-top:.625rem;">
-              <label class="chk"><input type="checkbox" id="timestamp-input" /><span>Add Timestamp</span></label>
-            </div>
-          </div>
-        </div>
-
-        <!-- Components injected here -->
-        <div id="fields-container"></div>
-        <div id="buttons-container"></div>
-        <div id="selects-container"></div>
-        <div id="modals-container"></div>
-
-        <!-- Generate + output -->
-        <div class="card fu fd2">
-          <div class="card-hdr"><span class="card-hdr-title">Output</span></div>
-          <div class="card-body">
-            <button class="btn btn-primary btn-full" id="replace-btn" style="margin-bottom:.75rem;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polygon points="5 3 19 12 5 21 5 3" />
-              </svg>
-              Generate Embed Code
-            </button>
-            <textarea id="output-text" class="out-area" readonly
-              placeholder="Your BDFD embed code will appear here…"></textarea>
-            <div style="display:flex;justify-content:flex-end;margin-top:.5rem;">
-              <button class="btn btn-ghost" id="copy-output">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                  <rect x="9" y="9" width="13" height="13" rx="2" />
-                  <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-                </svg>
-                Copy Output
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="right-panel fu fd2">
-        <!-- Preview -->
-        <div class="card">
-          <div class="card-hdr"><span class="card-hdr-title">Live Preview</span></div>
-          <div class="card-body">
-            <div class="preview-wrap">
-              <div id="embed-preview"></div>
-            </div>
-            <p style="font-size:.7rem;color:var(--text3);margin-top:.5rem;line-height:1.4;">Press Generate to refresh
-              components &amp; fields in the preview.</p>
-          </div>
-        </div>
-        <!-- Param reference -->
-        <div class="card" style="margin-top:.875rem;">
-          <div class="card-hdr"><span class="card-hdr-title">Parameter Reference</span></div>
-          <div class="card-body" style="overflow-x:auto;">
-            <table class="param-table">
-              <tr>
-                <th>Param</th>
-                <th>Type</th>
-              </tr>
-
-              <tr>
-                <td>Author Name</td>
-                <td>String, optional</td>
-              </tr>
-              <tr>
-                <td>Author Icon URL</td>
-                <td>URL, optional</td>
-              </tr>
-              <tr>
-                <td>Author URL</td>
-                <td>URL, optional</td>
-              </tr>
-
-              <tr>
-                <td>Title</td>
-                <td>String, optional</td>
-              </tr>
-              <tr>
-                <td>Title URL</td>
-                <td>URL, optional</td>
-              </tr>
-
-              <tr>
-                <td>Description</td>
-                <td>String, optional</td>
-              </tr>
-
-              <tr>
-                <td>Thumbnail URL</td>
-                <td>URL, optional</td>
-              </tr>
-              <tr>
-                <td>Image URL</td>
-                <td>URL, optional</td>
-              </tr>
-              <tr>
-                <td>Color</td>
-                <td>Hex/int, optional</td>
-              </tr>
-
-              <tr>
-                <td>Footer Text</td>
-                <td>String, optional</td>
-              </tr>
-              <tr>
-                <td>Footer Icon URL</td>
-                <td>URL, optional</td>
-              </tr>
-
-              <tr>
-                <td>Timestamp</td>
-                <td>Boolean, yes / no</td>
-              </tr>
-
-              <tr>
-                <td>Field Name</td>
-                <td>String, required (per field)</td>
-              </tr>
-              <tr>
-                <td>Field Value</td>
-                <td>String, required (per field)</td>
-              </tr>
-              <tr>
-                <td>Field Inline</td>
-                <td>Boolean, yes / no</td>
-              </tr>
-
-              <tr>
-                <td>Button ID / URL</td>
-                <td>String / URL, required (per button)</td>
-              </tr>
-              <tr>
-                <td>Button Label</td>
-                <td>String, required</td>
-              </tr>
-              <tr>
-                <td>Button Style</td>
-                <td>Enum (primary, secondary, success, danger, link)</td>
-              </tr>
-              <tr>
-                <td>Button Emoji</td>
-                <td>String, optional</td>
-              </tr>
-              <tr>
-                <td>Button Message ID</td>
-                <td>Snowflake, optional</td>
-              </tr>
-              <tr>
-                <td>Button New Row</td>
-                <td>Boolean, yes / no</td>
-              </tr>
-              <tr>
-                <td>Button Disabled</td>
-                <td>Boolean, yes / no</td>
-              </tr>
-
-              <tr>
-                <td>Select Menu ID</td>
-                <td>String, required</td>
-              </tr>
-              <tr>
-                <td>Select Menu Min</td>
-                <td>Integer</td>
-              </tr>
-              <tr>
-                <td>Select Menu Max</td>
-                <td>Integer</td>
-              </tr>
-              <tr>
-                <td>Select Menu Placeholder</td>
-                <td>String, optional</td>
-              </tr>
-              <tr>
-                <td>Select Menu Message ID</td>
-                <td>Snowflake, optional</td>
-              </tr>
-
-              <tr>
-                <td>Select Option ID</td>
-                <td>String, required (must match menu ID)</td>
-              </tr>
-              <tr>
-                <td>Select Option Label</td>
-                <td>String, required</td>
-              </tr>
-              <tr>
-                <td>Select Option Value</td>
-                <td>String, required</td>
-              </tr>
-              <tr>
-                <td>Select Option Description</td>
-                <td>String, required</td>
-              </tr>
-              <tr>
-                <td>Select Option Emoji</td>
-                <td>String, optional</td>
-              </tr>
-              <tr>
-                <td>Select Option Default</td>
-                <td>Boolean, yes / no</td>
-              </tr>
-              <tr>
-                <td>Select Option Message ID</td>
-                <td>Snowflake, optional</td>
-              </tr>
-
-              <tr>
-                <td>Modal ID</td>
-                <td>String, required</td>
-              </tr>
-              <tr>
-                <td>Modal Title</td>
-                <td>String, required</td>
-              </tr>
-
-              <tr>
-                <td>Text Input ID</td>
-                <td>String, required</td>
-              </tr>
-              <tr>
-                <td>Text Input Style</td>
-                <td>Enum (short / paragraph)</td>
-              </tr>
-              <tr>
-                <td>Text Input Label</td>
-                <td>String, required</td>
-              </tr>
-              <tr>
-                <td>Text Input Min Length</td>
-                <td>Integer</td>
-              </tr>
-              <tr>
-                <td>Text Input Max Length</td>
-                <td>Integer</td>
-              </tr>
-              <tr>
-                <td>Text Input Required</td>
-                <td>Boolean, yes / no</td>
-              </tr>
-              <tr>
-                <td>Text Input Default Value</td>
-                <td>String, optional</td>
-              </tr>
-              <tr>
-                <td>Text Input Placeholder</td>
-                <td>String, optional</td>
-              </tr>
-
-            </table>
           </div>
         </div>
       </div>
     </div>
-  </main>
 
-  <footer>
-    <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
-    <div class="foot-links"><a href="/tos">Terms</a><a href="/privacy">Privacy</a><a href="/contact">Contact</a></div>
-  </footer>
+    <main>
+      <div class="layout">
+        <!-- LEFT: form -->
+        <div>
+          <!-- Action bar -->
+          <div class="action-bar fu fd1">
+            <button class="btn btn-ghost" id="clear-input">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+              </svg>
+              Clear All
+            </button>
+            <div style="flex: 1"></div>
+            <button class="btn btn-ghost" id="add-field-btn">+ Field</button>
+            <button class="btn btn-ghost" id="add-button-btn">+ Button</button>
+            <button class="btn btn-ghost" id="add-selectmenu-btn">
+              + Select Menu
+            </button>
+            <button class="btn btn-ghost" id="add-modal-btn">+ Modal</button>
+          </div>
 
-  <script>
-    /* ── Loader ── */
-    const ldrtxt = document.getElementById('ldrtxt'); let dc = 0;
-    const di = setInterval(() => { dc = (dc + 1) % 4; ldrtxt.textContent = 'Loading' + '.'.repeat(dc); }, 350);
-    window.addEventListener('load', () => { setTimeout(() => { const l = document.getElementById('ldr'); l.classList.add('out'); setTimeout(() => l.remove(), 400); clearInterval(di); }, 900); });
-    function toast(msg, type = 's') { const box = document.getElementById('toasts'); const t = document.createElement('div'); t.className = `toast ${type}`; t.style.position = 'relative'; t.style.overflow = 'hidden'; t.innerHTML = `<span>${msg}</span><div class="tbar"></div>`; box.appendChild(t); setTimeout(() => t.remove(), 4500); }
-    function toggleTheme() { const h = document.documentElement, t = document.getElementById('tog'); const dark = h.classList.toggle('dark'); localStorage.setItem('darkMode', dark ? 'enabled' : 'disabled'); t.classList.toggle('on', dark); }
-    (function () { document.getElementById('tog').classList.toggle('on', document.documentElement.classList.contains('dark')); })();
-    window.addEventListener('load', () => { if (!localStorage.getItem('visited')) { toast("Welcome! Auora here 👋", 's'); localStorage.setItem('visited', 'true'); } });
+          <!-- Author -->
+          <div class="card fu fd1">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Author</span>
+            </div>
+            <div class="card-body">
+              <div class="g3">
+                <div class="section">
+                  <span class="slabel">Name</span
+                  ><input
+                    id="author-input"
+                    class="finput"
+                    placeholder="Author name"
+                  />
+                </div>
+                <div class="section">
+                  <span class="slabel">Icon URL</span
+                  ><input
+                    id="author-icon-input"
+                    class="finput"
+                    placeholder="https://…"
+                  />
+                </div>
+                <div class="section">
+                  <span class="slabel">Author URL</span
+                  ><input
+                    id="author-url-input"
+                    class="finput"
+                    placeholder="https://…"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
 
-    /* ── EXACT original sanitize ── */
-    function sanitizeInput(input) { if (!input) return input; return input.replace(/\\/g, '\\\\').replace(/\$/g, '%{DOL}%').replace(/;/g, '\\;').replace(/\]/g, '\\]'); }
+          <!-- Title + Description -->
+          <div class="card fu fd1">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Content</span>
+            </div>
+            <div class="card-body">
+              <div class="g2" style="margin-bottom: 0.625rem">
+                <div class="section">
+                  <span class="slabel">Title</span
+                  ><input
+                    id="title-input"
+                    class="finput"
+                    placeholder="Embed title"
+                  />
+                </div>
+                <div class="section">
+                  <span class="slabel">Title URL</span
+                  ><input
+                    id="title-url-input"
+                    class="finput"
+                    placeholder="https://…"
+                  />
+                </div>
+              </div>
+              <div class="section">
+                <span class="slabel">Description</span
+                ><textarea
+                  id="description-input"
+                  class="finput"
+                  rows="4"
+                  placeholder="Embed description…"
+                ></textarea>
+              </div>
+            </div>
+          </div>
 
-    /* ── counters ── */
-    let fieldCount = 0, buttonCount = 0, selectCount = 0, selectOptionCount = {}, modalCount = 0, modalInputCount = {};
+          <!-- Media + Style -->
+          <div class="card fu fd1">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Media &amp; Style</span>
+            </div>
+            <div class="card-body">
+              <div class="g3">
+                <div class="section">
+                  <span class="slabel">Thumbnail URL</span
+                  ><input
+                    id="thumbnail-input"
+                    class="finput"
+                    placeholder="https://…"
+                  />
+                </div>
+                <div class="section">
+                  <span class="slabel">Image URL</span
+                  ><input
+                    id="image-input"
+                    class="finput"
+                    placeholder="https://…"
+                  />
+                </div>
+                <div class="section">
+                  <span class="slabel">Colour (hex)</span
+                  ><input
+                    id="color-input"
+                    class="finput"
+                    placeholder="#5865F2"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
 
-    /* ── helper to build an input group row ── */
-    const INP = 'finput';
-    function inp(id, ph, type = 'text') { return `<input id="${id}" class="${INP}" placeholder="${ph}" type="${type}"/>`; }
-    function sel(id, opts) { return `<select id="${id}" class="${INP}">${opts}</select>`; }
-    function chk(id, lbl) { return `<label class="chk" style="margin-top:.25rem"><input type="checkbox" id="${id}"/><span>${lbl}</span></label>`; }
+          <!-- Footer -->
+          <div class="card fu fd1">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Footer</span>
+            </div>
+            <div class="card-body">
+              <div class="g2">
+                <div class="section">
+                  <span class="slabel">Footer Text</span
+                  ><input
+                    id="footer-input"
+                    class="finput"
+                    placeholder="Footer text"
+                  />
+                </div>
+                <div class="section">
+                  <span class="slabel">Footer Icon URL</span
+                  ><input
+                    id="footer-icon-input"
+                    class="finput"
+                    placeholder="https://…"
+                  />
+                </div>
+              </div>
+              <div style="margin-top: 0.625rem">
+                <label class="chk"
+                  ><input type="checkbox" id="timestamp-input" /><span
+                    >Add Timestamp</span
+                  ></label
+                >
+              </div>
+            </div>
+          </div>
 
-    /* ── Fields ── */
-    document.getElementById('add-field-btn').addEventListener('click', () => {
-      toast(`Field #${fieldCount + 1} added`, 's');
-      const idx = fieldCount++;
-      const d = document.createElement('div'); d.className = 'comp-block';
-      d.innerHTML = `
+          <!-- Components injected here -->
+          <div id="fields-container"></div>
+          <div id="buttons-container"></div>
+          <div id="selects-container"></div>
+          <div id="modals-container"></div>
+
+          <!-- Generate + output -->
+          <div class="card fu fd2">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Output</span>
+            </div>
+            <div class="card-body">
+              <button
+                class="btn btn-primary btn-full"
+                id="replace-btn"
+                style="margin-bottom: 0.75rem"
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+                Generate Embed Code
+              </button>
+              <textarea
+                id="output-text"
+                class="out-area"
+                readonly
+                placeholder="Your BDFD embed code will appear here…"
+              ></textarea>
+              <div
+                style="
+                  display: flex;
+                  justify-content: flex-end;
+                  margin-top: 0.5rem;
+                "
+              >
+                <button class="btn btn-ghost" id="copy-output">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" />
+                    <path
+                      d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"
+                    />
+                  </svg>
+                  Copy Output
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-panel fu fd2">
+          <!-- Preview -->
+          <div class="card">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Live Preview</span>
+            </div>
+            <div class="card-body">
+              <div class="preview-wrap">
+                <div id="embed-preview"></div>
+              </div>
+              <p
+                style="
+                  font-size: 0.7rem;
+                  color: var(--text3);
+                  margin-top: 0.5rem;
+                  line-height: 1.4;
+                "
+              >
+                Press Generate to refresh components &amp; fields in the
+                preview.
+              </p>
+            </div>
+          </div>
+          <!-- Param reference -->
+          <div class="card" style="margin-top: 0.875rem">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Parameter Reference</span>
+            </div>
+            <div class="card-body" style="overflow-x: auto">
+              <table class="param-table">
+                <tr>
+                  <th>Param</th>
+                  <th>Type</th>
+                </tr>
+
+                <tr>
+                  <td>Author Name</td>
+                  <td>String, optional</td>
+                </tr>
+                <tr>
+                  <td>Author Icon URL</td>
+                  <td>URL, optional</td>
+                </tr>
+                <tr>
+                  <td>Author URL</td>
+                  <td>URL, optional</td>
+                </tr>
+
+                <tr>
+                  <td>Title</td>
+                  <td>String, optional</td>
+                </tr>
+                <tr>
+                  <td>Title URL</td>
+                  <td>URL, optional</td>
+                </tr>
+
+                <tr>
+                  <td>Description</td>
+                  <td>String, optional</td>
+                </tr>
+
+                <tr>
+                  <td>Thumbnail URL</td>
+                  <td>URL, optional</td>
+                </tr>
+                <tr>
+                  <td>Image URL</td>
+                  <td>URL, optional</td>
+                </tr>
+                <tr>
+                  <td>Color</td>
+                  <td>Hex/int, optional</td>
+                </tr>
+
+                <tr>
+                  <td>Footer Text</td>
+                  <td>String, optional</td>
+                </tr>
+                <tr>
+                  <td>Footer Icon URL</td>
+                  <td>URL, optional</td>
+                </tr>
+
+                <tr>
+                  <td>Timestamp</td>
+                  <td>Boolean, yes / no</td>
+                </tr>
+
+                <tr>
+                  <td>Field Name</td>
+                  <td>String, required (per field)</td>
+                </tr>
+                <tr>
+                  <td>Field Value</td>
+                  <td>String, required (per field)</td>
+                </tr>
+                <tr>
+                  <td>Field Inline</td>
+                  <td>Boolean, yes / no</td>
+                </tr>
+
+                <tr>
+                  <td>Button ID / URL</td>
+                  <td>String / URL, required (per button)</td>
+                </tr>
+                <tr>
+                  <td>Button Label</td>
+                  <td>String, required</td>
+                </tr>
+                <tr>
+                  <td>Button Style</td>
+                  <td>Enum (primary, secondary, success, danger, link)</td>
+                </tr>
+                <tr>
+                  <td>Button Emoji</td>
+                  <td>String, optional</td>
+                </tr>
+                <tr>
+                  <td>Button Message ID</td>
+                  <td>Snowflake, optional</td>
+                </tr>
+                <tr>
+                  <td>Button New Row</td>
+                  <td>Boolean, yes / no</td>
+                </tr>
+                <tr>
+                  <td>Button Disabled</td>
+                  <td>Boolean, yes / no</td>
+                </tr>
+
+                <tr>
+                  <td>Select Menu ID</td>
+                  <td>String, required</td>
+                </tr>
+                <tr>
+                  <td>Select Menu Min</td>
+                  <td>Integer</td>
+                </tr>
+                <tr>
+                  <td>Select Menu Max</td>
+                  <td>Integer</td>
+                </tr>
+                <tr>
+                  <td>Select Menu Placeholder</td>
+                  <td>String, optional</td>
+                </tr>
+                <tr>
+                  <td>Select Menu Message ID</td>
+                  <td>Snowflake, optional</td>
+                </tr>
+
+                <tr>
+                  <td>Select Option ID</td>
+                  <td>String, required (must match menu ID)</td>
+                </tr>
+                <tr>
+                  <td>Select Option Label</td>
+                  <td>String, required</td>
+                </tr>
+                <tr>
+                  <td>Select Option Value</td>
+                  <td>String, required</td>
+                </tr>
+                <tr>
+                  <td>Select Option Description</td>
+                  <td>String, required</td>
+                </tr>
+                <tr>
+                  <td>Select Option Emoji</td>
+                  <td>String, optional</td>
+                </tr>
+                <tr>
+                  <td>Select Option Default</td>
+                  <td>Boolean, yes / no</td>
+                </tr>
+                <tr>
+                  <td>Select Option Message ID</td>
+                  <td>Snowflake, optional</td>
+                </tr>
+
+                <tr>
+                  <td>Modal ID</td>
+                  <td>String, required</td>
+                </tr>
+                <tr>
+                  <td>Modal Title</td>
+                  <td>String, required</td>
+                </tr>
+
+                <tr>
+                  <td>Text Input ID</td>
+                  <td>String, required</td>
+                </tr>
+                <tr>
+                  <td>Text Input Style</td>
+                  <td>Enum (short / paragraph)</td>
+                </tr>
+                <tr>
+                  <td>Text Input Label</td>
+                  <td>String, required</td>
+                </tr>
+                <tr>
+                  <td>Text Input Min Length</td>
+                  <td>Integer</td>
+                </tr>
+                <tr>
+                  <td>Text Input Max Length</td>
+                  <td>Integer</td>
+                </tr>
+                <tr>
+                  <td>Text Input Required</td>
+                  <td>Boolean, yes / no</td>
+                </tr>
+                <tr>
+                  <td>Text Input Default Value</td>
+                  <td>String, optional</td>
+                </tr>
+                <tr>
+                  <td>Text Input Placeholder</td>
+                  <td>String, optional</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+      <div class="foot-links">
+        <a href="/tos">Terms</a><a href="/privacy">Privacy</a
+        ><a href="/contact">Contact</a>
+      </div>
+    </footer>
+
+    <script>
+      /* ── Loader ── */
+      const ldrtxt = document.getElementById("ldrtxt");
+      let dc = 0;
+      const di = setInterval(() => {
+        dc = (dc + 1) % 4;
+        ldrtxt.textContent = "Loading" + ".".repeat(dc);
+      }, 350);
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          const l = document.getElementById("ldr");
+          l.classList.add("out");
+          setTimeout(() => l.remove(), 400);
+          clearInterval(di);
+        }, 900);
+      });
+      function toast(msg, type = "s") {
+        const box = document.getElementById("toasts");
+        const t = document.createElement("div");
+        t.className = `toast ${type}`;
+        t.style.position = "relative";
+        t.style.overflow = "hidden";
+        t.innerHTML = `<span>${msg}</span><div class="tbar"></div>`;
+        box.appendChild(t);
+        setTimeout(() => t.remove(), 4500);
+      }
+      function toggleTheme() {
+        const h = document.documentElement,
+          t = document.getElementById("tog");
+        const dark = h.classList.toggle("dark");
+        localStorage.setItem("darkMode", dark ? "enabled" : "disabled");
+        t.classList.toggle("on", dark);
+      }
+      (function () {
+        document
+          .getElementById("tog")
+          .classList.toggle(
+            "on",
+            document.documentElement.classList.contains("dark"),
+          );
+      })();
+      window.addEventListener("load", () => {
+        if (!localStorage.getItem("visited")) {
+          toast("Welcome! Auora here 👋", "s");
+          localStorage.setItem("visited", "true");
+        }
+      });
+
+      /* ── EXACT original sanitize ── */
+      function sanitizeInput(input) {
+        if (!input) return input;
+        return input
+          .replace(/\\/g, "\\\\")
+          .replace(/\$/g, "%{DOL}%")
+          .replace(/;/g, "\\;")
+          .replace(/\]/g, "\\]");
+      }
+
+      /* ── counters ── */
+      let fieldCount = 0,
+        buttonCount = 0,
+        selectCount = 0,
+        selectOptionCount = {},
+        modalCount = 0,
+        modalInputCount = {};
+
+      /* ── helper to build an input group row ── */
+      const INP = "finput";
+      function inp(id, ph, type = "text") {
+        return `<input id="${id}" class="${INP}" placeholder="${ph}" type="${type}"/>`;
+      }
+      function sel(id, opts) {
+        return `<select id="${id}" class="${INP}">${opts}</select>`;
+      }
+      function chk(id, lbl) {
+        return `<label class="chk" style="margin-top:.25rem"><input type="checkbox" id="${id}"/><span>${lbl}</span></label>`;
+      }
+
+      /* ── Fields ── */
+      document.getElementById("add-field-btn").addEventListener("click", () => {
+        toast(`Field #${fieldCount + 1} added`, "s");
+        const idx = fieldCount++;
+        const d = document.createElement("div");
+        d.className = "comp-block";
+        d.innerHTML = `
     <div class="comp-actions">
       <span class="comp-title">Field #${idx + 1}</span>
       <button class="icon-btn remove-comp" data-idx="${idx}" style="color:#f87171;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="g2" style="margin-top:.5rem;">
-      ${inp(`field-name-${idx}`, 'Field Name')}
-      ${inp(`field-value-${idx}`, 'Field Value')}
+      ${inp(`field-name-${idx}`, "Field Name")}
+      ${inp(`field-value-${idx}`, "Field Value")}
     </div>
-    ${chk(`field-inline-${idx}`, 'Inline')}`;
-      d.querySelector('.remove-comp').addEventListener('click', () => { d.remove(); updatePreview(); toast(`Field #${idx + 1} removed`, 's'); });
-      document.getElementById('fields-container').appendChild(d);
-      updatePreview();
-    });
+    ${chk(`field-inline-${idx}`, "Inline")}`;
+        d.querySelector(".remove-comp").addEventListener("click", () => {
+          d.remove();
+          updatePreview();
+          toast(`Field #${idx + 1} removed`, "s");
+        });
+        document.getElementById("fields-container").appendChild(d);
+        updatePreview();
+      });
 
-    /* ── Buttons ── */
-    document.getElementById('add-button-btn').addEventListener('click', () => {
-      toast(`Button #${buttonCount + 1} added`, 's');
-      const idx = buttonCount++;
-      const d = document.createElement('div'); d.className = 'comp-block';
-      d.innerHTML = `
+      /* ── Buttons ── */
+      document
+        .getElementById("add-button-btn")
+        .addEventListener("click", () => {
+          toast(`Button #${buttonCount + 1} added`, "s");
+          const idx = buttonCount++;
+          const d = document.createElement("div");
+          d.className = "comp-block";
+          d.innerHTML = `
     <div class="comp-actions">
       <span class="comp-title">Button #${idx + 1}</span>
       <button class="icon-btn remove-comp" style="color:#f87171;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.5rem;">
-      ${inp(`button-idlink-${idx}`, 'ID or URL')}
-      ${inp(`button-label-${idx}`, 'Button Label')}
+      ${inp(`button-idlink-${idx}`, "ID or URL")}
+      ${inp(`button-label-${idx}`, "Button Label")}
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-top:.5rem;">
       ${sel(`button-style-${idx}`, '<option value="primary">Primary</option><option value="secondary">Secondary</option><option value="success">Success</option><option value="danger">Danger</option><option value="link">Link</option>')}
-      ${inp(`button-emoji-${idx}`, 'Emoji ID (opt)')}
-      ${inp(`button-messageid-${idx}`, 'Message ID (opt)')}
+      ${inp(`button-emoji-${idx}`, "Emoji ID (opt)")}
+      ${inp(`button-messageid-${idx}`, "Message ID (opt)")}
     </div>
     <div style="display:flex;gap:1rem;margin-top:.375rem;">
-      ${chk(`button-newrow-${idx}`, 'New Row')}
-      ${chk(`button-disable-${idx}`, 'Disable')}
+      ${chk(`button-newrow-${idx}`, "New Row")}
+      ${chk(`button-disable-${idx}`, "Disable")}
     </div>`;
-      d.querySelector('.remove-comp').addEventListener('click', () => { d.remove(); updatePreview(); toast(`Button #${idx + 1} removed`, 's'); });
-      document.getElementById('buttons-container').appendChild(d);
-      updatePreview();
-    });
+          d.querySelector(".remove-comp").addEventListener("click", () => {
+            d.remove();
+            updatePreview();
+            toast(`Button #${idx + 1} removed`, "s");
+          });
+          document.getElementById("buttons-container").appendChild(d);
+          updatePreview();
+        });
 
-    /* ── Select Menus ── */
-    document.getElementById('add-selectmenu-btn').addEventListener('click', () => {
-      toast(`Select Menu #${selectCount + 1} added`, 's');
-      const idx = selectCount++; selectOptionCount[idx] = 0;
-      const d = document.createElement('div'); d.className = 'comp-block';
-      d.innerHTML = `
+      /* ── Select Menus ── */
+      document
+        .getElementById("add-selectmenu-btn")
+        .addEventListener("click", () => {
+          toast(`Select Menu #${selectCount + 1} added`, "s");
+          const idx = selectCount++;
+          selectOptionCount[idx] = 0;
+          const d = document.createElement("div");
+          d.className = "comp-block";
+          d.innerHTML = `
     <div class="comp-actions">
       <span class="comp-title">Select Menu #${idx + 1}</span>
       <div style="display:flex;gap:.25rem;">
@@ -1351,44 +1588,55 @@
       </div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.5rem;margin-top:.5rem;">
-      ${inp(`select-id-${idx}`, 'Menu ID')}
-      ${inp(`select-min-${idx}`, 'Min', 'number')}
-      ${inp(`select-max-${idx}`, 'Max', 'number')}
-      ${inp(`select-placeholder-${idx}`, 'Placeholder (opt)')}
-      ${inp(`select-messageid-${idx}`, 'Message ID (opt)')}
+      ${inp(`select-id-${idx}`, "Menu ID")}
+      ${inp(`select-min-${idx}`, "Min", "number")}
+      ${inp(`select-max-${idx}`, "Max", "number")}
+      ${inp(`select-placeholder-${idx}`, "Placeholder (opt)")}
+      ${inp(`select-messageid-${idx}`, "Message ID (opt)")}
     </div>
     <div id="select-options-${idx}" style="margin-top:.5rem;display:flex;flex-direction:column;gap:.5rem;"></div>`;
-      d.querySelector('.remove-comp').addEventListener('click', () => { d.remove(); updatePreview(); toast(`Select Menu #${idx + 1} removed`, 's'); delete selectOptionCount[idx]; });
-      d.querySelector('.add-opt-btn').addEventListener('click', () => {
-        const oIdx = selectOptionCount[idx]++;
-        const od = document.createElement('div'); od.className = 'comp-block-inner';
-        od.innerHTML = `
+          d.querySelector(".remove-comp").addEventListener("click", () => {
+            d.remove();
+            updatePreview();
+            toast(`Select Menu #${idx + 1} removed`, "s");
+            delete selectOptionCount[idx];
+          });
+          d.querySelector(".add-opt-btn").addEventListener("click", () => {
+            const oIdx = selectOptionCount[idx]++;
+            const od = document.createElement("div");
+            od.className = "comp-block-inner";
+            od.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;">
         <span style="font-size:.7rem;font-weight:600;color:var(--text3);">Option #${oIdx + 1}</span>
         <button class="icon-btn remove-opt" style="color:#f87171;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.375rem;">
-        ${inp(`select-option-id-${idx}-${oIdx}`, 'Option ID')}
-        ${inp(`select-option-label-${idx}-${oIdx}`, 'Label')}
-        ${inp(`select-option-value-${idx}-${oIdx}`, 'Value')}
-        ${inp(`select-option-description-${idx}-${oIdx}`, 'Description')}
-        ${inp(`select-option-emoji-${idx}-${oIdx}`, 'Emoji (opt)')}
-        ${inp(`select-option-messageid-${idx}-${oIdx}`, 'Msg ID (opt)')}
+        ${inp(`select-option-id-${idx}-${oIdx}`, "Option ID")}
+        ${inp(`select-option-label-${idx}-${oIdx}`, "Label")}
+        ${inp(`select-option-value-${idx}-${oIdx}`, "Value")}
+        ${inp(`select-option-description-${idx}-${oIdx}`, "Description")}
+        ${inp(`select-option-emoji-${idx}-${oIdx}`, "Emoji (opt)")}
+        ${inp(`select-option-messageid-${idx}-${oIdx}`, "Msg ID (opt)")}
       </div>
-      ${chk(`select-option-default-${idx}-${oIdx}`, 'Default?')}`;
-        od.querySelector('.remove-opt').addEventListener('click', () => { od.remove(); toast(`Option #${oIdx + 1} removed`, 's'); });
-        document.getElementById(`select-options-${idx}`).appendChild(od);
-        toast(`Option #${oIdx + 1} added to Menu #${idx + 1}`, 's');
-      });
-      document.getElementById('selects-container').appendChild(d);
-    });
+      ${chk(`select-option-default-${idx}-${oIdx}`, "Default?")}`;
+            od.querySelector(".remove-opt").addEventListener("click", () => {
+              od.remove();
+              toast(`Option #${oIdx + 1} removed`, "s");
+            });
+            document.getElementById(`select-options-${idx}`).appendChild(od);
+            toast(`Option #${oIdx + 1} added to Menu #${idx + 1}`, "s");
+          });
+          document.getElementById("selects-container").appendChild(d);
+        });
 
-    /* ── Modals ── */
-    document.getElementById('add-modal-btn').addEventListener('click', () => {
-      toast(`Modal #${modalCount + 1} added`, 's');
-      const idx = modalCount++; modalInputCount[idx] = 0;
-      const d = document.createElement('div'); d.className = 'comp-block';
-      d.innerHTML = `
+      /* ── Modals ── */
+      document.getElementById("add-modal-btn").addEventListener("click", () => {
+        toast(`Modal #${modalCount + 1} added`, "s");
+        const idx = modalCount++;
+        modalInputCount[idx] = 0;
+        const d = document.createElement("div");
+        d.className = "comp-block";
+        d.innerHTML = `
     <div class="comp-actions">
       <span class="comp-title">Modal #${idx + 1}</span>
       <div style="display:flex;gap:.25rem;">
@@ -1397,190 +1645,480 @@
       </div>
     </div>
     <div class="g2" style="margin-top:.5rem;">
-      ${inp(`modal-id-${idx}`, 'Modal ID')}
-      ${inp(`modal-title-${idx}`, 'Modal Title')}
+      ${inp(`modal-id-${idx}`, "Modal ID")}
+      ${inp(`modal-title-${idx}`, "Modal Title")}
     </div>
     <div id="modal-textinputs-${idx}" style="margin-top:.5rem;display:flex;flex-direction:column;gap:.5rem;"></div>`;
-      d.querySelector('.remove-comp').addEventListener('click', () => { d.remove(); toast(`Modal #${idx + 1} removed`, 's'); });
-      d.querySelector('.add-input-btn').addEventListener('click', () => {
-        const iIdx = modalInputCount[idx]++;
-        const id = document.createElement('div'); id.className = 'comp-block-inner';
-        id.innerHTML = `
+        d.querySelector(".remove-comp").addEventListener("click", () => {
+          d.remove();
+          toast(`Modal #${idx + 1} removed`, "s");
+        });
+        d.querySelector(".add-input-btn").addEventListener("click", () => {
+          const iIdx = modalInputCount[idx]++;
+          const id = document.createElement("div");
+          id.className = "comp-block-inner";
+          id.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;">
         <span style="font-size:.7rem;font-weight:600;color:var(--text3);">Text Input #${iIdx + 1}</span>
         <button class="icon-btn remove-tinput" style="color:#f87171;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.375rem;">
-        ${inp(`modal-text-id-${idx}-${iIdx}`, 'Input ID')}
+        ${inp(`modal-text-id-${idx}-${iIdx}`, "Input ID")}
         ${sel(`modal-text-style-${idx}-${iIdx}`, '<option value="short">Short</option><option value="paragraph">Paragraph</option>')}
-        ${inp(`modal-text-label-${idx}-${iIdx}`, 'Label')}
-        ${inp(`modal-text-min-${idx}-${iIdx}`, 'Min Length', 'number')}
-        ${inp(`modal-text-max-${idx}-${iIdx}`, 'Max Length', 'number')}
-        ${inp(`modal-text-value-${idx}-${iIdx}`, 'Default Value (opt)')}
-        ${inp(`modal-text-placeholder-${idx}-${iIdx}`, 'Placeholder (opt)')}
+        ${inp(`modal-text-label-${idx}-${iIdx}`, "Label")}
+        ${inp(`modal-text-min-${idx}-${iIdx}`, "Min Length", "number")}
+        ${inp(`modal-text-max-${idx}-${iIdx}`, "Max Length", "number")}
+        ${inp(`modal-text-value-${idx}-${iIdx}`, "Default Value (opt)")}
+        ${inp(`modal-text-placeholder-${idx}-${iIdx}`, "Placeholder (opt)")}
       </div>
-      ${chk(`modal-text-required-${idx}-${iIdx}`, 'Required')}`;
-        id.querySelector('.remove-tinput').addEventListener('click', () => { id.remove(); toast(`Text Input #${iIdx + 1} removed`, 's'); });
-        document.getElementById(`modal-textinputs-${idx}`).appendChild(id);
-        toast(`Text Input #${iIdx + 1} added to Modal #${idx + 1}`, 's');
-      });
-      document.getElementById('modals-container').appendChild(d);
-    });
-
-    /* ── Clear ── */
-    document.getElementById('clear-input').addEventListener('click', () => {
-      ['author-input', 'author-icon-input', 'author-url-input', 'title-input', 'title-url-input', 'description-input', 'thumbnail-input', 'image-input', 'color-input', 'footer-input', 'footer-icon-input'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-      document.getElementById('timestamp-input').checked = false;
-      ['fields-container', 'buttons-container', 'selects-container', 'modals-container'].forEach(id => document.getElementById(id).innerHTML = '');
-      fieldCount = 0; buttonCount = 0; selectCount = 0; modalCount = 0; selectOptionCount = {}; modalInputCount = {};
-      document.getElementById('output-text').value = ''; updatePreview(); toast('Cleared', 's');
-    });
-
-    /* ── EXACT original Generate ── */
-    document.getElementById('replace-btn').addEventListener('click', () => {
-      let errorFlag = false;
-      const author = sanitizeInput(document.getElementById('author-input').value.trim());
-      const authorIcon = sanitizeInput(document.getElementById('author-icon-input').value.trim());
-      const authorURL = sanitizeInput(document.getElementById('author-url-input').value.trim());
-      const title = sanitizeInput(document.getElementById('title-input').value.trim());
-      const titleURL = sanitizeInput(document.getElementById('title-url-input').value.trim());
-      const description = sanitizeInput(document.getElementById('description-input').value.trim());
-      const thumbnail = sanitizeInput(document.getElementById('thumbnail-input').value.trim());
-      const image = sanitizeInput(document.getElementById('image-input').value.trim());
-      const color = sanitizeInput(document.getElementById('color-input').value.trim());
-      const footer = sanitizeInput(document.getElementById('footer-input').value.trim());
-      const footerIcon = sanitizeInput(document.getElementById('footer-icon-input').value.trim());
-      if (!author && (authorIcon || authorURL)) { toast("Can't have Author Icon/URL without Author Name", 'e'); return; }
-      if (!title && titleURL) { toast("Can't have Title URL without Title", 'e'); return; }
-      if (!footer && footerIcon) { toast("Can't have Footer Icon without Footer text", 'e'); return; }
-      let code = '$nomention\n';
-      if (author) code += `$author[${author}]\n`;
-      if (authorIcon) code += `$authorIcon[${authorIcon}]\n`;
-      if (authorURL) code += `$authorURL[${authorURL}]\n`;
-      if (title) code += `$title[${title}]\n`;
-      if (titleURL) code += `$embeddedURL[${titleURL}]\n`;
-      if (description) code += `$description[${description}]\n`;
-      if (thumbnail) code += `$thumbnail[${thumbnail}]\n`;
-      if (image) code += `$image[${image}]\n`;
-      if (color) code += `$color[${color}]\n`;
-      if (footer) code += `$footer[${footer}]\n`;
-      if (footerIcon) code += `$footerIcon[${footerIcon}]\n`;
-      if (document.getElementById('timestamp-input').checked) code += `$addTimestamp\n`;
-      document.querySelectorAll('#fields-container .comp-block').forEach((fd, i) => {
-        const n = sanitizeInput(fd.querySelector('input[id^="field-name-"]')?.value.trim() || '');
-        const v = sanitizeInput(fd.querySelector('input[id^="field-value-"]')?.value.trim() || '');
-        const inl = fd.querySelector('input[id^="field-inline-"]')?.checked ? 'yes' : 'no';
-        if (!n || !v) { toast(`Field ${i + 1}: Name and Value required`, 'e'); errorFlag = true; return; }
-        if (n === v) { toast(`Field ${i + 1}: Name and Value can't be the same`, 'e'); errorFlag = true; return; }
-        code += `$addField[${n};${v};${inl}]\n`;
-      });
-      document.querySelectorAll('#buttons-container .comp-block').forEach((bd, i) => {
-        const id = sanitizeInput(bd.querySelector('input[id^="button-idlink-"]')?.value.trim() || '');
-        const lbl = sanitizeInput(bd.querySelector('input[id^="button-label-"]')?.value.trim() || '');
-        const style = bd.querySelector('select')?.value || 'primary';
-        const nr = bd.querySelector('input[id^="button-newrow-"]')?.checked ? 'yes' : 'no';
-        const dis = bd.querySelector('input[id^="button-disable-"]')?.checked ? 'yes' : '';
-        const emoji = sanitizeInput(bd.querySelector('input[id^="button-emoji-"]')?.value.trim() || '');
-        const msgid = sanitizeInput(bd.querySelector('input[id^="button-messageid-"]')?.value.trim() || '');
-        if (!id) { toast(`Button ${i + 1}: ID/URL required`, 'e'); return; }
-        if (!lbl) { toast(`Button ${i + 1}: Label required`, 'e'); return; }
-        code += `$addButton[${nr};${id};${lbl};${style};${dis};${emoji};${msgid}]\n`;
-      });
-      document.querySelectorAll('#selects-container .comp-block').forEach((sd, i) => {
-        const menuId = sanitizeInput(sd.querySelector('input[id^="select-id-"]')?.value.trim() || '');
-        const min = Number(sd.querySelector('input[id^="select-min-"]')?.value || 0);
-        const max = Number(sd.querySelector('input[id^="select-max-"]')?.value || 0);
-        const ph = sanitizeInput(sd.querySelector('input[id^="select-placeholder-"]')?.value.trim() || '');
-        const msgid = sanitizeInput(sd.querySelector('input[id^="select-messageid-"]')?.value.trim() || '');
-        if (!menuId) { toast(`Select Menu ${i + 1}: Menu ID required`, 'e'); errorFlag = true; return; }
-        const opts = sd.querySelectorAll('.comp-block-inner');
-        if (!opts.length) { toast(`Select Menu ${i + 1}: Add at least one option`, 'e'); errorFlag = true; return; }
-        code += `$newSelectMenu[${menuId};${min};${max};${ph};${msgid}]\n`;
-        opts.forEach((od, j) => {
-          const optId = sanitizeInput(od.querySelector('input[id^="select-option-id-"]')?.value.trim() || '');
-          const lbl = sanitizeInput(od.querySelector('input[id^="select-option-label-"]')?.value.trim() || '');
-          const val = sanitizeInput(od.querySelector('input[id^="select-option-value-"]')?.value.trim() || '');
-          const desc = sanitizeInput(od.querySelector('input[id^="select-option-description-"]')?.value.trim() || '');
-          const def = od.querySelector('input[id^="select-option-default-"]')?.checked ? 'yes' : '';
-          const emoji = sanitizeInput(od.querySelector('input[id^="select-option-emoji-"]')?.value.trim() || '');
-          const omid = sanitizeInput(od.querySelector('input[id^="select-option-messageid-"]')?.value.trim() || '');
-          if (!optId || !lbl || !val || !desc) { toast(`Menu ${i + 1} Option ${j + 1}: all fields required`, 'e'); errorFlag = true; return; }
-          if (optId !== menuId) { toast(`Menu ${i + 1} Option ${j + 1}: Option ID must match Menu ID`, 'e'); errorFlag = true; return; }
-          code += `$addSelectMenuOption[${optId};${lbl};${val};${desc};${def};${emoji};${omid}]\n`;
+      ${chk(`modal-text-required-${idx}-${iIdx}`, "Required")}`;
+          id.querySelector(".remove-tinput").addEventListener("click", () => {
+            id.remove();
+            toast(`Text Input #${iIdx + 1} removed`, "s");
+          });
+          document.getElementById(`modal-textinputs-${idx}`).appendChild(id);
+          toast(`Text Input #${iIdx + 1} added to Modal #${idx + 1}`, "s");
         });
+        document.getElementById("modals-container").appendChild(d);
       });
-      document.querySelectorAll('#modals-container .comp-block').forEach((md, i) => {
-        const modalId = sanitizeInput(md.querySelector('input[id^="modal-id-"]')?.value.trim() || '');
-        const modalTitle = sanitizeInput(md.querySelector('input[id^="modal-title-"]')?.value.trim() || '');
-        if (!modalId || !modalTitle) { toast(`Modal ${i + 1}: ID and Title required`, 'e'); errorFlag = true; return; }
-        code += `$newModal[${modalId};${modalTitle}]\n`;
-        const inputs = md.querySelectorAll('.comp-block-inner');
-        if (!inputs.length) { toast(`Modal ${i + 1}: Add at least one text input`, 'e'); errorFlag = true; return; }
-        let validCount = 0;
-        inputs.forEach((tid, j) => {
-          const inputId = sanitizeInput(tid.querySelector('input[id^="modal-text-id-"]')?.value.trim() || '');
-          if (!inputId) return; validCount++;
-          const style = tid.querySelector('select')?.value || 'short';
-          const label = sanitizeInput(tid.querySelector('input[id^="modal-text-label-"]')?.value.trim() || '');
-          const min = Number(tid.querySelector('input[id^="modal-text-min-"]')?.value || 0);
-          const max = Number(tid.querySelector('input[id^="modal-text-max-"]')?.value || 0);
-          const req = tid.querySelector('input[id^="modal-text-required-"]')?.checked ? 'true' : 'false';
-          const val = sanitizeInput(tid.querySelector('input[id^="modal-text-value-"]')?.value.trim() || '');
-          const ph = sanitizeInput(tid.querySelector('input[id^="modal-text-placeholder-"]')?.value.trim() || '');
-          if (!label) { toast(`Modal ${i + 1} Input ${j + 1}: Label required`, 'e'); errorFlag = true; return; }
-          if (max > 4000 || min > 4000) { toast(`Modal ${i + 1} Input ${j + 1}: Length can't exceed 4000`, 'e'); errorFlag = true; return; }
-          if (max > 0 && max < min) { toast(`Modal ${i + 1} Input ${j + 1}: Max < Min`, 'e'); errorFlag = true; return; }
-          if (label.length > 45) { toast(`Modal ${i + 1} Input ${j + 1}: Label max 45 chars`, 'e'); errorFlag = true; return; }
-          if (ph.length > 100) { toast(`Modal ${i + 1} Input ${j + 1}: Placeholder max 100 chars`, 'e'); errorFlag = true; return; }
-          code += `$addTextInput[${inputId};${style};${label};${min};${max};${req};${val};${ph}]\n`;
+
+      /* ── Clear ── */
+      document.getElementById("clear-input").addEventListener("click", () => {
+        [
+          "author-input",
+          "author-icon-input",
+          "author-url-input",
+          "title-input",
+          "title-url-input",
+          "description-input",
+          "thumbnail-input",
+          "image-input",
+          "color-input",
+          "footer-input",
+          "footer-icon-input",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
         });
-        if (validCount === 0) { toast(`Modal ${i + 1}: Add at least one valid input`, 'e'); errorFlag = true; }
+        document.getElementById("timestamp-input").checked = false;
+        [
+          "fields-container",
+          "buttons-container",
+          "selects-container",
+          "modals-container",
+        ].forEach((id) => (document.getElementById(id).innerHTML = ""));
+        fieldCount = 0;
+        buttonCount = 0;
+        selectCount = 0;
+        modalCount = 0;
+        selectOptionCount = {};
+        modalInputCount = {};
+        document.getElementById("output-text").value = "";
+        updatePreview();
+        toast("Cleared", "s");
       });
-      if (errorFlag) return;
-      document.getElementById('output-text').value = code.trim();
-      toast('Embed code generated', 's'); updatePreview();
-    });
 
-    /* ── Copy ── */
-    document.getElementById('copy-output').addEventListener('click', () => {
-      const v = document.getElementById('output-text').value;
-      if (!v) { toast('Nothing to copy', 'e'); return; }
-      navigator.clipboard.writeText(v).then(() => toast('Copied', 's')).catch(() => toast('Copy failed', 'e'));
-    });
+      /* ── EXACT original Generate ── */
+      document.getElementById("replace-btn").addEventListener("click", () => {
+        let errorFlag = false;
+        const author = sanitizeInput(
+          document.getElementById("author-input").value.trim(),
+        );
+        const authorIcon = sanitizeInput(
+          document.getElementById("author-icon-input").value.trim(),
+        );
+        const authorURL = sanitizeInput(
+          document.getElementById("author-url-input").value.trim(),
+        );
+        const title = sanitizeInput(
+          document.getElementById("title-input").value.trim(),
+        );
+        const titleURL = sanitizeInput(
+          document.getElementById("title-url-input").value.trim(),
+        );
+        const description = sanitizeInput(
+          document.getElementById("description-input").value.trim(),
+        );
+        const thumbnail = sanitizeInput(
+          document.getElementById("thumbnail-input").value.trim(),
+        );
+        const image = sanitizeInput(
+          document.getElementById("image-input").value.trim(),
+        );
+        const color = sanitizeInput(
+          document.getElementById("color-input").value.trim(),
+        );
+        const footer = sanitizeInput(
+          document.getElementById("footer-input").value.trim(),
+        );
+        const footerIcon = sanitizeInput(
+          document.getElementById("footer-icon-input").value.trim(),
+        );
+        if (!author && (authorIcon || authorURL)) {
+          toast("Can't have Author Icon/URL without Author Name", "e");
+          return;
+        }
+        if (!title && titleURL) {
+          toast("Can't have Title URL without Title", "e");
+          return;
+        }
+        if (!footer && footerIcon) {
+          toast("Can't have Footer Icon without Footer text", "e");
+          return;
+        }
+        let code = "$nomention\n";
+        if (author) code += `$author[${author}]\n`;
+        if (authorIcon) code += `$authorIcon[${authorIcon}]\n`;
+        if (authorURL) code += `$authorURL[${authorURL}]\n`;
+        if (title) code += `$title[${title}]\n`;
+        if (titleURL) code += `$embeddedURL[${titleURL}]\n`;
+        if (description) code += `$description[${description}]\n`;
+        if (thumbnail) code += `$thumbnail[${thumbnail}]\n`;
+        if (image) code += `$image[${image}]\n`;
+        if (color) code += `$color[${color}]\n`;
+        if (footer) code += `$footer[${footer}]\n`;
+        if (footerIcon) code += `$footerIcon[${footerIcon}]\n`;
+        if (document.getElementById("timestamp-input").checked)
+          code += `$addTimestamp\n`;
+        document
+          .querySelectorAll("#fields-container .comp-block")
+          .forEach((fd, i) => {
+            const n = sanitizeInput(
+              fd.querySelector('input[id^="field-name-"]')?.value.trim() || "",
+            );
+            const v = sanitizeInput(
+              fd.querySelector('input[id^="field-value-"]')?.value.trim() || "",
+            );
+            const inl = fd.querySelector('input[id^="field-inline-"]')?.checked
+              ? "yes"
+              : "no";
+            if (!n || !v) {
+              toast(`Field ${i + 1}: Name and Value required`, "e");
+              errorFlag = true;
+              return;
+            }
+            if (n === v) {
+              toast(`Field ${i + 1}: Name and Value can't be the same`, "e");
+              errorFlag = true;
+              return;
+            }
+            code += `$addField[${n};${v};${inl}]\n`;
+          });
+        document
+          .querySelectorAll("#buttons-container .comp-block")
+          .forEach((bd, i) => {
+            const id = sanitizeInput(
+              bd.querySelector('input[id^="button-idlink-"]')?.value.trim() ||
+                "",
+            );
+            const lbl = sanitizeInput(
+              bd.querySelector('input[id^="button-label-"]')?.value.trim() ||
+                "",
+            );
+            const style = bd.querySelector("select")?.value || "primary";
+            const nr = bd.querySelector('input[id^="button-newrow-"]')?.checked
+              ? "yes"
+              : "no";
+            const dis = bd.querySelector('input[id^="button-disable-"]')
+              ?.checked
+              ? "yes"
+              : "";
+            const emoji = sanitizeInput(
+              bd.querySelector('input[id^="button-emoji-"]')?.value.trim() ||
+                "",
+            );
+            const msgid = sanitizeInput(
+              bd
+                .querySelector('input[id^="button-messageid-"]')
+                ?.value.trim() || "",
+            );
+            if (!id) {
+              toast(`Button ${i + 1}: ID/URL required`, "e");
+              return;
+            }
+            if (!lbl) {
+              toast(`Button ${i + 1}: Label required`, "e");
+              return;
+            }
+            code += `$addButton[${nr};${id};${lbl};${style};${dis};${emoji};${msgid}]\n`;
+          });
+        document
+          .querySelectorAll("#selects-container .comp-block")
+          .forEach((sd, i) => {
+            const menuId = sanitizeInput(
+              sd.querySelector('input[id^="select-id-"]')?.value.trim() || "",
+            );
+            const min = Number(
+              sd.querySelector('input[id^="select-min-"]')?.value || 0,
+            );
+            const max = Number(
+              sd.querySelector('input[id^="select-max-"]')?.value || 0,
+            );
+            const ph = sanitizeInput(
+              sd
+                .querySelector('input[id^="select-placeholder-"]')
+                ?.value.trim() || "",
+            );
+            const msgid = sanitizeInput(
+              sd
+                .querySelector('input[id^="select-messageid-"]')
+                ?.value.trim() || "",
+            );
+            if (!menuId) {
+              toast(`Select Menu ${i + 1}: Menu ID required`, "e");
+              errorFlag = true;
+              return;
+            }
+            const opts = sd.querySelectorAll(".comp-block-inner");
+            if (!opts.length) {
+              toast(`Select Menu ${i + 1}: Add at least one option`, "e");
+              errorFlag = true;
+              return;
+            }
+            code += `$newSelectMenu[${menuId};${min};${max};${ph};${msgid}]\n`;
+            opts.forEach((od, j) => {
+              const optId = sanitizeInput(
+                od
+                  .querySelector('input[id^="select-option-id-"]')
+                  ?.value.trim() || "",
+              );
+              const lbl = sanitizeInput(
+                od
+                  .querySelector('input[id^="select-option-label-"]')
+                  ?.value.trim() || "",
+              );
+              const val = sanitizeInput(
+                od
+                  .querySelector('input[id^="select-option-value-"]')
+                  ?.value.trim() || "",
+              );
+              const desc = sanitizeInput(
+                od
+                  .querySelector('input[id^="select-option-description-"]')
+                  ?.value.trim() || "",
+              );
+              const def = od.querySelector(
+                'input[id^="select-option-default-"]',
+              )?.checked
+                ? "yes"
+                : "";
+              const emoji = sanitizeInput(
+                od
+                  .querySelector('input[id^="select-option-emoji-"]')
+                  ?.value.trim() || "",
+              );
+              const omid = sanitizeInput(
+                od
+                  .querySelector('input[id^="select-option-messageid-"]')
+                  ?.value.trim() || "",
+              );
+              if (!optId || !lbl || !val || !desc) {
+                toast(
+                  `Menu ${i + 1} Option ${j + 1}: all fields required`,
+                  "e",
+                );
+                errorFlag = true;
+                return;
+              }
+              if (optId !== menuId) {
+                toast(
+                  `Menu ${i + 1} Option ${j + 1}: Option ID must match Menu ID`,
+                  "e",
+                );
+                errorFlag = true;
+                return;
+              }
+              code += `$addSelectMenuOption[${optId};${lbl};${val};${desc};${def};${emoji};${omid}]\n`;
+            });
+          });
+        document
+          .querySelectorAll("#modals-container .comp-block")
+          .forEach((md, i) => {
+            const modalId = sanitizeInput(
+              md.querySelector('input[id^="modal-id-"]')?.value.trim() || "",
+            );
+            const modalTitle = sanitizeInput(
+              md.querySelector('input[id^="modal-title-"]')?.value.trim() || "",
+            );
+            if (!modalId || !modalTitle) {
+              toast(`Modal ${i + 1}: ID and Title required`, "e");
+              errorFlag = true;
+              return;
+            }
+            code += `$newModal[${modalId};${modalTitle}]\n`;
+            const inputs = md.querySelectorAll(".comp-block-inner");
+            if (!inputs.length) {
+              toast(`Modal ${i + 1}: Add at least one text input`, "e");
+              errorFlag = true;
+              return;
+            }
+            let validCount = 0;
+            inputs.forEach((tid, j) => {
+              const inputId = sanitizeInput(
+                tid
+                  .querySelector('input[id^="modal-text-id-"]')
+                  ?.value.trim() || "",
+              );
+              if (!inputId) return;
+              validCount++;
+              const style = tid.querySelector("select")?.value || "short";
+              const label = sanitizeInput(
+                tid
+                  .querySelector('input[id^="modal-text-label-"]')
+                  ?.value.trim() || "",
+              );
+              const min = Number(
+                tid.querySelector('input[id^="modal-text-min-"]')?.value || 0,
+              );
+              const max = Number(
+                tid.querySelector('input[id^="modal-text-max-"]')?.value || 0,
+              );
+              const req = tid.querySelector('input[id^="modal-text-required-"]')
+                ?.checked
+                ? "true"
+                : "false";
+              const val = sanitizeInput(
+                tid
+                  .querySelector('input[id^="modal-text-value-"]')
+                  ?.value.trim() || "",
+              );
+              const ph = sanitizeInput(
+                tid
+                  .querySelector('input[id^="modal-text-placeholder-"]')
+                  ?.value.trim() || "",
+              );
+              if (!label) {
+                toast(`Modal ${i + 1} Input ${j + 1}: Label required`, "e");
+                errorFlag = true;
+                return;
+              }
+              if (max > 4000 || min > 4000) {
+                toast(
+                  `Modal ${i + 1} Input ${j + 1}: Length can't exceed 4000`,
+                  "e",
+                );
+                errorFlag = true;
+                return;
+              }
+              if (max > 0 && max < min) {
+                toast(`Modal ${i + 1} Input ${j + 1}: Max < Min`, "e");
+                errorFlag = true;
+                return;
+              }
+              if (label.length > 45) {
+                toast(`Modal ${i + 1} Input ${j + 1}: Label max 45 chars`, "e");
+                errorFlag = true;
+                return;
+              }
+              if (ph.length > 100) {
+                toast(
+                  `Modal ${i + 1} Input ${j + 1}: Placeholder max 100 chars`,
+                  "e",
+                );
+                errorFlag = true;
+                return;
+              }
+              code += `$addTextInput[${inputId};${style};${label};${min};${max};${req};${val};${ph}]\n`;
+            });
+            if (validCount === 0) {
+              toast(`Modal ${i + 1}: Add at least one valid input`, "e");
+              errorFlag = true;
+            }
+          });
+        if (errorFlag) return;
+        document.getElementById("output-text").value = code.trim();
+        toast("Embed code generated", "s");
+        updatePreview();
+      });
 
-    /* ── EXACT original updatePreview ── */
-    function updatePreview() {
-      const author = document.getElementById('author-input').value.trim();
-      const authorIcon = document.getElementById('author-icon-input').value.trim();
-      const authorURL = document.getElementById('author-url-input').value.trim();
-      const title = document.getElementById('title-input').value.trim();
-      const titleURL = document.getElementById('title-url-input').value.trim();
-      const description = document.getElementById('description-input').value.trim();
-      const thumbnail = document.getElementById('thumbnail-input').value.trim();
-      const image = document.getElementById('image-input').value.trim();
-      const color = document.getElementById('color-input').value.trim() || '#ffffff';
-      const footer = document.getElementById('footer-input').value.trim();
-      const footerIcon = document.getElementById('footer-icon-input').value.trim();
-      const timestamp = document.getElementById('timestamp-input').checked;
-      let fieldsHTML = '';
-      document.querySelectorAll('#fields-container .comp-block').forEach((fd, i) => {
-        const n = fd.querySelector('input[id^="field-name-"]')?.value.trim() || 'Field';
-        const v = fd.querySelector('input[id^="field-value-"]')?.value.trim() || 'Value';
-        const inl = fd.querySelector('input[id^="field-inline-"]')?.checked;
-        fieldsHTML += `<div style="width:${inl ? '47%' : '100%'}"><div class="embed-field-name">${n}</div><div class="embed-field-val">${v}</div></div>`;
+      /* ── Copy ── */
+      document.getElementById("copy-output").addEventListener("click", () => {
+        const v = document.getElementById("output-text").value;
+        if (!v) {
+          toast("Nothing to copy", "e");
+          return;
+        }
+        navigator.clipboard
+          .writeText(v)
+          .then(() => toast("Copied", "s"))
+          .catch(() => toast("Copy failed", "e"));
       });
-      let buttonsHTML = '';
-      document.querySelectorAll('#buttons-container .comp-block').forEach(bd => {
-        const lbl = bd.querySelector('input[id^="button-label-"]')?.value.trim() || 'Button';
-        const style = bd.querySelector('select')?.value || 'primary';
-        const colors = { primary: '#4752c4', secondary: '#4f545c', success: '#3ba55c', danger: '#ed4245', link: '#4f545c' };
-        buttonsHTML += `<button style="background:${colors[style] || colors.primary};color:#fff;font-size:.75rem;padding:.25rem .75rem;border-radius:4px;border:none;cursor:pointer;font-weight:500">${lbl}</button>`;
-      });
-      const bots = [{ n: 'Auora', a: 'https://auora.live/auora_logo.png' }];
-      const bot = bots[0];
-      const now = new Date(); const ts = 'Today at ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-      const hasContent = author || title || description || footer || image || thumbnail || fieldsHTML;
-      document.getElementById('embed-preview').innerHTML = `
+
+      /* ── EXACT original updatePreview ── */
+      function updatePreview() {
+        const author = document.getElementById("author-input").value.trim();
+        const authorIcon = document
+          .getElementById("author-icon-input")
+          .value.trim();
+        const authorURL = document
+          .getElementById("author-url-input")
+          .value.trim();
+        const title = document.getElementById("title-input").value.trim();
+        const titleURL = document
+          .getElementById("title-url-input")
+          .value.trim();
+        const description = document
+          .getElementById("description-input")
+          .value.trim();
+        const thumbnail = document
+          .getElementById("thumbnail-input")
+          .value.trim();
+        const image = document.getElementById("image-input").value.trim();
+        const color =
+          document.getElementById("color-input").value.trim() || "#ffffff";
+        const footer = document.getElementById("footer-input").value.trim();
+        const footerIcon = document
+          .getElementById("footer-icon-input")
+          .value.trim();
+        const timestamp = document.getElementById("timestamp-input").checked;
+        let fieldsHTML = "";
+        document
+          .querySelectorAll("#fields-container .comp-block")
+          .forEach((fd, i) => {
+            const n =
+              fd.querySelector('input[id^="field-name-"]')?.value.trim() ||
+              "Field";
+            const v =
+              fd.querySelector('input[id^="field-value-"]')?.value.trim() ||
+              "Value";
+            const inl = fd.querySelector('input[id^="field-inline-"]')?.checked;
+            fieldsHTML += `<div style="width:${inl ? "47%" : "100%"}"><div class="embed-field-name">${n}</div><div class="embed-field-val">${v}</div></div>`;
+          });
+        let buttonsHTML = "";
+        document
+          .querySelectorAll("#buttons-container .comp-block")
+          .forEach((bd) => {
+            const lbl =
+              bd.querySelector('input[id^="button-label-"]')?.value.trim() ||
+              "Button";
+            const style = bd.querySelector("select")?.value || "primary";
+            const colors = {
+              primary: "#4752c4",
+              secondary: "#4f545c",
+              success: "#3ba55c",
+              danger: "#ed4245",
+              link: "#4f545c",
+            };
+            buttonsHTML += `<button style="background:${colors[style] || colors.primary};color:#fff;font-size:.75rem;padding:.25rem .75rem;border-radius:4px;border:none;cursor:pointer;font-weight:500">${lbl}</button>`;
+          });
+        const bots = [{ n: "Auora", a: "https://auora.live/auora_logo.png" }];
+        const bot = bots[0];
+        const now = new Date();
+        const ts =
+          "Today at " +
+          now.toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+          });
+        const hasContent =
+          author ||
+          title ||
+          description ||
+          footer ||
+          image ||
+          thumbnail ||
+          fieldsHTML;
+        document.getElementById("embed-preview").innerHTML = `
     <div class="preview-msg">
       <img src="${bot.a}" class="preview-avatar" onerror="this.style.display='none'"/>
       <div class="preview-content">
@@ -1589,33 +2127,51 @@
           <span class="preview-badge">BOT</span>
           <span class="preview-time">${ts}</span>
         </div>
-        ${hasContent ? `
+        ${
+          hasContent
+            ? `
         <div class="preview-embed">
           <div class="embed-pill" style="background:${color}"></div>
-          <div class="embed-body" style="padding-right:${thumbnail ? '88px' : '.75rem'}">
-            ${author ? `<div class="embed-author">${authorIcon ? `<img src="${authorIcon}" onerror="this.style.display='none'">` : ''}${authorURL ? `<a href="${authorURL}" style="color:#00b0f4">${author}</a>` : author}</div>` : ''}
-            ${title ? `<div class="embed-title">${titleURL ? `<a href="${titleURL}">${title}</a>` : title}</div>` : ''}
-            ${description ? `<div class="embed-desc">${description}</div>` : ''}
-            ${fieldsHTML ? `<div class="embed-fields">${fieldsHTML}</div>` : ''}
-            ${image ? `<div class="embed-image"><img src="${image}" onerror="this.style.display='none'"></div>` : ''}
-            ${footer || timestamp ? `<div class="embed-footer">${footerIcon ? `<img src="${footerIcon}" onerror="this.style.display='none'">` : ''}${footer}${footer && timestamp ? ' · ' : ''}${timestamp ? ts : ''}</div>` : ''}
-            ${thumbnail ? `<img src="${thumbnail}" class="embed-thumb" onerror="this.style.display='none'">` : ''}
+          <div class="embed-body" style="padding-right:${thumbnail ? "88px" : ".75rem"}">
+            ${author ? `<div class="embed-author">${authorIcon ? `<img src="${authorIcon}" onerror="this.style.display='none'">` : ""}${authorURL ? `<a href="${authorURL}" style="color:#00b0f4">${author}</a>` : author}</div>` : ""}
+            ${title ? `<div class="embed-title">${titleURL ? `<a href="${titleURL}">${title}</a>` : title}</div>` : ""}
+            ${description ? `<div class="embed-desc">${description}</div>` : ""}
+            ${fieldsHTML ? `<div class="embed-fields">${fieldsHTML}</div>` : ""}
+            ${image ? `<div class="embed-image"><img src="${image}" onerror="this.style.display='none'"></div>` : ""}
+            ${footer || timestamp ? `<div class="embed-footer">${footerIcon ? `<img src="${footerIcon}" onerror="this.style.display='none'">` : ""}${footer}${footer && timestamp ? " · " : ""}${timestamp ? ts : ""}</div>` : ""}
+            ${thumbnail ? `<img src="${thumbnail}" class="embed-thumb" onerror="this.style.display='none'">` : ""}
           </div>
-        </div>`: '<p style="font-size:.8rem;color:#72767d;font-style:italic">Fill in the form to see a preview…</p>'}
-        ${buttonsHTML ? `<div style="display:flex;gap:.375rem;flex-wrap:wrap;margin-top:.25rem">${buttonsHTML}</div>` : ''}
+        </div>`
+            : '<p style="font-size:.8rem;color:#72767d;font-style:italic">Fill in the form to see a preview…</p>'
+        }
+        ${buttonsHTML ? `<div style="display:flex;gap:.375rem;flex-wrap:wrap;margin-top:.25rem">${buttonsHTML}</div>` : ""}
       </div>
     </div>`;
-    }
+      }
 
-    /* ── live preview listeners ── */
-    ['author-input', 'author-icon-input', 'author-url-input', 'title-input', 'title-url-input', 'description-input', 'thumbnail-input', 'image-input', 'color-input', 'footer-input', 'footer-icon-input', 'timestamp-input'].forEach(id => {
-      const el = document.getElementById(id); if (!el) return;
-      el.addEventListener('input', updatePreview);
-      if (el.type === 'checkbox') el.addEventListener('change', updatePreview);
-    });
+      /* ── live preview listeners ── */
+      [
+        "author-input",
+        "author-icon-input",
+        "author-url-input",
+        "title-input",
+        "title-url-input",
+        "description-input",
+        "thumbnail-input",
+        "image-input",
+        "color-input",
+        "footer-input",
+        "footer-icon-input",
+        "timestamp-input",
+      ].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("input", updatePreview);
+        if (el.type === "checkbox")
+          el.addEventListener("change", updatePreview);
+      });
 
-    updatePreview();
-  </script>
-</body>
-
+      updatePreview();
+    </script>
+  </body>
 </html>
