@@ -144,7 +144,7 @@
       width: 40px;
       height: 22px;
       border-radius: 999px;
-     background: #e8e9f2;
+      background: #e8e9f2;
       position: relative;
       cursor: pointer;
       transition: background .2s;
@@ -621,12 +621,15 @@
             Copy Code
           </button>
         </div>
+
         <p class="text-sm text-gray-400 dark-text-3 mb-4">
           Endpoint: <span class="font-mono text-[#818cf8]">Submit Server</span> — paste this into a BDFD command.
           Full credit for the example code goes to <strong class="text-white">Catearo</strong>.
         </p>
+
         <div class="code-block">
-          <pre id="exampleCode"><span class="fn">$nomention</span>
+          <pre id="exampleCode"><code>
+<span class="fn">$nomention</span>
 <span class="fn">$c</span><span class="kw">[</span><span class="cmt">You have to change these two placeholder values</span><span class="kw">]</span>
 <span class="fn">$var</span><span class="kw">[</span><span class="str">count</span><span class="kw">;</span><span class="num">NUMBER_OF_SERVERS</span><span class="kw">]</span>
 <span class="fn">$httpAddHeader</span><span class="kw">[</span><span class="str">Authorization</span><span class="kw">;</span><span class="str">Bearer YOUR_API_KEY_HERE</span><span class="kw">]</span>
@@ -636,22 +639,39 @@
 <span class="fn">$textSplit</span><span class="kw">[</span><span class="fn">$serverNames</span><span class="kw">[</span><span class="fn">$var</span><span class="kw">[</span><span class="str">count</span><span class="kw">];</span><span class="str">%%%</span><span class="kw">];</span><span class="str">%%%</span><span class="kw">]</span>
 <span class="fn">$httpPost</span><span class="kw">[</span><span class="str">https://api-bdtools.netlify.app/submit-server</span><span class="kw">;</span>
 <span class="str">Author ID: $authorID</span>
-<span class="fn">$eval</span><span class="kw">[</span><span class="fn">$replaceText</span><span class="kw">[</span><span class="fn">$cropText</span><span class="kw">[</span><span class="fn">$repeatMessage</span><span class="kw">[</span><span class="num">10</span><span class="kw">;</span><span class="fn">$repeatMessage</span><span class="kw">[</span><span class="num">10</span><span class="kw">;</span><span class="fn">$repeatMessage</span><span class="kw">[</span><span class="num">5</span><span class="kw">;</span><span class="str">a</span><span class="kw">]]];</span><span class="fn">$min</span><span class="kw">[</span><span class="fn">$getTextSplitLength</span><span class="kw">;</span><span class="num">250</span><span class="kw">]];</span><span class="str">a</span><span class="kw">;</span><span class="str">Server Name: ...</span><span class="kw">]]]</span>
+<span class="fn">$eval</span><span class="kw">[</span><span class="fn">$replaceText</span><span class="kw">[</span><span class="fn">$cropText</span><span class="kw">[</span><span class="fn">$repeatMessage</span><span class="kw">[</span><span class="num">10</span><span class="kw">;</span><span class="fn">$repeatMessage</span><span class="kw">[</span><span class="num">10</span><span class="kw">;</span><span class="fn">$repeatMessage</span><span class="kw">[</span><span class="num">5</span><span class="kw">;</span><span class="str">a</span><span class="kw">]]];</span><span class="fn">$min</span><span class="kw">[</span><span class="fn">$getTextSplitLength</span><span class="kw">;</span><span class="num">250</span><span class="kw">]];</span><span class="str">a</span><span class="kw">;</span><span class="str">Server Name: %{DOL}%splitText[%{DOL}%var[i\]\]</span>
+<span class="str">Server ID: %{DOL}%guildID[%{DOL}%splitText[%{DOL}%var[i\]\]\]</span>
+<span class="str">Invite Link: %{DOL}%try %{DOL}%getServerInvite[%{DOL}%guildID[%{DOL}%splitText[%{DOL}%var[i\]\]\]\] %{DOL}%catch failed %{DOL}%endtry</span>
+<span class="str">Owner ID: %{DOL}%serverOwner[%{DOL}%guildID[%{DOL}%splitText[%{DOL}%var[i\]\]\]\]</span>
+<span class="str">%{DOL}%var[i\;%{DOL}%sum[1\;%{DOL}%var[i\]\]\]</span>
+<span class="kw">]]]</span>
 <span class="kw">]</span>
 <span class="fn">$c</span><span class="kw">[</span><span class="cmt">You can edit this message below:</span><span class="kw">]</span>
-<span class="fn">$httpResult</span></pre>
-        </div>
-        <div class="mt-5">
-          <p class="text-sm text-gray-400 dark-text-3 mb-3">Example Response:</p>
-          <div class="code-block">
-            <pre><span class="kw">{</span>
-  <span class="key">"message"</span><span class="kw">:</span> <span class="str">"Processing started. This may take 15s–5min."</span><span class="kw">,</span>
-  <span class="key">"receivedServers"</span><span class="kw">:</span> <span class="num">10</span><span class="kw">,</span>
-  <span class="key">"info"</span><span class="kw">:</span> <span class="str">"View updated guild list at /bot-guild-list"</span>
-<span class="kw">}</span></pre>
-          </div>
+<span class="fn">$httpResult</span>
+</code></pre>
         </div>
       </section>
+
+      <pre id="rawCode" style="position:absolute; left:-9999px;">
+$nomention
+$c[You have to change these two placeholder values]
+$var[count;NUMBER_OF_SERVERS]
+$httpAddHeader[Authorization;Bearer YOUR_API_KEY_HERE]
+
+$c[DO NOT CHANGE ANYTHING FROM THIS POINT ONWARDS]
+$var[i;1]
+$textSplit[$serverNames[$var[count];%%%];%%%]
+$httpPost[https://api-bdtools.netlify.app/submit-server;
+Author ID: $authorID
+$eval[$replaceText[$cropText[$repeatMessage[10;$repeatMessage[10;$repeatMessage[5;a]]];$min[$getTextSplitLength;250];];a;Server Name: %{DOL}%splitText[%{DOL}%var[i\]\]
+Server ID: %{DOL}%guildID[%{DOL}%splitText[%{DOL}%var[i\]\]\]
+Invite Link: %{DOL}%try %{DOL}%getServerInvite[%{DOL}%guildID[%{DOL}%splitText[%{DOL}%var[i\]\]\]\] %{DOL}%catch failed %{DOL}%endtry 
+Owner ID: %{DOL}%serverOwner[%{DOL}%guildID[%{DOL}%splitText[%{DOL}%var[i\]\]\]\] %{DOL}%var[i\;%{DOL}%sum[1\;%{DOL}%var[i\]\]\]
+]]
+]
+$c[You can edit this message below:]
+$httpResult
+</pre>
 
       <!-- Rules -->
       <section id="rules" class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-5 sm:p-6 fu">
@@ -875,8 +895,8 @@
     }
 
     function copyCode() {
-      const raw = `$nomention\n$c[You have to change these two placeholder values]\n$var[count;NUMBER_OF_SERVERS]\n$httpAddHeader[Authorization;Bearer YOUR_API_KEY_HERE]\n\n$c[DO NOT CHANGE ANYTHING FROM THIS POINT ONWARDS, NOT EVEN BRACKETS]\n$var[i;1]\n$textSplit[$serverNames[$var[count];%%%];%%%]\n$httpPost[https://api-bdtools.netlify.app/submit-server;\nAuthor ID: $authorID\n$eval[$replaceText[$cropText[$repeatMessage[10;$repeatMessage[10;$repeatMessage[5;a]]];$min[$getTextSplitLength;250]];a;Server Name: ...]]]\n]\n$c[You can edit this message below:]\n$httpResult`;
-      navigator.clipboard.writeText(raw).then(() => showToast('Code copied!'));
+      const raw = document.getElementById("rawCode").textContent;
+      navigator.clipboard.writeText(raw);
     }
 
     async function testAPI() {
@@ -907,21 +927,27 @@
     });
 
     // Init
-    (function init() {
-      const params = new URLSearchParams(window.location.search);
-      const code = params.get('code'), state = params.get('state');
-      if (code) { handleOAuthCallback(code, state); return; }
-      const raw = localStorage.getItem('bdtools_session');
-      if (raw) {
-        try {
-          const session = JSON.parse(raw);
-          if (Date.now() - session.savedAt < 30 * 24 * 60 * 60 * 1000) {
-            showApp(session.user, session.apiKey); return;
-          }
-        } catch (_) { }
-        localStorage.removeItem('bdtools_session');
-      }
-    })();
+    // (function init() {
+    //   const params = new URLSearchParams(window.location.search);
+    //   const code = params.get('code');
+    //   const state = params.get('state');
+    //   if (code) { handleOAuthCallback(code, state); return; }
+    //   const raw = localStorage.getItem('bdtools_session');
+    //   if (raw) {
+    //     try {
+    //       const session = JSON.parse(raw);
+    //       const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+    //       if (Date.now() - session.savedAt < thirtyDays) { showApp(session.user, session.apiKey); return; }
+    //     } catch (_) {}
+    //     localStorage.removeItem('bdtools_session');
+    //   }
+    // })();
+
+    // TEMP: bypass login for testing
+    showApp(
+      { id: '000000000000000000', username: 'TestUser', avatar: null },
+      'BDTools-test-key-replace-me'
+    );
   </script>
 
 </body>
