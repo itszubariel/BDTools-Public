@@ -3,9 +3,9 @@
   <head>
     <script>
       (function () {
-        localStorage.getItem("darkMode") === "enabled"
-          ? document.documentElement.classList.add("dark")
-          : document.documentElement.classList.remove("dark");
+        const isDark = localStorage.getItem("darkMode") === "enabled";
+        document.documentElement.classList.toggle("dark", isDark);
+        document.documentElement.classList.toggle("light", !isDark);
       })();
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -67,6 +67,15 @@
         --text: #0d0f1a;
         --text2: #54526e;
         --text3: #a0a0b8;
+      }
+
+      html.light .dark-text {
+        color: #0d0f1a !important;
+      }
+
+      html.light .lowerNav {
+        background: rgba(244, 245, 250, 0.92) !important;
+        border-color: #e2e4ef !important;
       }
 
       #ldr {
@@ -783,7 +792,7 @@
       </div>
     </nav>
 
-    <div class="border-b border-[#1e2130]">
+    <div class="lowerNav border-b border-[#1e2130]">
       <div class="max-w-[1080px] mx-auto px-6 py-10 fu">
         <div class="flex items-start gap-4">
           <div
@@ -806,7 +815,9 @@
 
           <!-- Text Content -->
           <div>
-            <h1 class="text-2xl font-black text-white tracking-tight dark-text">
+            <h1
+              class="dark-text text-2xl font-black text-white tracking-tight dark-text"
+            >
               Send Embed Builder
             </h1>
 
@@ -816,17 +827,41 @@
               function using simple fillouts and get a live preview.
             </p>
 
-            <div class="flex flex-wrap gap-1.5 mt-1">
+            <div class="flex flex-wrap gap-1.5 mt-3">
               <span
-                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
                 >JavaScript</span
               >
               <span
-                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
                 >HTML</span
               >
               <span
-                class="text-[10px] font-mono bg-[#1e2130] border border-[#2e3350] text-gray-500 px-2 py-0.5 rounded-md"
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
                 >Tailwind CSS</span
               >
             </div>
@@ -1209,9 +1244,10 @@
         setTimeout(() => t.remove(), 4500);
       }
       function toggleTheme() {
-        const h = document.documentElement,
-          t = document.getElementById("tog");
+        const h = document.documentElement;
+        const t = document.getElementById("tog");
         const dark = h.classList.toggle("dark");
+        h.classList.toggle("light", !dark); // ← add this line
         localStorage.setItem("darkMode", dark ? "enabled" : "disabled");
         t.classList.toggle("on", dark);
       }

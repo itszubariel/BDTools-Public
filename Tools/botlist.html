@@ -3,9 +3,9 @@
   <head>
     <script>
       (function () {
-        localStorage.getItem("darkMode") === "enabled"
-          ? document.documentElement.classList.add("dark")
-          : document.documentElement.classList.remove("dark");
+        const isDark = localStorage.getItem("darkMode") === "enabled";
+        document.documentElement.classList.toggle("dark", isDark);
+        document.documentElement.classList.toggle("light", !isDark);
       })();
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,30 +26,6 @@
         padding: 0;
       }
 
-      :root {
-        --bg: #07080f;
-        --bg2: #0d0f1a;
-        --bg3: #12141f;
-        --border: #1e2133;
-        --accent: #5865f2;
-        --accentH: #4752c4;
-        --text: #f0eff8;
-        --text2: #8b8aa8;
-        --text3: #45435e;
-        --r: 12px;
-        --card-h: 250px;
-      }
-
-      html.light {
-        --bg: #f1f2f9;
-        --bg2: #ffffff;
-        --bg3: #e8e9f2;
-        --border: #dcdde8;
-        --text: #0d0f1a;
-        --text2: #54526e;
-        --text3: #a0a0b8;
-      }
-
       body {
         font-family: "Geist", sans-serif;
         background: var(--bg);
@@ -58,6 +34,41 @@
         display: flex;
         flex-direction: column;
         -webkit-font-smoothing: antialiased;
+      }
+
+      :root {
+        --bg: #07080f;
+        --bg2: #0d0f1a;
+        --bg3: #12141f;
+        --bg4: #181a28;
+        --bg5: #1e2133;
+        --border: #1e2133;
+        --border2: #252840;
+        --accent: #5865f2;
+        --accent-h: #4752c4;
+        --text: #f0eff8;
+        --text2: #8b8aa8;
+        --text3: #45435e;
+        --mono: "Geist Mono", monospace;
+        --r: 10px;
+        --r2: 14px;
+      }
+
+      html.light body {
+        background: #f1f2f9;
+        color: #0d0f1a;
+      }
+
+      html.light {
+        --bg: #f1f2f9;
+        --bg2: #ffffff;
+        --bg3: #e8e9f2;
+        --bg4: #dfe0ec;
+        --border: #dcdde8;
+        --border2: #d0d1de;
+        --text: #0d0f1a;
+        --text2: #54526e;
+        --text3: #a0a0b8;
       }
 
       /* ── Loader ── */
@@ -233,7 +244,7 @@
         width: 40px;
         height: 22px;
         border-radius: 999px;
-        background: #1e2130;
+        background: #d0d1de;
         position: relative;
         cursor: pointer;
         transition: background 0.2s;
@@ -780,11 +791,7 @@
       >
         <!-- Controls bar -->
         <div
-          style="
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border);
-            background: rgba(7, 8, 15, 0.4);
-          "
+          style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--border)"
         >
           <div
             style="
@@ -1012,18 +1019,19 @@
       }
 
       function toggleTheme() {
-        const h = document.documentElement,
-          t = document.getElementById("themeToggle");
+        const h = document.documentElement;
+        const t = document.getElementById("themeToggle");
         const dark = h.classList.toggle("dark");
+        h.classList.toggle("light", !dark);
         localStorage.setItem("darkMode", dark ? "enabled" : "disabled");
         t.classList.toggle("on", dark);
       }
-      document
-        .getElementById("themeToggle")
-        .classList.toggle(
-          "on",
-          document.documentElement.classList.contains("dark"),
-        );
+
+      // Sync toggle state on load
+      (function () {
+        const isDark = document.documentElement.classList.contains("dark");
+        document.getElementById("themeToggle").classList.toggle("on", isDark);
+      })();
 
       const PANELS = [
         "skeletonGrid",
