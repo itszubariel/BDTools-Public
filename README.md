@@ -36,7 +36,7 @@ Authentication uses JWT-based API keys generated via Discord OAuth. Full docs at
 
 ```bash
 # Example — fetch BDFD function list
-curl https://bdtools.netlify.app/bdfd-functions
+curl https://api-bdtools.netlify.app/bdfd-functions
 ```
 
 ---

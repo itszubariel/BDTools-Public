@@ -14,3 +14,9 @@
   to = "/.netlify/functions/submit-server"
   status = 200
   force = true
+
+[[redirects]]
+  from = "/bdfd-functions"  
+  to = "/.netlify/functions/bdfd-functions"
+  status = 200
+  force = true
