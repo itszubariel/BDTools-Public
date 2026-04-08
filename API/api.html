@@ -927,27 +927,21 @@ $httpResult
     });
 
     // Init
-    // (function init() {
-    //   const params = new URLSearchParams(window.location.search);
-    //   const code = params.get('code');
-    //   const state = params.get('state');
-    //   if (code) { handleOAuthCallback(code, state); return; }
-    //   const raw = localStorage.getItem('bdtools_session');
-    //   if (raw) {
-    //     try {
-    //       const session = JSON.parse(raw);
-    //       const thirtyDays = 30 * 24 * 60 * 60 * 1000;
-    //       if (Date.now() - session.savedAt < thirtyDays) { showApp(session.user, session.apiKey); return; }
-    //     } catch (_) {}
-    //     localStorage.removeItem('bdtools_session');
-    //   }
-    // })();
-
-    // TEMP: bypass login for testing
-    showApp(
-      { id: '000000000000000000', username: 'TestUser', avatar: null },
-      'BDTools-test-key-replace-me'
-    );
+   (function init() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code'), state = params.get('state');
+      if (code) { handleOAuthCallback(code, state); return; }
+      const raw = localStorage.getItem('bdtools_session');
+      if (raw) {
+        try {
+          const session = JSON.parse(raw);
+          if (Date.now() - session.savedAt < 30 * 24 * 60 * 60 * 1000) {
+            showApp(session.user, session.apiKey); return;
+          }
+        } catch (_) {}
+        localStorage.removeItem('bdtools_session');
+      }
+    })();
   </script>
 
 </body>
