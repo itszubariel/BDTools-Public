@@ -1,956 +1,887 @@
 <!doctype html>
 <html lang="en" class="dark">
-  <head>
-    <script>
-      (function () {
-        const isDark = localStorage.getItem("darkMode") === "enabled";
-        document.documentElement.classList.toggle("dark", isDark);
-        document.documentElement.classList.toggle("light", !isDark);
-      })();
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>BDTools | Character Escaper</title>
-    <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
 
-      body {
-        font-family: "Geist", sans-serif;
-        background: #07080f;
-        color: #f0eff8;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        -webkit-font-smoothing: antialiased;
-      }
+<head>
+  <script>
+    (function () {
+      const isDark = localStorage.getItem("darkMode") === "enabled";
+      document.documentElement.classList.toggle("dark", isDark);
+      document.documentElement.classList.toggle("light", !isDark);
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BDTools | Character Escaper</title>
+  <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-      :root {
-        --bg: #07080f;
-        --bg2: #0d0f1a;
-        --bg3: #12141f;
-        --bg4: #181a28;
-        --bg5: #1e2133;
-        --border: #1e2133;
-        --border2: #252840;
-        --accent: #5865f2;
-        --accent-h: #4752c4;
-        --text: #f0eff8;
-        --text2: #8b8aa8;
-        --text3: #45435e;
-        --mono: "Geist Mono", monospace;
-        --r: 10px;
-        --r2: 14px;
-      }
+    body {
+      font-family: "Geist", sans-serif;
+      background: #07080f;
+      color: #f0eff8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
 
-      html.light body {
-        background: #f1f2f9;
-        color: #0d0f1a;
-      }
+    :root {
+      --bg: #07080f;
+      --bg2: #0d0f1a;
+      --bg3: #12141f;
+      --bg4: #181a28;
+      --bg5: #1e2133;
+      --border: #1e2133;
+      --border2: #252840;
+      --accent: #5865f2;
+      --accent-h: #4752c4;
+      --text: #f0eff8;
+      --text2: #8b8aa8;
+      --text3: #45435e;
+      --mono: "Geist Mono", monospace;
+      --r: 10px;
+      --r2: 14px;
+    }
 
-      html.light {
-        --bg: #f1f2f9;
-        --bg2: #ffffff;
-        --bg3: #e8e9f2;
-        --bg4: #dfe0ec;
-        --border: #dcdde8;
-        --border2: #d0d1de;
-        --text: #0d0f1a;
-        --text2: #54526e;
-        --text3: #a0a0b8;
-      }
+    html.light body {
+      background: #f1f2f9;
+      color: #0d0f1a;
+    }
 
-      html.light .dark-text {
-        color: #0d0f1a !important;
-      }
+    html.light {
+      --bg: #f1f2f9;
+      --bg2: #ffffff;
+      --bg3: #e8e9f2;
+      --bg4: #dfe0ec;
+      --border: #dcdde8;
+      --border2: #d0d1de;
+      --text: #0d0f1a;
+      --text2: #54526e;
+      --text3: #a0a0b8;
+    }
 
-      html.light .lowerNav {
-        background: rgba(244, 245, 250, 0.92) !important;
-        border-color: #e2e4ef !important;
-      }
+    html.light .dark-text {
+      color: #0d0f1a !important;
+    }
 
-      #ldr {
-        position: fixed;
-        inset: 0;
-        background: var(--bg);
-        z-index: 999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        gap: 0.875rem;
-        transition: opacity 0.4s;
-      }
+    html.light .lowerNav {
+      background: rgba(244, 245, 250, 0.92) !important;
+      border-color: #e2e4ef !important;
+    }
 
-      #ldr.out {
+    #ldr {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0.875rem;
+      transition: opacity 0.4s;
+    }
+
+    #ldr.out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #ldr img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      animation: ldrb 0.75s ease-in-out infinite alternate;
+    }
+
+    #ldr p {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text2);
+    }
+
+    #output-text {
+      pointer-events: none;
+    }
+
+    @keyframes ldrb {
+      to {
+        transform: translateY(-8px);
+      }
+    }
+
+    #toasts {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      pointer-events: none;
+    }
+
+    .toast {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 0.875rem;
+      border-radius: var(--r);
+
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+
+      position: relative;
+      overflow: hidden;
+
+      /* MATCHES YOUR CARD SYSTEM */
+      background:
+        radial-gradient(120% 120% at 0% 0%,
+          rgba(88, 101, 242, 0.14),
+          transparent 65%),
+        var(--bg3);
+
+      border: 1px solid var(--border);
+
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+
+      animation: tin 0.25s ease both;
+    }
+
+    /* success */
+    .toast.s {
+      border-left: 3px solid #22c55e;
+    }
+
+    /* error */
+    .toast.e {
+      border-left: 3px solid #ef4444;
+    }
+
+    .tbar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.3);
+      animation: tbar 4s linear forwards;
+    }
+
+    @keyframes tin {
+      from {
         opacity: 0;
-        pointer-events: none;
+        transform: translateX(12px);
       }
 
-      #ldr img {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        animation: ldrb 0.75s ease-in-out infinite alternate;
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes tbar {
+      to {
+        width: 0;
+      }
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--border);
+      background: rgba(7, 8, 15, 0.88);
+      backdrop-filter: blur(18px);
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      gap: 1rem;
+    }
+
+    html.light nav {
+      background: rgba(241, 242, 249, 0.9);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .nav-logo img {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+    }
+
+    .nav-logo span {
+      font-weight: 800;
+      font-size: 0.9375rem;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+    .tog {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tog-lbl {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .tog-track {
+      width: 34px;
+      height: 19px;
+      border-radius: 999px;
+      background: var(--border2);
+      position: relative;
+      transition: background 0.2s;
+    }
+
+    .tog-track.on {
+      background: var(--accent);
+    }
+
+    .tog-thumb {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: #fff;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.2s;
+    }
+
+    .tog-track.on .tog-thumb {
+      transform: translateX(15px);
+    }
+
+    .hero {
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 2.25rem 1.5rem 1.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.6875rem;
+      font-family: var(--mono);
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero h1 {
+      font-size: 1.625rem;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .hero p {
+      font-size: 0.875rem;
+      color: var(--text2);
+      line-height: 1.6;
+      max-width: 440px;
+    }
+
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 1.75rem 1.5rem;
+    }
+
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+    }
+
+    .card-hdr {
+      padding: 0.625rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg3);
+      border-radius: var(--r2) var(--r2) 0 0;
+    }
+
+    .card-hdr-title {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text2);
+    }
+
+    .card-body {
+      padding: 1rem;
+    }
+
+    .code-area {
+      width: 100%;
+      min-height: 260px;
+      padding: 0.75rem 0.875rem;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.7875rem;
+      line-height: 1.8;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .code-area:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-dim);
+    }
+
+    .code-area::placeholder {
+      color: var(--text3);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: var(--r);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1.5px solid transparent;
+      font-family: "Geist", sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-h);
+    }
+
+    .btn-ghost {
+      background: var(--bg3);
+      border-color: var(--border2);
+      color: var(--text2);
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg4);
+      color: var(--text);
+    }
+
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text3);
+      transition: all 0.15s;
+    }
+
+    .icon-btn:hover {
+      color: var(--text);
+      background: var(--bg4);
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      padding: 0.625rem 0.875rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+      margin-bottom: 1rem;
+    }
+
+    .toolbar-label {
+      font-size: 0.7875rem;
+      color: var(--text2);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .rule-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      /* Allow wrapping on mobile */
+      row-gap: 0.5rem;
+    }
+
+    .rule-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.45rem 0.7rem;
+      background: var(--bg4);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .rule-chip .from {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .rule-chip .arr {
+      color: var(--text3);
+    }
+
+    .rule-chip .to {
+      color: var(--text2);
+    }
+
+    .rule-select select {
+      font-size: 0.73rem;
+      padding: 3px 6px;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .rule-select select:focus {
+      border-color: var(--accent);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    footer p {
+      font-size: 0.7rem;
+      color: var(--text3);
+    }
+
+    .foot-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .foot-links a {
+      font-size: 0.7rem;
+      color: var(--text3);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .foot-links a:hover {
+      color: var(--text2);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
       }
 
-      #ldr p {
-        font-size: 0.8125rem;
-        font-weight: 600;
-        color: var(--text2);
+      to {
+        opacity: 1;
+        transform: none;
       }
+    }
 
-      #output-text {
-        pointer-events: none;
-      }
+    .fu {
+      animation: fadeUp 0.26s ease both;
+    }
 
-      @keyframes ldrb {
-        to {
-          transform: translateY(-8px);
-        }
-      }
+    .fd1 {
+      animation-delay: 0.05s;
+    }
 
-      #toasts {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        z-index: 9999;
-        display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
-        pointer-events: none;
-      }
+    .fd2 {
+      animation-delay: 0.1s;
+    }
 
-      .toast {
-        pointer-events: auto;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.625rem 0.875rem;
-        border-radius: var(--r);
+    .g2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
 
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: var(--text);
-
-        position: relative;
-        overflow: hidden;
-
-        /* MATCHES YOUR CARD SYSTEM */
-        background:
-          radial-gradient(
-            120% 120% at 0% 0%,
-            rgba(88, 101, 242, 0.14),
-            transparent 65%
-          ),
-          var(--bg3);
-
-        border: 1px solid var(--border);
-
-        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
-
-        animation: tin 0.25s ease both;
-      }
-
-      /* success */
-      .toast.s {
-        border-left: 3px solid #22c55e;
-      }
-
-      /* error */
-      .toast.e {
-        border-left: 3px solid #ef4444;
-      }
-
-      .tbar {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        height: 2px;
-        width: 100%;
-        background: rgba(255, 255, 255, 0.3);
-        animation: tbar 4s linear forwards;
-      }
-
-      @keyframes tin {
-        from {
-          opacity: 0;
-          transform: translateX(12px);
-        }
-
-        to {
-          opacity: 1;
-          transform: none;
-        }
-      }
-
-      @keyframes tbar {
-        to {
-          width: 0;
-        }
-      }
-
-      nav {
-        position: sticky;
-        top: 0;
-        z-index: 50;
-        border-bottom: 1px solid var(--border);
-        background: rgba(7, 8, 15, 0.88);
-        backdrop-filter: blur(18px);
-        height: 52px;
-        display: flex;
-        align-items: center;
-        padding: 0 1.5rem;
-        gap: 1rem;
-      }
-
-      html.light nav {
-        background: rgba(241, 242, 249, 0.9);
-      }
-
-      .nav-logo {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-      }
-
-      .nav-logo img {
-        width: 26px;
-        height: 26px;
-        border-radius: 7px;
-      }
-
-      .nav-logo span {
-        font-weight: 800;
-        font-size: 0.9375rem;
-        color: var(--text);
-        letter-spacing: -0.02em;
-      }
-
-      .spacer {
-        flex: 1;
-      }
-
-      .tog {
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        cursor: pointer;
-        user-select: none;
-      }
-
-      .tog-lbl {
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: var(--text3);
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-      }
-
-      .tog-track {
-        width: 34px;
-        height: 19px;
-        border-radius: 999px;
-        background: var(--border2);
-        position: relative;
-        transition: background 0.2s;
-      }
-
-      .tog-track.on {
-        background: var(--accent);
-      }
-
-      .tog-thumb {
-        width: 13px;
-        height: 13px;
-        border-radius: 50%;
-        background: #fff;
-        position: absolute;
-        top: 3px;
-        left: 3px;
-        transition: transform 0.2s;
-      }
-
-      .tog-track.on .tog-thumb {
-        transform: translateX(15px);
-      }
-
-      .hero {
-        max-width: 900px;
-        margin: 0 auto;
-        width: 100%;
-        padding: 2.25rem 1.5rem 1.75rem;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.375rem;
-        font-size: 0.6875rem;
-        font-family: var(--mono);
-        color: var(--accent);
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        margin-bottom: 0.75rem;
+    @media (max-width: 640px) {
+      .g2 {
+        grid-template-columns: 1fr;
       }
 
       .hero h1 {
-        font-size: 1.625rem;
-        font-weight: 900;
-        letter-spacing: -0.035em;
-        line-height: 1.1;
-        color: var(--text);
-        margin-bottom: 0.4rem;
+        font-size: 1.375rem;
       }
+    }
+  </style>
+</head>
 
-      .hero p {
-        font-size: 0.875rem;
-        color: var(--text2);
-        line-height: 1.6;
-        max-width: 440px;
-      }
+<body>
+  <div id="ldr">
+    <img src="https://bdtools.netlify.app/images/bdfd_logo.png" alt="" />
+    <p id="ldrtxt">Loading</p>
+  </div>
+  <div id="toasts"></div>
 
-      main {
-        flex: 1;
-        max-width: 900px;
-        margin: 0 auto;
-        width: 100%;
-        padding: 1.75rem 1.5rem;
-      }
-
-      .card {
-        background: var(--bg2);
-        border: 1px solid var(--border);
-        border-radius: var(--r2);
-      }
-
-      .card-hdr {
-        padding: 0.625rem 1rem;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: var(--bg3);
-        border-radius: var(--r2) var(--r2) 0 0;
-      }
-
-      .card-hdr-title {
-        font-size: 0.6875rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.07em;
-        color: var(--text2);
-      }
-
-      .card-body {
-        padding: 1rem;
-      }
-
-      .code-area {
-        width: 100%;
-        min-height: 260px;
-        padding: 0.75rem 0.875rem;
-        background: var(--bg);
-        border: 1.5px solid var(--border);
-        border-radius: var(--r);
-        color: var(--text);
-        font-family: var(--mono);
-        font-size: 0.7875rem;
-        line-height: 1.8;
-        resize: vertical;
-        outline: none;
-        transition: border-color 0.15s;
-      }
-
-      .code-area:focus {
-        outline: none;
-        border-color: var(--accent);
-        box-shadow: 0 0 0 1px var(--accent-dim);
-      }
-
-      .code-area::placeholder {
-        color: var(--text3);
-      }
-
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.375rem;
-        padding: 0.5rem 1.25rem;
-        border-radius: var(--r);
-        font-size: 0.8125rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.15s;
-        border: 1.5px solid transparent;
-        font-family: "Geist", sans-serif;
-      }
-
-      .btn-primary {
-        background: var(--accent);
-        color: #fff;
-      }
-
-      .btn-primary:hover {
-        background: var(--accent-h);
-      }
-
-      .btn-ghost {
-        background: var(--bg3);
-        border-color: var(--border2);
-        color: var(--text2);
-      }
-
-      .btn-ghost:hover {
-        background: var(--bg4);
-        color: var(--text);
-      }
-
-      .icon-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 28px;
-        height: 28px;
-        border-radius: 8px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: var(--text3);
-        transition: all 0.15s;
-      }
-
-      .icon-btn:hover {
-        color: var(--text);
-        background: var(--bg4);
-      }
-
-      .toolbar {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        padding: 0.625rem 0.875rem;
-        background: var(--bg3);
-        border: 1px solid var(--border);
-        border-radius: var(--r2);
-        margin-bottom: 1rem;
-      }
-
-      .toolbar-label {
-        font-size: 0.7875rem;
-        color: var(--text2);
-        font-weight: 500;
-        white-space: nowrap;
-      }
-
-      .rule-row {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-        /* Allow wrapping on mobile */
-        row-gap: 0.5rem;
-      }
-
-      .rule-chip {
-        display: flex;
-        align-items: center;
-        gap: 0.625rem;
-        padding: 0.45rem 0.7rem;
-        background: var(--bg4);
-        border: 1px solid var(--border);
-        border-radius: var(--r);
-        font-family: var(--mono);
-        font-size: 0.78rem;
-        white-space: nowrap;
-        flex-shrink: 0;
-      }
-
-      .rule-chip .from {
-        color: var(--accent);
-        font-weight: 700;
-      }
-
-      .rule-chip .arr {
-        color: var(--text3);
-      }
-
-      .rule-chip .to {
-        color: var(--text2);
-      }
-
-      .rule-select select {
-        font-size: 0.73rem;
-        padding: 3px 6px;
-        background: var(--bg);
-        border: 1.5px solid var(--border);
-        border-radius: 4px;
-        color: var(--text);
-        outline: none;
-        cursor: pointer;
-      }
-
-      .rule-select select:focus {
-        border-color: var(--accent);
-      }
-
-      footer {
-        border-top: 1px solid var(--border);
-        padding: 1rem 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-
-      footer p {
-        font-size: 0.7rem;
-        color: var(--text3);
-      }
-
-      .foot-links {
-        display: flex;
-        gap: 1rem;
-      }
-
-      .foot-links a {
-        font-size: 0.7rem;
-        color: var(--text3);
-        text-decoration: none;
-        transition: color 0.15s;
-      }
-
-      .foot-links a:hover {
-        color: var(--text2);
-      }
-
-      @keyframes fadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(8px);
-        }
-
-        to {
-          opacity: 1;
-          transform: none;
-        }
-      }
-
-      .fu {
-        animation: fadeUp 0.26s ease both;
-      }
-
-      .fd1 {
-        animation-delay: 0.05s;
-      }
-
-      .fd2 {
-        animation-delay: 0.1s;
-      }
-
-      .g2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-      }
-
-      @media (max-width: 640px) {
-        .g2 {
-          grid-template-columns: 1fr;
-        }
-
-        .hero h1 {
-          font-size: 1.375rem;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <div id="ldr">
-      <img src="https://bdtools.netlify.app/images/bdfd_logo.png" alt="" />
-      <p id="ldrtxt">Loading</p>
-    </div>
-    <div id="toasts"></div>
-
-    <nav>
-      <a href="/" class="nav-logo"
-        ><img
-          src="https://bdtools.netlify.app/images/bdfd_logo.png"
-          onerror="this.style.display = 'none'"
-          alt=""
-        /><span>BDTools</span></a
-      >
-      <div class="spacer"></div>
-      <div class="tog" onclick="toggleTheme()">
-        <span class="tog-lbl">Dark</span>
-        <div class="tog-track on" id="tog">
-          <div class="tog-thumb"></div>
-        </div>
-      </div>
-    </nav>
-
-    <div class="lowerNav border-b border-[#1e2130]">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
-        <div class="flex items-start gap-4">
-          <div
-            class="w-11 h-11 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center flex-shrink-0"
-          >
-            <svg
-              class="w-5 h-5 text-[#5865F2]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-              />
-            </svg>
-          </div>
-          <div>
-            <h1 class="dark-text text-2xl font-black tracking-tight">
-              Character Escaper
-            </h1>
-            <p class="text-gray-400 text-sm mt-1">
-              Escape special characters in your BDFD scripts.
-            </p>
-            <div class="flex flex-wrap gap-1.5 mt-3">
-              <span
-                style="
-                  font-size: 10px;
-                  font-family: var(--mono);
-                  background: var(--bg4);
-                  border: 1px solid var(--border2);
-                  color: var(--text2);
-                  padding: 2px 8px;
-                  border-radius: 6px;
-                "
-                >JavaScript</span
-              >
-              <span
-                style="
-                  font-size: 10px;
-                  font-family: var(--mono);
-                  background: var(--bg4);
-                  border: 1px solid var(--border2);
-                  color: var(--text2);
-                  padding: 2px 8px;
-                  border-radius: 6px;
-                "
-                >HTML</span
-              >
-              <span
-                style="
-                  font-size: 10px;
-                  font-family: var(--mono);
-                  background: var(--bg4);
-                  border: 1px solid var(--border2);
-                  color: var(--text2);
-                  padding: 2px 8px;
-                  border-radius: 6px;
-                "
-                >Tailwind CSS</span
-              >
-            </div>
-          </div>
-        </div>
+  <nav>
+    <a href="/" class="nav-logo"><img src="https://bdtools.netlify.app/images/bdfd_logo.png"
+        onerror="this.style.display = 'none'" alt="" /><span>BDTools</span></a>
+    <div class="spacer"></div>
+    <div class="tog" onclick="toggleTheme()">
+      <span class="tog-lbl">Dark</span>
+      <div class="tog-track on" id="tog">
+        <div class="tog-thumb"></div>
       </div>
     </div>
+  </nav>
 
-    <main>
-      <!-- Toolbar - Matching Indenter Style -->
-      <!-- Toolbar -->
-      <div class="toolbar fu fd1">
-        <span class="toolbar-label">Escape Rules:</span>
-
-        <div class="rule-row">
-          <div
-            class="rule-chip rule-select"
-            data-from="$"
-            data-a="%{DOL}%"
-            data-b="$$c[]"
-          >
-            <span class="from">$</span>
-            <span class="arr">→</span>
-            <select class="rule-choice">
-              <option value="a">%{DOL}%</option>
-              <option value="b" selected>$$c[]</option>
-            </select>
-          </div>
-
-          <div
-            class="rule-chip rule-select"
-            data-from=";"
-            data-a="\;"
-            data-b="%{-SEMICOL-}%"
-          >
-            <span class="from">;</span>
-            <span class="arr">→</span>
-            <select class="rule-choice">
-              <option value="a">\;</option>
-              <option value="b">%{-SEMICOL-}%</option>
-            </select>
-          </div>
-
-          <div
-            class="rule-chip rule-select"
-            data-from="]"
-            data-a="\]"
-            data-b="%ESCAPED%"
-          >
-            <span class="from">]</span>
-            <span class="arr">→</span>
-            <select class="rule-choice">
-              <option value="a">\]</option>
-              <option value="b">%ESCAPED%</option>
-            </select>
-          </div>
-
-          <div class="rule-chip rule-select" data-from="\\">
-            <span class="from">\</span>
-            <span class="arr">→</span>
-            <span class="to">\\</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Input & Output -->
-      <div class="g2 fu fd1">
-        <div class="card">
-          <div class="card-hdr">
-            <span class="card-hdr-title">Input</span>
-            <button class="icon-btn" id="clear-input" title="Clear">
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.2"
-              >
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                <path d="M10 11v6M14 11v6" />
-              </svg>
-            </button>
-          </div>
-          <div class="card-body">
-            <textarea
-              id="input-text"
-              class="code-area"
-              placeholder="Paste your BDFD code here…"
-            ></textarea>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-hdr">
-            <span class="card-hdr-title">Escaped Output</span>
-            <button class="icon-btn" id="copy-output" title="Copy">
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.2"
-              >
-                <rect x="9" y="9" width="13" height="13" rx="2" />
-                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-              </svg>
-            </button>
-          </div>
-          <div class="card-body">
-            <textarea
-              id="output-text"
-              class="code-area"
-              readonly
-              placeholder="Escaped output will appear here…"
-            ></textarea>
-          </div>
-        </div>
-      </div>
-
-      <!-- Escape Button - Centered at bottom -->
-      <div style="margin-top: 1.5rem; text-align: center" class="fu fd2">
-        <button class="btn btn-primary" id="replace-btn">
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <polyline points="17 1 21 5 17 9" />
-            <path d="M3 11V9a4 4 0 014-4h14" />
-            <polyline points="7 23 3 19 7 15" />
-            <path d="M21 13v2a4 4 0 01-4 4H3" />
+  <div class="lowerNav border-b border-[#1e2130]">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
+      <div class="flex items-start gap-4">
+        <div
+          class="w-11 h-11 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+              d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
           </svg>
-          Escape Code
-        </button>
+        </div>
+        <div>
+          <h1 class="dark-text text-2xl font-black tracking-tight">
+            Character Escaper
+          </h1>
+          <p class="text-gray-400 text-sm mt-1">
+            Escape special characters in your BDFD scripts.
+          </p>
+          <div class="flex flex-wrap gap-1.5 mt-3">
+            <span style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                ">JavaScript</span>
+            <span style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                ">HTML</span>
+            <span style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                ">Tailwind CSS</span>
+          </div>
+        </div>
       </div>
-    </main>
+    </div>
+  </div>
 
-    <footer>
-      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
-      <div class="foot-links">
-        <a href="/tos">Terms</a><a href="/privacy">Privacy</a
-        ><a href="/contact">Contact</a>
+  <main>
+    <!-- Toolbar - Matching Indenter Style -->
+    <!-- Toolbar -->
+    <div class="toolbar fu fd1">
+      <span class="toolbar-label">Escape Rules:</span>
+
+      <div class="rule-row">
+        <div class="rule-chip rule-select" data-from="$" data-a="%{DOL}%" data-b="$$c[]">
+          <span class="from">$</span>
+          <span class="arr">→</span>
+          <select class="rule-choice">
+            <option value="a">%{DOL}%</option>
+            <option value="b" selected>$$c[]</option>
+          </select>
+        </div>
+
+        <div class="rule-chip rule-select" data-from=";" data-a="\;" data-b="%{-SEMICOL-}%">
+          <span class="from">;</span>
+          <span class="arr">→</span>
+          <select class="rule-choice">
+            <option value="a">\;</option>
+            <option value="b">%{-SEMICOL-}%</option>
+          </select>
+        </div>
+
+        <div class="rule-chip rule-select" data-from="]" data-a="\]" data-b="%ESCAPED%">
+          <span class="from">]</span>
+          <span class="arr">→</span>
+          <select class="rule-choice">
+            <option value="a">\]</option>
+            <option value="b">%ESCAPED%</option>
+          </select>
+        </div>
+
+        <div class="rule-chip rule-select" data-from="\\">
+          <span class="from">\</span>
+          <span class="arr">→</span>
+          <span class="to">\\</span>
+        </div>
       </div>
-    </footer>
+    </div>
 
-    <script>
-      // ==================== LOADER & TOAST ====================
-      const ldrtxt = document.getElementById("ldrtxt");
-      let dc = 0;
-      const di = setInterval(() => {
-        dc = (dc + 1) % 4;
-        ldrtxt.textContent = "Loading" + ".".repeat(dc);
-      }, 350);
+    <!-- Input & Output -->
+    <div class="g2 fu fd1">
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-hdr-title">Input</span>
+          <button class="icon-btn" id="clear-input" title="Clear">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+              <path d="M10 11v6M14 11v6" />
+            </svg>
+          </button>
+        </div>
+        <div class="card-body">
+          <textarea id="input-text" class="code-area" placeholder="Paste your BDFD code here…"></textarea>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-hdr-title">Escaped Output</span>
+          <button class="icon-btn" id="copy-output" title="Copy">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <rect x="9" y="9" width="13" height="13" rx="2" />
+              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+            </svg>
+          </button>
+        </div>
+        <div class="card-body">
+          <textarea id="output-text" class="code-area" readonly
+            placeholder="Escaped output will appear here…"></textarea>
+        </div>
+      </div>
+    </div>
 
-      window.addEventListener("load", () => {
-        setTimeout(() => {
-          const l = document.getElementById("ldr");
-          l.classList.add("out");
-          setTimeout(() => l.remove(), 400);
-          clearInterval(di);
-        }, 900);
-      });
+    <!-- Escape Button - Centered at bottom -->
+    <div style="margin-top: 1.5rem; text-align: center" class="fu fd2">
+      <button class="btn btn-primary" id="replace-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="17 1 21 5 17 9" />
+          <path d="M3 11V9a4 4 0 014-4h14" />
+          <polyline points="7 23 3 19 7 15" />
+          <path d="M21 13v2a4 4 0 01-4 4H3" />
+        </svg>
+        Escape Code
+      </button>
+    </div>
+  </main>
 
-      function toast(msg, type = "s") {
-        const box = document.getElementById("toasts");
-        const t = document.createElement("div");
-        t.className = `toast ${type}`;
-        t.innerHTML = `<span>${msg}</span><div class="tbar"></div>`;
-        box.appendChild(t);
-        setTimeout(() => t.remove(), 4500);
-      }
+  <footer>
+    <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+    <div class="foot-links">
+      <a href="/tos">Terms</a><a href="/privacy">Privacy</a><a href="/contact">Contact</a>
+    </div>
+  </footer>
 
-      function toggleTheme() {
-        const h = document.documentElement;
-        const t = document.getElementById("tog");
-        const dark = h.classList.toggle("dark");
-        h.classList.toggle("light", !dark); // ← add this line
-        localStorage.setItem("darkMode", dark ? "enabled" : "disabled");
-        t.classList.toggle("on", dark);
-      }
+  <script>
+    // ==================== LOADER & TOAST ====================
+    const ldrtxt = document.getElementById("ldrtxt");
+    let dc = 0;
+    const di = setInterval(() => {
+      dc = (dc + 1) % 4;
+      ldrtxt.textContent = "Loading" + ".".repeat(dc);
+    }, 350);
 
-      (function () {
-        document
-          .getElementById("tog")
-          .classList.toggle(
-            "on",
-            document.documentElement.classList.contains("dark"),
-          );
-      })();
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        const l = document.getElementById("ldr");
+        l.classList.add("out");
+        setTimeout(() => l.remove(), 400);
+        clearInterval(di);
+      }, 900);
+    });
 
-      window.addEventListener("load", () => {
-        if (!localStorage.getItem("visited")) {
-          toast("Welcome! 👋", "s");
-          localStorage.setItem("visited", "true");
-        }
-      });
+    function toast(msg, type = "s") {
+      const box = document.getElementById("toasts");
+      const t = document.createElement("div");
+      t.className = `toast ${type}`;
+      t.innerHTML = `<span>${msg}</span><div class="tbar"></div>`;
+      box.appendChild(t);
+      setTimeout(() => t.remove(), 4500);
+    }
 
-      // ==================== ESCAPE FUNCTION ====================
-      function escapeText(text) {
-        let result = text;
+    function toggleTheme() {
+      const h = document.documentElement;
+      const t = document.getElementById("tog");
+      const dark = h.classList.toggle("dark");
+      h.classList.toggle("light", !dark); // ← add this line
+      localStorage.setItem("darkMode", dark ? "enabled" : "disabled");
+      t.classList.toggle("on", dark);
+    }
 
-        // Escape everything except $ first
-        document.querySelectorAll(".rule-select").forEach((rule) => {
-          const from = rule.dataset.from;
-          if (from === "$") return;
-
-          let replacement = !rule.querySelector(".rule-choice")
-            ? "\\\\"
-            : rule.querySelector(".rule-choice").value === "a"
-              ? rule.dataset.a
-              : rule.dataset.b;
-
-          const escapedFrom = from.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
-          result = result.replace(new RegExp(escapedFrom, "g"), replacement);
-        });
-
-        // Escape $ last
-        const dollarRule = document.querySelector(
-          '.rule-select[data-from="$"]',
+    (function () {
+      document
+        .getElementById("tog")
+        .classList.toggle(
+          "on",
+          document.documentElement.classList.contains("dark"),
         );
-        if (dollarRule) {
-          const select = dollarRule.querySelector(".rule-choice");
-          let replacement =
-            select.value === "a" ? dollarRule.dataset.a : dollarRule.dataset.b;
+    })();
 
-          if (replacement === "$$c[]") {
-            replacement = "$$c[]".replace(/\$/g, "$$$$");
-          } else if (replacement.includes("$")) {
-            replacement = replacement.replace(/\$/g, "$$$$");
-          }
+    window.addEventListener("load", () => {
+      if (!localStorage.getItem("visited")) {
+        toast("Welcome! 👋", "s");
+        localStorage.setItem("visited", "true");
+      }
+    });
 
-          result = result.replace(/\$/g, replacement);
+    // ==================== ESCAPE FUNCTION ====================
+    function escapeText(text) {
+      let result = text;
+
+      // FORCE escape backslashes first
+      result = result.replace(/\\/g, "\\\\");
+
+      // Escape everything except $ next
+      document.querySelectorAll(".rule-select").forEach((rule) => {
+        const from = rule.dataset.from;
+        if (from === "$") return;
+
+        let replacement = !rule.querySelector(".rule-choice")
+          ? "\\\\"
+          : rule.querySelector(".rule-choice").value === "a"
+            ? rule.dataset.a
+            : rule.dataset.b;
+
+        const escapedFrom = from.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+        result = result.replace(new RegExp(escapedFrom, "g"), replacement);
+      });
+
+      // Escape $ last
+      const dollarRule = document.querySelector('.rule-select[data-from="$"]');
+      if (dollarRule) {
+        const select = dollarRule.querySelector(".rule-choice");
+        let replacement =
+          select.value === "a" ? dollarRule.dataset.a : dollarRule.dataset.b;
+
+        if (replacement === "$$c[]") {
+          replacement = "$$c[]".replace(/\$/g, "$$$$");
+        } else if (replacement.includes("$")) {
+          replacement = replacement.replace(/\$/g, "$$$$");
         }
 
-        return result;
+        result = result.replace(/\$/g, replacement);
       }
 
-      // ==================== UI LOGIC ====================
-      const inputEl = document.getElementById("input-text");
-      const outputEl = document.getElementById("output-text");
+      return result;
+    }
 
-      document.getElementById("replace-btn").addEventListener("click", () => {
-        const val = inputEl.value.trim();
-        if (!val) {
-          toast("Nothing to escape", "e");
-          return;
-        }
+    // ==================== UI LOGIC ====================
+    const inputEl = document.getElementById("input-text");
+    const outputEl = document.getElementById("output-text");
 
-        outputEl.value = escapeText(val);
-        toast("Code escaped successfully", "s");
+    document.getElementById("replace-btn").addEventListener("click", () => {
+      const val = inputEl.value.trim();
+      if (!val) {
+        toast("Nothing to escape", "e");
+        return;
+      }
+
+      outputEl.value = escapeText(val);
+      toast("Code escaped successfully", "s");
+    });
+
+    document.getElementById("copy-output").addEventListener("click", () => {
+      if (!outputEl.value.trim()) {
+        toast("Nothing to copy", "e");
+        return;
+      }
+      navigator.clipboard
+        .writeText(outputEl.value)
+        .then(() => toast("Copied to clipboard", "s"))
+        .catch(() => toast("Copy failed", "e"));
+    });
+
+    // Clear buttons (both toolbar and card)
+    const clearBtns = document.querySelectorAll(
+      "#clear-input, #clear-input2",
+    );
+    clearBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        inputEl.value = "";
+        outputEl.value = "";
+        toast("Cleared", "s");
       });
+    });
 
-      document.getElementById("copy-output").addEventListener("click", () => {
-        if (!outputEl.value.trim()) {
-          toast("Nothing to copy", "e");
-          return;
-        }
-        navigator.clipboard
-          .writeText(outputEl.value)
-          .then(() => toast("Copied to clipboard", "s"))
-          .catch(() => toast("Copy failed", "e"));
-      });
+    // Ctrl+Enter shortcut
+    inputEl.addEventListener("keydown", (e) => {
+      if (e.ctrlKey && e.key === "Enter") {
+        e.preventDefault();
+        document.getElementById("replace-btn").click();
+      }
+    });
+  </script>
+</body>
 
-      // Clear buttons (both toolbar and card)
-      const clearBtns = document.querySelectorAll(
-        "#clear-input, #clear-input2",
-      );
-      clearBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          inputEl.value = "";
-          outputEl.value = "";
-          toast("Cleared", "s");
-        });
-      });
-
-      // Ctrl+Enter shortcut
-      inputEl.addEventListener("keydown", (e) => {
-        if (e.ctrlKey && e.key === "Enter") {
-          e.preventDefault();
-          document.getElementById("replace-btn").click();
-        }
-      });
-    </script>
-  </body>
 </html>
