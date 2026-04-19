@@ -1515,6 +1515,14 @@
         }
       });
 
+      /* ── Validators ── */
+      function isValidURL(url) {
+        return /^https?:\/\/.+/.test(url);
+      }
+      function isValidHex(hex) {
+        return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(hex);
+      }
+
       /* ── EXACT original sanitize ── */
       function sanitizeInput(input) {
         if (!input) return input;
@@ -1799,6 +1807,25 @@
         }
         if (!footer && footerIcon) {
           toast("Can't have Footer Icon without Footer text", "e");
+          return;
+        }
+        const urlFields = [
+          [authorIcon, "Author Icon URL"],
+          [authorURL, "Author URL"],
+          [titleURL, "Title URL"],
+          [thumbnail, "Thumbnail URL"],
+          [image, "Image URL"],
+          [footerIcon, "Footer Icon URL"],
+        ];
+        for (const [val, label] of urlFields) {
+          if (val && !isValidURL(val)) {
+            toast(`${label}: must start with http:// or https://`, "e");
+            return;
+          }
+        }
+        const rawColor = document.getElementById("color-input").value.trim();
+        if (rawColor && !isValidHex(rawColor)) {
+          toast("Colour: must be a valid hex code (e.g. #5865F2)", "e");
           return;
         }
         let code = "$nomention\n";
