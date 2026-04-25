@@ -1,6 +1,6 @@
 # BDTools
 
-> Browser-based utilities for the [Bot Designer for Discord](https://botdesignerdiscord.com) community no installs, no accounts required for most tools.
+> Browser-based utilities for the [Bot Designer for Discord](https://botdesignerdiscord.com) community — no installs, no accounts required for most tools.
 
 **[bdtools.netlify.app](https://bdtools.netlify.app)** · [Report a Bug](https://bdtools.netlify.app/contact) · [Request a Feature](https://bdtools.netlify.app/contact)
 
@@ -12,6 +12,7 @@
 |------|-------------|
 | [Embed Builder](https://bdtools.netlify.app/embed-builder) | Visually build Discord embeds with buttons, select menus, and modals. Outputs ready-to-use embed code. |
 | [Send Embed Builder](https://bdtools.netlify.app/send-embed-builder) | Build `$sendEmbedMessage[]` blocks with a live preview. |
+| [CompV2 Builder](https://bdtools.netlify.app/container-builder) | Build Discord Component V2 layouts visually and generate your BDFD code. |
 | [Code Highlighter](https://bdtools.netlify.app/highlighter) | Custom syntax highlighting for BDFD scripts. Supports 300+ functions with per-function color and style controls. |
 | [Code Indenter](https://bdtools.netlify.app/indenter) | Auto-format and indent messy BDFD scripts for readability. |
 | [Character Escaper](https://bdtools.netlify.app/escaper) | Escape BDFD special characters: `$`, `;`, `\`, `]`. |
@@ -48,7 +49,6 @@ curl https://api-bdtools.netlify.app/bdfd-functions
 - **Auth** — Discord OAuth2, JWT
 - **Deployment** — Netlify (continuous deployment from GitHub)
 
-
 ---
 
 ## License
@@ -60,6 +60,6 @@ All rights reserved. This repository is public for reference only — you may no
 ## Credits
 
 Built and maintained by [Zubariel](https://zubariel.is-a.dev).  
-Thanks to Catearo (BDFD examples) and Luka (testing and bug reports).
+Thanks to Catearo (BDFD examples), Luka (testing and bug reports), and skraba (testing and feedback for the CompV2 Builder).
 
 Not officially affiliated with Bot Designer for Discord.
