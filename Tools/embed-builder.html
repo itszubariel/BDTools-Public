@@ -583,6 +583,56 @@
         margin-bottom: 0.625rem;
       }
 
+      .drag-handle {
+        cursor: grab;
+        color: var(--text3);
+        padding: 0 4px;
+        font-size: 1rem;
+      }
+      .drag-handle:active {
+        cursor: grabbing;
+      }
+      .comp-block.dragging {
+        opacity: 0.4;
+        border: 1.5px dashed var(--accent);
+      }
+      .comp-block.drag-over {
+        border-top: 2px solid var(--accent);
+      }
+
+      .type-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.6rem;
+        font-family: var(--mono);
+        font-weight: 600;
+        padding: 0.15rem 0.45rem;
+        border-radius: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .type-badge.field {
+        background: rgba(251, 191, 36, 0.12);
+        color: #fbbf24;
+        border: 1px solid rgba(251, 191, 36, 0.2);
+      }
+      .type-badge.button {
+        background: rgba(239, 68, 68, 0.12);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+      }
+      .type-badge.selectmenu {
+        background: rgba(168, 85, 247, 0.12);
+        color: #c084fc;
+        border: 1px solid rgba(168, 85, 247, 0.2);
+      }
+      .type-badge.modal {
+        background: rgba(34, 211, 238, 0.12);
+        color: #22d3ee;
+        border: 1px solid rgba(34, 211, 238, 0.2);
+      }
+
       .comp-actions {
         display: flex;
         align-items: center;
@@ -622,7 +672,7 @@
 
       /* preview */
       .preview-wrap {
-        background: #2b2d31;
+        background: #1e1f22;
         border-radius: var(--r2);
         padding: 1rem;
       }
@@ -689,6 +739,7 @@
         flex: 1;
         min-width: 0;
         position: relative;
+        background: #2b2d31;
       }
 
       .embed-author {
@@ -1025,6 +1076,35 @@
             </button>
             <button class="btn btn-ghost" id="add-modal-btn">+ Modal</button>
           </div>
+          <p
+            style="
+              font-size: 0.7rem;
+              color: var(--text3);
+              margin-bottom: 0.75rem;
+              margin-top: -0.375rem;
+            "
+          >
+            <svg
+              style="
+                display: inline;
+                vertical-align: -0.1em;
+                margin-right: 0.25rem;
+              "
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <path
+                d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
+              />
+              <polyline points="17 21 17 13 7 13 7 21" />
+              <polyline points="7 3 7 8 15 8" />
+            </svg>
+            Your work is auto-saved locally.
+          </p>
 
           <!-- Author -->
           <div class="card fu fd1">
@@ -1510,7 +1590,7 @@
       })();
       window.addEventListener("load", () => {
         if (!localStorage.getItem("visited")) {
-          toast("Welcome! Auora here 👋", "s");
+          toast("Welcome! scrobbler here 👋", "s");
           localStorage.setItem("visited", "true");
         }
       });
@@ -1541,6 +1621,140 @@
         modalCount = 0,
         modalInputCount = {};
 
+      /* ── localStorage persistence ── */
+      const EB_LS_KEY = "bdtools_embed_state";
+      const EB_STATIC_IDS = [
+        "author-input",
+        "author-icon-input",
+        "author-url-input",
+        "title-input",
+        "title-url-input",
+        "description-input",
+        "thumbnail-input",
+        "image-input",
+        "color-input",
+        "footer-input",
+        "footer-icon-input",
+        "timestamp-input",
+      ];
+      function ebSaveState() {
+        try {
+          const state = { fields: {}, counters: {}, dynamics: {} };
+          EB_STATIC_IDS.forEach((id) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            state.fields[id] = el.type === "checkbox" ? el.checked : el.value;
+          });
+          state.counters = { fieldCount, buttonCount, selectCount, modalCount };
+          // Serialize dynamic containers as HTML
+          [
+            "fields-container",
+            "buttons-container",
+            "selects-container",
+            "modals-container",
+          ].forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) state.dynamics[id] = el.innerHTML;
+          });
+          localStorage.setItem(EB_LS_KEY, JSON.stringify(state));
+        } catch (e) {}
+      }
+      function ebLoadState() {
+        try {
+          const raw = localStorage.getItem(EB_LS_KEY);
+          if (!raw) return;
+          const state = JSON.parse(raw);
+          if (state.fields) {
+            EB_STATIC_IDS.forEach((id) => {
+              const el = document.getElementById(id);
+              if (!el || state.fields[id] === undefined) return;
+              if (el.type === "checkbox") el.checked = state.fields[id];
+              else el.value = state.fields[id];
+            });
+          }
+          if (state.counters) {
+            fieldCount = state.counters.fieldCount || 0;
+            buttonCount = state.counters.buttonCount || 0;
+            selectCount = state.counters.selectCount || 0;
+            modalCount = state.counters.modalCount || 0;
+          }
+          if (state.dynamics) {
+            [
+              "fields-container",
+              "buttons-container",
+              "selects-container",
+              "modals-container",
+            ].forEach((id) => {
+              const el = document.getElementById(id);
+              if (el && state.dynamics[id] !== undefined) {
+                el.innerHTML = state.dynamics[id];
+                // Re-attach remove listeners
+                el.querySelectorAll(".remove-comp").forEach((btn) => {
+                  btn.addEventListener("click", () => {
+                    btn.closest(".comp-block").remove();
+                    ebSaveState();
+                    updatePreview();
+                  });
+                });
+                el.querySelectorAll(".remove-opt").forEach((btn) => {
+                  btn.addEventListener("click", () => {
+                    btn.closest(".comp-block-inner").remove();
+                    ebSaveState();
+                  });
+                });
+                el.querySelectorAll(".remove-tinput").forEach((btn) => {
+                  btn.addEventListener("click", () => {
+                    btn.closest(".comp-block-inner").remove();
+                    ebSaveState();
+                  });
+                });
+                // Re-attach collapse listeners
+                el.querySelectorAll("[data-collapse]").forEach((btn) => {
+                  const block = btn.closest(".comp-block");
+                  if (!block) return;
+                  btn.addEventListener("click", () => {
+                    const body = block.querySelector(".comp-body");
+                    const chevron = btn.querySelector("svg");
+                    const collapsed = body.style.display === "none";
+                    body.style.display = collapsed ? "" : "none";
+                    if (chevron)
+                      chevron.style.transform = collapsed
+                        ? ""
+                        : "rotate(180deg)";
+                    ebSaveState();
+                  });
+                });
+                // Re-attach add-opt and add-input listeners (select menus / modals)
+                el.querySelectorAll(".add-opt-btn").forEach((btn) => {
+                  const idx = parseInt(btn.dataset.idx);
+                  if (isNaN(idx)) return;
+                  if (!selectOptionCount[idx])
+                    selectOptionCount[idx] = el.querySelectorAll(
+                      `#select-options-${idx} .comp-block-inner`,
+                    ).length;
+                  btn.addEventListener("click", () => addSelectOption(idx));
+                });
+                el.querySelectorAll(".add-input-btn").forEach((btn) => {
+                  const idx = parseInt(btn.dataset.idx);
+                  if (isNaN(idx)) return;
+                  if (!modalInputCount[idx])
+                    modalInputCount[idx] = el.querySelectorAll(
+                      `#modal-textinputs-${idx} .comp-block-inner`,
+                    ).length;
+                  btn.addEventListener("click", () => addModalInput(idx));
+                });
+                // Re-attach input listeners for live save
+                el.querySelectorAll("input,textarea,select").forEach((inp) => {
+                  inp.addEventListener("input", ebSaveState);
+                  inp.addEventListener("change", ebSaveState);
+                });
+              }
+            });
+          }
+          updatePreview();
+        } catch (e) {}
+      }
+
       /* ── helper to build an input group row ── */
       const INP = "finput";
       function inp(id, ph, type = "text") {
@@ -1553,6 +1767,22 @@
         return `<label class="chk" style="margin-top:.25rem"><input type="checkbox" id="${id}"/><span>${lbl}</span></label>`;
       }
 
+      /* ── collapse helper ── */
+      function makeCollapsible(d) {
+        const collapseBtn = d.querySelector("[data-collapse]");
+        if (!collapseBtn) return;
+        collapseBtn.addEventListener("click", () => {
+          const body = d.querySelector(".comp-body");
+          if (!body) return;
+          const collapsed = body.style.display === "none";
+          body.style.display = collapsed ? "" : "none";
+          const chevron = collapseBtn.querySelector("svg");
+          if (chevron)
+            chevron.style.transform = collapsed ? "" : "rotate(180deg)";
+          ebSaveState();
+        });
+      }
+
       /* ── Fields ── */
       document.getElementById("add-field-btn").addEventListener("click", () => {
         toast(`Field #${fieldCount + 1} added`, "s");
@@ -1561,20 +1791,35 @@
         d.className = "comp-block";
         d.innerHTML = `
     <div class="comp-actions">
-      <span class="comp-title">Field #${idx + 1}</span>
-      <button class="icon-btn remove-comp" data-idx="${idx}" style="color:#f87171;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div style="display:flex;align-items:center;gap:.5rem;"><span class="type-badge field">Field</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
+      <div style="display:flex;gap:.25rem;"><button class="icon-btn" data-collapse title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></button><button class="icon-btn remove-comp" data-idx="${idx}" style="color:#f87171;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     </div>
+    <div class="comp-body">
     <div class="g2" style="margin-top:.5rem;">
       ${inp(`field-name-${idx}`, "Field Name")}
       ${inp(`field-value-${idx}`, "Field Value")}
     </div>
-    ${chk(`field-inline-${idx}`, "Inline")}`;
+    ${chk(`field-inline-${idx}`, "Inline")}
+    </div>`;
+        makeCollapsible(d);
         d.querySelector(".remove-comp").addEventListener("click", () => {
           d.remove();
+          ebSaveState();
           updatePreview();
           toast(`Field #${idx + 1} removed`, "s");
         });
+        d.querySelectorAll("input,textarea,select").forEach((el) => {
+          el.addEventListener("input", () => {
+            ebSaveState();
+            updatePreview();
+          });
+          el.addEventListener("change", () => {
+            ebSaveState();
+            updatePreview();
+          });
+        });
         document.getElementById("fields-container").appendChild(d);
+        ebSaveState();
         updatePreview();
       });
 
@@ -1588,9 +1833,10 @@
           d.className = "comp-block";
           d.innerHTML = `
     <div class="comp-actions">
-      <span class="comp-title">Button #${idx + 1}</span>
-      <button class="icon-btn remove-comp" style="color:#f87171;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div style="display:flex;align-items:center;gap:.5rem;"><span class="type-badge button">Button</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
+      <div style="display:flex;gap:.25rem;"><button class="icon-btn" data-collapse title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></button><button class="icon-btn remove-comp" style="color:#f87171;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     </div>
+    <div class="comp-body">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.5rem;">
       ${inp(`button-idlink-${idx}`, "ID or URL")}
       ${inp(`button-label-${idx}`, "Button Label")}
@@ -1603,52 +1849,36 @@
     <div style="display:flex;gap:1rem;margin-top:.375rem;">
       ${chk(`button-newrow-${idx}`, "New Row")}
       ${chk(`button-disable-${idx}`, "Disable")}
+    </div>
     </div>`;
+          makeCollapsible(d);
           d.querySelector(".remove-comp").addEventListener("click", () => {
             d.remove();
+            ebSaveState();
             updatePreview();
             toast(`Button #${idx + 1} removed`, "s");
           });
+          d.querySelectorAll("input,textarea,select").forEach((el) => {
+            el.addEventListener("input", () => {
+              ebSaveState();
+              updatePreview();
+            });
+            el.addEventListener("change", () => {
+              ebSaveState();
+              updatePreview();
+            });
+          });
           document.getElementById("buttons-container").appendChild(d);
+          ebSaveState();
           updatePreview();
         });
 
-      /* ── Select Menus ── */
-      document
-        .getElementById("add-selectmenu-btn")
-        .addEventListener("click", () => {
-          toast(`Select Menu #${selectCount + 1} added`, "s");
-          const idx = selectCount++;
-          selectOptionCount[idx] = 0;
-          const d = document.createElement("div");
-          d.className = "comp-block";
-          d.innerHTML = `
-    <div class="comp-actions">
-      <span class="comp-title">Select Menu #${idx + 1}</span>
-      <div style="display:flex;gap:.25rem;">
-        <button class="btn btn-ghost add-opt-btn" style="padding:.25rem .625rem;font-size:.7rem;" data-idx="${idx}">+ Option</button>
-        <button class="icon-btn remove-comp" style="color:#f87171;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.5rem;margin-top:.5rem;">
-      ${inp(`select-id-${idx}`, "Menu ID")}
-      ${inp(`select-min-${idx}`, "Min", "number")}
-      ${inp(`select-max-${idx}`, "Max", "number")}
-      ${inp(`select-placeholder-${idx}`, "Placeholder (opt)")}
-      ${inp(`select-messageid-${idx}`, "Message ID (opt)")}
-    </div>
-    <div id="select-options-${idx}" style="margin-top:.5rem;display:flex;flex-direction:column;gap:.5rem;"></div>`;
-          d.querySelector(".remove-comp").addEventListener("click", () => {
-            d.remove();
-            updatePreview();
-            toast(`Select Menu #${idx + 1} removed`, "s");
-            delete selectOptionCount[idx];
-          });
-          d.querySelector(".add-opt-btn").addEventListener("click", () => {
-            const oIdx = selectOptionCount[idx]++;
-            const od = document.createElement("div");
-            od.className = "comp-block-inner";
-            od.innerHTML = `
+      /* ── addSelectOption helper ── */
+      function addSelectOption(idx) {
+        const oIdx = selectOptionCount[idx]++;
+        const od = document.createElement("div");
+        od.className = "comp-block-inner";
+        od.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;">
         <span style="font-size:.7rem;font-weight:600;color:var(--text3);">Option #${oIdx + 1}</span>
         <button class="icon-btn remove-opt" style="color:#f87171;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -1662,45 +1892,73 @@
         ${inp(`select-option-messageid-${idx}-${oIdx}`, "Msg ID (opt)")}
       </div>
       ${chk(`select-option-default-${idx}-${oIdx}`, "Default?")}`;
-            od.querySelector(".remove-opt").addEventListener("click", () => {
-              od.remove();
-              toast(`Option #${oIdx + 1} removed`, "s");
-            });
-            document.getElementById(`select-options-${idx}`).appendChild(od);
-            toast(`Option #${oIdx + 1} added to Menu #${idx + 1}`, "s");
-          });
-          document.getElementById("selects-container").appendChild(d);
+        od.querySelector(".remove-opt").addEventListener("click", () => {
+          od.remove();
+          ebSaveState();
+          toast(`Option #${oIdx + 1} removed`, "s");
         });
+        od.querySelectorAll("input,select").forEach((el) => {
+          el.addEventListener("input", ebSaveState);
+          el.addEventListener("change", ebSaveState);
+        });
+        document.getElementById(`select-options-${idx}`).appendChild(od);
+        ebSaveState();
+        toast(`Option #${oIdx + 1} added to Menu #${idx + 1}`, "s");
+      }
 
-      /* ── Modals ── */
-      document.getElementById("add-modal-btn").addEventListener("click", () => {
-        toast(`Modal #${modalCount + 1} added`, "s");
-        const idx = modalCount++;
-        modalInputCount[idx] = 0;
-        const d = document.createElement("div");
-        d.className = "comp-block";
-        d.innerHTML = `
+      /* ── Select Menus ── */
+      document
+        .getElementById("add-selectmenu-btn")
+        .addEventListener("click", () => {
+          toast(`Select Menu #${selectCount + 1} added`, "s");
+          const idx = selectCount++;
+          selectOptionCount[idx] = 0;
+          const d = document.createElement("div");
+          d.className = "comp-block";
+          d.innerHTML = `
     <div class="comp-actions">
-      <span class="comp-title">Modal #${idx + 1}</span>
+      <div style="display:flex;align-items:center;gap:.5rem;"><span class="type-badge selectmenu">Select Menu</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
       <div style="display:flex;gap:.25rem;">
-        <button class="btn btn-ghost add-input-btn" style="padding:.25rem .625rem;font-size:.7rem;" data-idx="${idx}">+ Text Input</button>
+        <button class="btn btn-ghost add-opt-btn" style="padding:.25rem .625rem;font-size:.7rem;" data-idx="${idx}">+ Option</button>
+        <button class="icon-btn" data-collapse title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></button>
         <button class="icon-btn remove-comp" style="color:#f87171;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
     </div>
-    <div class="g2" style="margin-top:.5rem;">
-      ${inp(`modal-id-${idx}`, "Modal ID")}
-      ${inp(`modal-title-${idx}`, "Modal Title")}
+    <div class="comp-body">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.5rem;margin-top:.5rem;">
+      ${inp(`select-id-${idx}`, "Menu ID")}
+      ${inp(`select-min-${idx}`, "Min", "number")}
+      ${inp(`select-max-${idx}`, "Max", "number")}
+      ${inp(`select-placeholder-${idx}`, "Placeholder (opt)")}
+      ${inp(`select-messageid-${idx}`, "Message ID (opt)")}
     </div>
-    <div id="modal-textinputs-${idx}" style="margin-top:.5rem;display:flex;flex-direction:column;gap:.5rem;"></div>`;
-        d.querySelector(".remove-comp").addEventListener("click", () => {
-          d.remove();
-          toast(`Modal #${idx + 1} removed`, "s");
+    <div id="select-options-${idx}" style="margin-top:.5rem;display:flex;flex-direction:column;gap:.5rem;"></div>
+    </div>`;
+          makeCollapsible(d);
+          d.querySelector(".remove-comp").addEventListener("click", () => {
+            d.remove();
+            ebSaveState();
+            updatePreview();
+            toast(`Select Menu #${idx + 1} removed`, "s");
+            delete selectOptionCount[idx];
+          });
+          d.querySelector(".add-opt-btn").addEventListener("click", () =>
+            addSelectOption(idx),
+          );
+          d.querySelectorAll("input,select").forEach((el) => {
+            el.addEventListener("input", ebSaveState);
+            el.addEventListener("change", ebSaveState);
+          });
+          document.getElementById("selects-container").appendChild(d);
+          ebSaveState();
         });
-        d.querySelector(".add-input-btn").addEventListener("click", () => {
-          const iIdx = modalInputCount[idx]++;
-          const id = document.createElement("div");
-          id.className = "comp-block-inner";
-          id.innerHTML = `
+
+      /* ── addModalInput helper ── */
+      function addModalInput(idx) {
+        const iIdx = modalInputCount[idx]++;
+        const id = document.createElement("div");
+        id.className = "comp-block-inner";
+        id.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;">
         <span style="font-size:.7rem;font-weight:600;color:var(--text3);">Text Input #${iIdx + 1}</span>
         <button class="icon-btn remove-tinput" style="color:#f87171;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -1715,14 +1973,58 @@
         ${inp(`modal-text-placeholder-${idx}-${iIdx}`, "Placeholder (opt)")}
       </div>
       ${chk(`modal-text-required-${idx}-${iIdx}`, "Required")}`;
-          id.querySelector(".remove-tinput").addEventListener("click", () => {
-            id.remove();
-            toast(`Text Input #${iIdx + 1} removed`, "s");
-          });
-          document.getElementById(`modal-textinputs-${idx}`).appendChild(id);
-          toast(`Text Input #${iIdx + 1} added to Modal #${idx + 1}`, "s");
+        id.querySelector(".remove-tinput").addEventListener("click", () => {
+          id.remove();
+          ebSaveState();
+          toast(`Text Input #${iIdx + 1} removed`, "s");
+        });
+        id.querySelectorAll("input,select").forEach((el) => {
+          el.addEventListener("input", ebSaveState);
+          el.addEventListener("change", ebSaveState);
+        });
+        document.getElementById(`modal-textinputs-${idx}`).appendChild(id);
+        ebSaveState();
+        toast(`Text Input #${iIdx + 1} added to Modal #${idx + 1}`, "s");
+      }
+
+      /* ── Modals ── */
+      document.getElementById("add-modal-btn").addEventListener("click", () => {
+        toast(`Modal #${modalCount + 1} added`, "s");
+        const idx = modalCount++;
+        modalInputCount[idx] = 0;
+        const d = document.createElement("div");
+        d.className = "comp-block";
+        d.innerHTML = `
+    <div class="comp-actions">
+      <div style="display:flex;align-items:center;gap:.5rem;"><span class="type-badge modal">Modal</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
+      <div style="display:flex;gap:.25rem;">
+        <button class="btn btn-ghost add-input-btn" style="padding:.25rem .625rem;font-size:.7rem;" data-idx="${idx}">+ Text Input</button>
+        <button class="icon-btn" data-collapse title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <button class="icon-btn remove-comp" style="color:#f87171;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>
+    <div class="comp-body">
+    <div class="g2" style="margin-top:.5rem;">
+      ${inp(`modal-id-${idx}`, "Modal ID")}
+      ${inp(`modal-title-${idx}`, "Modal Title")}
+    </div>
+    <div id="modal-textinputs-${idx}" style="margin-top:.5rem;display:flex;flex-direction:column;gap:.5rem;"></div>
+    </div>`;
+        makeCollapsible(d);
+        d.querySelector(".remove-comp").addEventListener("click", () => {
+          d.remove();
+          ebSaveState();
+          toast(`Modal #${idx + 1} removed`, "s");
+        });
+        d.querySelector(".add-input-btn").addEventListener("click", () =>
+          addModalInput(idx),
+        );
+        d.querySelectorAll("input,select").forEach((el) => {
+          el.addEventListener("input", ebSaveState);
+          el.addEventListener("change", ebSaveState);
         });
         document.getElementById("modals-container").appendChild(d);
+        ebSaveState();
       });
 
       /* ── Clear ── */
@@ -1757,6 +2059,7 @@
         selectOptionCount = {};
         modalInputCount = {};
         document.getElementById("output-text").value = "";
+        localStorage.removeItem(EB_LS_KEY);
         updatePreview();
         toast("Cleared", "s");
       });
@@ -2163,7 +2466,12 @@
             };
             buttonsHTML += `<button style="background:${colors[style] || colors.primary};color:#fff;font-size:.75rem;padding:.25rem .75rem;border-radius:4px;border:none;cursor:pointer;font-weight:500">${lbl}</button>`;
           });
-        const bots = [{ n: "Auora", a: "https://auora.live/auora_logo.png" }];
+        const bots = [
+          {
+            n: "scrobbler",
+            a: "https://scrobbler.netlify.app/assets/images/scrobbler_logo.png",
+          },
+        ];
         const bot = bots[0];
         const now = new Date();
         const ts =
@@ -2228,11 +2536,18 @@
       ].forEach((id) => {
         const el = document.getElementById(id);
         if (!el) return;
-        el.addEventListener("input", updatePreview);
+        el.addEventListener("input", () => {
+          ebSaveState();
+          updatePreview();
+        });
         if (el.type === "checkbox")
-          el.addEventListener("change", updatePreview);
+          el.addEventListener("change", () => {
+            ebSaveState();
+            updatePreview();
+          });
       });
 
+      ebLoadState();
       updatePreview();
     </script>
   </body>

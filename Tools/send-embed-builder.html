@@ -542,7 +542,7 @@
       }
 
       .preview-wrap {
-        background: #2b2d31;
+        background: #1e1f22;
         border-radius: var(--r2);
         padding: 1rem;
       }
@@ -608,6 +608,7 @@
         padding: 0.75rem;
         flex: 1;
         min-width: 0;
+        background: #2b2d31;
       }
 
       .embed-author {
@@ -894,6 +895,34 @@
               </button>
             </div>
             <div class="card-body">
+              <p
+                style="
+                  font-size: 0.7rem;
+                  color: var(--text3);
+                  margin-bottom: 0.75rem;
+                "
+              >
+                <svg
+                  style="
+                    display: inline;
+                    vertical-align: -0.1em;
+                    margin-right: 0.25rem;
+                  "
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path
+                    d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
+                  />
+                  <polyline points="17 21 17 13 7 13 7 21" />
+                  <polyline points="7 3 7 8 15 8" />
+                </svg>
+                Your work is auto-saved locally.
+              </p>
               <div class="g2">
                 <div class="section">
                   <span class="slabel"
@@ -1261,7 +1290,7 @@
       })();
       window.addEventListener("load", () => {
         if (!localStorage.getItem("visited")) {
-          toast("Welcome! Auora here 👋", "s");
+          toast("Welcome! scrobbler here 👋", "s");
           localStorage.setItem("visited", "true");
         }
       });
@@ -1272,6 +1301,50 @@
       }
       function isValidHex(hex) {
         return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(hex);
+      }
+
+      /* localStorage persistence */
+      const SEB_LS_KEY = "bdtools_sendembed_state";
+      const SEB_FIELD_IDS = [
+        "channelID-input",
+        "content-input",
+        "author-input",
+        "author-icon-input",
+        "title-input",
+        "title-url-input",
+        "description-input",
+        "thumbnail-input",
+        "image-input",
+        "color-input",
+        "footer-input",
+        "footer-icon-input",
+        "timestamp-input",
+        "messageID-input",
+      ];
+      function sebSaveState() {
+        try {
+          const state = {};
+          SEB_FIELD_IDS.forEach((id) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            state[id] = el.type === "checkbox" ? el.checked : el.value;
+          });
+          localStorage.setItem(SEB_LS_KEY, JSON.stringify(state));
+        } catch (e) {}
+      }
+      function sebLoadState() {
+        try {
+          const raw = localStorage.getItem(SEB_LS_KEY);
+          if (!raw) return;
+          const state = JSON.parse(raw);
+          SEB_FIELD_IDS.forEach((id) => {
+            const el = document.getElementById(id);
+            if (!el || state[id] === undefined) return;
+            if (el.type === "checkbox") el.checked = state[id];
+            else el.value = state[id];
+          });
+          updatePreview();
+        } catch (e) {}
       }
 
       /* EXACT original sanitize */
@@ -1388,8 +1461,9 @@
           .getElementById("footer-icon-input")
           .value.trim();
         const ts = document.getElementById("timestamp-input")?.checked;
-        const botAvatarURL = "https://auora.live/auora_logo.png";
-        const botName = "Auora";
+        const botAvatarURL =
+          "https://scrobbler.netlify.app/assets/images/scrobbler_logo.png";
+        const botName = "scrobbler";
         const now = new Date();
         const dateStr =
           "Today at " +
@@ -1444,9 +1518,15 @@
       ].forEach((id) => {
         const el = document.getElementById(id);
         if (!el) return;
-        el.addEventListener("input", updatePreview);
+        el.addEventListener("input", () => {
+          sebSaveState();
+          updatePreview();
+        });
         if (el.type === "checkbox")
-          el.addEventListener("change", updatePreview);
+          el.addEventListener("change", () => {
+            sebSaveState();
+            updatePreview();
+          });
       });
 
       document.getElementById("replace-btn").addEventListener("click", () => {
@@ -1456,6 +1536,11 @@
           toast("Code generated", "s");
           updatePreview();
         }
+      });
+      // Also save on channelID and content changes (not in preview listener list)
+      ["channelID-input", "content-input"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("input", sebSaveState);
       });
       document.getElementById("copy-output").addEventListener("click", () => {
         const v = document.getElementById("output-text").value;
@@ -1491,10 +1576,12 @@
           if (el) el.checked = false;
         });
         document.getElementById("output-text").value = "";
+        localStorage.removeItem(SEB_LS_KEY);
         toast("Cleared", "s");
         updatePreview();
       });
 
+      sebLoadState();
       updatePreview();
     </script>
   </body>

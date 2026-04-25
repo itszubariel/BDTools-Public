@@ -1,0 +1,2447 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <script>
+      (function () {
+        const isDark = localStorage.getItem("darkMode") === "enabled";
+        document.documentElement.classList.toggle("dark", isDark);
+        document.documentElement.classList.toggle("light", !isDark);
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BDTools | CompV2 Builder</title>
+    <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Geist", sans-serif;
+        background: #07080f;
+        color: #f0eff8;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        -webkit-font-smoothing: antialiased;
+      }
+      :root {
+        --bg: #07080f;
+        --bg2: #0d0f1a;
+        --bg3: #12141f;
+        --bg4: #181a28;
+        --bg5: #1e2133;
+        --border: #1e2133;
+        --border2: #252840;
+        --border3: #2e3150;
+        --accent: #5865f2;
+        --accent-h: #4752c4;
+        --accent-dim: rgba(88, 101, 242, 0.14);
+        --text: #f0eff8;
+        --text2: #8b8aa8;
+        --text3: #45435e;
+        --mono: "Geist Mono", monospace;
+        --r: 10px;
+        --r2: 14px;
+      }
+      html.light body {
+        background: #f1f2f9;
+        color: #0d0f1a;
+      }
+      html.light {
+        --bg: #f1f2f9;
+        --bg2: #ffffff;
+        --bg3: #e8e9f2;
+        --bg4: #dfe0ec;
+        --bg5: #d5d6e8;
+        --border: #dcdde8;
+        --border2: #d0d1de;
+        --border3: #c4c5d4;
+        --text: #0d0f1a;
+        --text2: #54526e;
+        --text3: #a0a0b8;
+      }
+      html.light .dark-text {
+        color: #0d0f1a !important;
+      }
+      html.light .lowerNav {
+        background: rgba(244, 245, 250, 0.92) !important;
+        border-color: #e2e4ef !important;
+      }
+      #ldr {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.875rem;
+        transition: opacity 0.4s;
+      }
+      #ldr.out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #ldr img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        animation: ldrb 0.75s ease-in-out infinite alternate;
+      }
+      #ldr p {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--text2);
+      }
+      @keyframes ldrb {
+        to {
+          transform: translateY(-8px);
+        }
+      }
+      #toasts {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        pointer-events: none;
+      }
+      .toast {
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 0.875rem;
+        border-radius: var(--r);
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text);
+        position: relative;
+        overflow: hidden;
+        background:
+          radial-gradient(
+            120% 120% at 0% 0%,
+            rgba(88, 101, 242, 0.14),
+            transparent 65%
+          ),
+          var(--bg3);
+        border: 1px solid var(--border);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+        animation: tin 0.25s ease both;
+      }
+      .toast.s {
+        border-left: 3px solid #22c55e;
+      }
+      .toast.e {
+        border-left: 3px solid #ef4444;
+      }
+      .tbar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.3);
+        animation: tbar 4s linear forwards;
+      }
+      @keyframes tin {
+        from {
+          opacity: 0;
+          transform: translateX(12px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes tbar {
+        to {
+          width: 0;
+        }
+      }
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        border-bottom: 1px solid var(--border);
+        background: rgba(7, 8, 15, 0.88);
+        backdrop-filter: blur(18px);
+        height: 52px;
+        display: flex;
+        align-items: center;
+        padding: 0 1.5rem;
+        gap: 1rem;
+      }
+      html.light nav {
+        background: rgba(241, 242, 249, 0.9);
+      }
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+      }
+      .nav-logo img {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+      }
+      .nav-logo span {
+        font-weight: 800;
+        font-size: 0.9375rem;
+        color: var(--text);
+        letter-spacing: -0.02em;
+      }
+      .spacer {
+        flex: 1;
+      }
+      .tog {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        user-select: none;
+      }
+      .tog-lbl {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .tog-track {
+        width: 34px;
+        height: 19px;
+        border-radius: 999px;
+        background: var(--border2);
+        position: relative;
+        transition: background 0.2s;
+        flex-shrink: 0;
+      }
+      .tog-track.on {
+        background: var(--accent);
+      }
+      .tog-thumb {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #fff;
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        transition: transform 0.2s;
+      }
+      .tog-track.on .tog-thumb {
+        transform: translateX(15px);
+      }
+      main {
+        flex: 1;
+        max-width: 1080px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 1.75rem 1.5rem;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 1.25rem;
+      }
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--r2);
+        margin-bottom: 0.875rem;
+      }
+      .card:last-child {
+        margin-bottom: 0;
+      }
+      .card-hdr {
+        padding: 0.625rem 1rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--bg3);
+        border-radius: var(--r2) var(--r2) 0 0;
+      }
+      .card-hdr-title {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text3);
+      }
+      .card-body {
+        padding: 1rem;
+      }
+      .slabel {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text3);
+        display: block;
+        margin-bottom: 0.4rem;
+      }
+      .finput {
+        width: 100%;
+        padding: 0.45rem 0.7rem;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
+        color: var(--text);
+        font-family: "Geist", sans-serif;
+        font-size: 0.8rem;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .finput:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent-dim);
+      }
+      .finput::placeholder {
+        color: var(--text3);
+      }
+      textarea.finput {
+        resize: vertical;
+        line-height: 1.6;
+      }
+      select.finput {
+        cursor: pointer;
+      }
+      .g2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+      }
+      .g3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 0.5rem;
+      }
+      .g4 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 0.5rem;
+      }
+      @media (max-width: 600px) {
+        .g2,
+        .g3,
+        .g4 {
+          grid-template-columns: 1fr;
+        }
+      }
+      .chk {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        user-select: none;
+      }
+      .chk input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 0.9375rem;
+        height: 0.9375rem;
+        border-radius: 4px;
+        border: 1.5px solid var(--border2);
+        background: var(--bg);
+        cursor: pointer;
+        transition: all 0.15s;
+        position: relative;
+        flex-shrink: 0;
+      }
+      .chk input[type="checkbox"]:checked {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      .chk input[type="checkbox"]:checked::after {
+        content: "";
+        position: absolute;
+        left: 3px;
+        top: 1px;
+        width: 4px;
+        height: 7px;
+        border: 1.5px solid #fff;
+        border-top: none;
+        border-left: none;
+        transform: rotate(45deg);
+      }
+      .chk span {
+        font-size: 0.8rem;
+        color: var(--text2);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.4rem 0.875rem;
+        border-radius: var(--r);
+        font-size: 0.7875rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s;
+        border: 1.5px solid transparent;
+        font-family: "Geist", sans-serif;
+        white-space: nowrap;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .btn-primary:hover {
+        background: var(--accent-h);
+      }
+      .btn-ghost {
+        background: var(--bg3);
+        border-color: var(--border2);
+        color: var(--text2);
+      }
+      .btn-ghost:hover {
+        background: var(--bg4);
+        color: var(--text);
+      }
+      .btn-full {
+        width: 100%;
+        justify-content: center;
+      }
+      .icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text3);
+        transition: all 0.15s;
+      }
+      .icon-btn:hover {
+        color: var(--text);
+        background: var(--bg4);
+      }
+      .comp-block {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: var(--r2);
+        padding: 0.875rem;
+        margin-bottom: 0.625rem;
+        position: relative;
+        animation: compIn 0.2s ease both;
+      }
+      .comp-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+      }
+      .action-bar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: var(--r2);
+        margin-bottom: 0.875rem;
+      }
+      .out-area {
+        width: 100%;
+        min-height: 140px;
+        padding: 0.75rem 0.875rem;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
+        color: var(--text);
+        font-family: var(--mono);
+        font-size: 0.7625rem;
+        line-height: 1.8;
+        resize: vertical;
+        outline: none;
+      }
+      .type-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.6rem;
+        font-family: var(--mono);
+        font-weight: 600;
+        padding: 0.15rem 0.45rem;
+        border-radius: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .type-badge.container {
+        background: rgba(88, 101, 242, 0.18);
+        color: #818cf8;
+        border: 1px solid rgba(88, 101, 242, 0.25);
+      }
+      .type-badge.textdisplay {
+        background: rgba(251, 191, 36, 0.12);
+        color: #fbbf24;
+        border: 1px solid rgba(251, 191, 36, 0.2);
+      }
+      .type-badge.separator {
+        background: rgba(139, 92, 246, 0.12);
+        color: #a78bfa;
+        border: 1px solid rgba(139, 92, 246, 0.2);
+      }
+      .type-badge.section {
+        background: rgba(34, 197, 94, 0.12);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.2);
+      }
+      .type-badge.thumbnail {
+        background: rgba(236, 72, 153, 0.12);
+        color: #f472b6;
+        border: 1px solid rgba(236, 72, 153, 0.2);
+      }
+      .type-badge.mediagallery {
+        background: rgba(34, 211, 238, 0.12);
+        color: #22d3ee;
+        border: 1px solid rgba(34, 211, 238, 0.2);
+      }
+      .type-badge.actionrow {
+        background: rgba(239, 68, 68, 0.12);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+      }
+      .type-badge.button {
+        background: rgba(239, 68, 68, 0.12);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+      }
+      .type-badge.select {
+        background: rgba(168, 85, 247, 0.12);
+        color: #c084fc;
+        border: 1px solid rgba(168, 85, 247, 0.2);
+      }
+      .preview-wrap {
+        background: #1e1f22;
+        border-radius: var(--r2);
+        padding: 1rem;
+      }
+      .preview-msg {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+      .preview-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background: #5865f2;
+      }
+      .preview-content {
+        flex: 1;
+        min-width: 0;
+      }
+      .preview-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        margin-bottom: 0.25rem;
+      }
+      .preview-name {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #fff;
+      }
+      .preview-badge {
+        background: #5865f2;
+        color: #fff;
+        font-size: 0.6rem;
+        padding: 0.1rem 0.3rem;
+        border-radius: 3px;
+        font-weight: 700;
+      }
+      .preview-time {
+        font-size: 0.75rem;
+        color: #72767d;
+      }
+      .pv-container {
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 4px;
+        background: #2b2d31;
+        position: relative;
+      }
+      .pv-container-inner {
+        padding: 0.5rem 0.75rem;
+      }
+      .pv-container.colored {
+        border-left: 4px solid var(--pv-accent, #5865f2);
+      }
+      .pv-spoiler-overlay {
+        position: absolute;
+        inset: 0;
+        backdrop-filter: blur(8px);
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        cursor: pointer;
+        z-index: 2;
+      }
+      .pv-spoiler-label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 0.3rem 0.6rem;
+        border-radius: 4px;
+      }
+      .pv-text-display {
+        padding: 0.375rem 0.25rem;
+      }
+      .pv-text-content {
+        font-size: 0.8125rem;
+        color: #dbdee1;
+        line-height: 1.5;
+      }
+      .pv-separator {
+        margin: 0.375rem 0;
+      }
+      .pv-separator.divider {
+        height: 1px;
+        background: #3f4147;
+      }
+      .pv-separator.divider.large {
+        margin: 0.75rem 0;
+      }
+      .pv-separator.nodivider {
+        height: 8px;
+      }
+      .pv-separator.nodivider.large {
+        height: 20px;
+      }
+      .pv-section {
+        background: #2b2d31;
+        padding: 0.5rem 0.75rem;
+        border-radius: 4px;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+      .pv-section-content {
+        flex: 1;
+      }
+      .pv-thumbnail {
+        width: 48px;
+        height: 48px;
+        border-radius: 4px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+      .pv-media-gallery {
+        display: flex;
+        gap: 4px;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 4px;
+      }
+      .pv-media-gallery img {
+        flex: 1;
+        object-fit: cover;
+        max-height: 120px;
+        border-radius: 4px;
+      }
+      .pv-buttons {
+        display: flex;
+        gap: 0.375rem;
+        flex-wrap: wrap;
+        margin-bottom: 4px;
+      }
+      .pv-btn {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.75rem;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        color: #fff;
+      }
+      .pv-btn.primary {
+        background: #5865f2;
+      }
+      .pv-btn.secondary {
+        background: #4f545c;
+      }
+      .pv-btn.success {
+        background: #248045;
+      }
+      .pv-btn.danger {
+        background: #da373c;
+      }
+      .pv-btn.link {
+        background: transparent;
+        color: #00aff4;
+        text-decoration: underline;
+      }
+      .pv-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .pv-select {
+        background: #2b2d31;
+        border: 1px solid #3f4147;
+        border-radius: 4px;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8125rem;
+        color: #dbdee1;
+        margin-bottom: 4px;
+      }
+      .pv-empty {
+        font-size: 0.8rem;
+        color: #72767d;
+        font-style: italic;
+      }
+      .right-panel {
+        position: sticky;
+        top: 68px;
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+        scrollbar-width: thin;
+      }
+      .param-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.78rem;
+      }
+      .param-table th {
+        text-align: left;
+        padding: 0.375rem 0.5rem;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text3);
+        border-bottom: 1px solid var(--border);
+      }
+      .param-table td {
+        padding: 0.375rem 0.5rem;
+        border-bottom: 1px solid var(--border);
+        color: var(--text2);
+        vertical-align: top;
+      }
+      .param-table td:first-child {
+        font-family: var(--mono);
+        color: var(--accent);
+        font-size: 0.75rem;
+        white-space: nowrap;
+      }
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      footer p {
+        font-size: 0.7rem;
+        color: var(--text3);
+      }
+      .foot-links {
+        display: flex;
+        gap: 1rem;
+      }
+      .foot-links a {
+        font-size: 0.7rem;
+        color: var(--text3);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+      .foot-links a:hover {
+        color: var(--text2);
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .fu {
+        animation: fadeUp 0.26s ease both;
+      }
+      .fd1 {
+        animation-delay: 0.05s;
+      }
+      .fd2 {
+        animation-delay: 0.1s;
+      }
+      @keyframes compIn {
+        from {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .drag-handle {
+        cursor: grab;
+        color: var(--text3);
+        padding: 0 4px;
+      }
+      .drag-handle:active {
+        cursor: grabbing;
+      }
+      .comp-block.dragging {
+        opacity: 0.4;
+        border: 1.5px dashed var(--accent);
+      }
+      .comp-block.drag-over {
+        border-top: 2px solid var(--accent);
+      }
+      .callout {
+        background: rgba(88, 101, 242, 0.08);
+        border: 1px solid rgba(88, 101, 242, 0.2);
+        border-radius: var(--r);
+        padding: 0.625rem 0.875rem;
+        font-size: 0.775rem;
+        color: var(--text2);
+        line-height: 1.5;
+        margin-bottom: 0.875rem;
+      }
+      .callout strong {
+        color: #818cf8;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ldr">
+      <img src="https://bdtools.netlify.app/images/bdfd_logo.png" alt="" />
+      <p id="ldrtxt">Loading</p>
+    </div>
+    <div id="toasts"></div>
+    <nav>
+      <a href="/" class="nav-logo">
+        <img
+          src="https://bdtools.netlify.app/images/bdfd_logo.png"
+          onerror="this.style.display = 'none'"
+          alt=""
+        />
+        <span>BDTools</span>
+      </a>
+      <div class="spacer"></div>
+      <div class="tog" onclick="toggleTheme()">
+        <span class="tog-lbl">Dark</span>
+        <div class="tog-track on" id="tog"><div class="tog-thumb"></div></div>
+      </div>
+    </nav>
+    <div class="lowerNav border-b border-[#1e2130]">
+      <div class="max-w-[1080px] mx-auto px-6 py-10 fu">
+        <div class="flex items-start gap-4">
+          <div
+            class="w-11 h-11 flex-shrink-0 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
+          >
+            <svg
+              class="w-5 h-5 text-[#5865F2]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1 class="dark-text text-2xl font-black text-white tracking-tight">
+              CompV2 Builder
+              <span class="text-sm font-normal text-gray-500"
+                >(Container Components)</span
+              >
+            </h1>
+            <p class="text-gray-400 text-sm mt-1">
+              Build Discord Component V2 layouts visually with containers,
+              sections, text displays, media galleries, separators and buttons —
+              then generate your BDFD code.
+            </p>
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              <span
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
+                >JavaScript</span
+              >
+              <span
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
+                >HTML</span
+              >
+              <span
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
+                >CompV2 / Containers</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <main>
+      <div class="layout">
+        <div>
+          <div class="callout fu fd1">
+            <strong>How it works:</strong> Components are a flat list. Add a
+            <strong>Container</strong> first, then add other components and
+            assign them by name. <strong>Sections</strong> have their own name —
+            text displays and thumbnails attach to a section by selecting its
+            name. <strong>Action Rows</strong> have their own ID — buttons and
+            selects attach to them by ID. Containers are output first in the
+            generated code.
+          </div>
+          <p
+            style="
+              font-size: 0.7rem;
+              color: var(--text3);
+              margin-bottom: 0.75rem;
+              margin-top: -0.5rem;
+            "
+          >
+            <svg
+              style="
+                display: inline;
+                vertical-align: -0.1em;
+                margin-right: 0.25rem;
+              "
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <path
+                d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
+              />
+              <polyline points="17 21 17 13 7 13 7 21" />
+              <polyline points="7 3 7 8 15 8" />
+            </svg>
+            Your work is auto-saved locally.
+          </p>
+          <div class="action-bar fu fd1">
+            <button class="btn btn-ghost" id="clear-btn">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+              </svg>
+              Clear All
+            </button>
+            <div style="flex: 1"></div>
+            <button class="btn btn-ghost" id="add-textdisplay-btn">
+              + Text Display
+            </button>
+            <button class="btn btn-ghost" id="add-separator-btn">
+              + Separator
+            </button>
+            <button class="btn btn-ghost" id="add-section-btn">
+              + Section
+            </button>
+            <button class="btn btn-ghost" id="add-thumbnail-btn">
+              + Thumbnail
+            </button>
+            <button class="btn btn-ghost" id="add-mediagallery-btn">
+              + Media Gallery
+            </button>
+            <button class="btn btn-ghost" id="add-mediagalleryitem-btn">
+              + Media Item
+            </button>
+            <button class="btn btn-ghost" id="add-actionrow-btn">
+              + Action Row
+            </button>
+            <button class="btn btn-ghost" id="add-buttoncv2-btn">
+              + Button
+            </button>
+            <button class="btn btn-ghost" id="add-userselect-btn">
+              + User Select
+            </button>
+            <button class="btn btn-ghost" id="add-roleselect-btn">
+              + Role Select
+            </button>
+            <button class="btn btn-ghost" id="add-mentionableselect-btn">
+              + Mentionable Select
+            </button>
+            <button class="btn btn-primary" id="add-container-btn">
+              + Container
+            </button>
+          </div>
+          <div id="components-root"></div>
+          <div class="card fu fd2">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Output</span>
+            </div>
+            <div class="card-body">
+              <button
+                class="btn btn-primary btn-full"
+                id="generate-btn"
+                style="margin-bottom: 0.75rem"
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+                Generate CompV2 Code
+              </button>
+              <textarea
+                id="output-text"
+                class="out-area"
+                readonly
+                placeholder="Your BDFD CompV2 code will appear here…"
+              ></textarea>
+              <div
+                style="
+                  display: flex;
+                  justify-content: flex-end;
+                  margin-top: 0.5rem;
+                "
+              >
+                <button class="btn btn-ghost" id="copy-output">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" />
+                    <path
+                      d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"
+                    />
+                  </svg>
+                  Copy Output
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="right-panel fu fd2">
+          <div class="card">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Live Preview</span>
+            </div>
+            <div class="card-body">
+              <div class="preview-wrap">
+                <div class="preview-msg">
+                  <img
+                    class="preview-avatar"
+                    src="https://scrobbler.netlify.app/assets/images/scrobbler_logo.png"
+                    onerror="this.style.display = 'none'"
+                    alt=""
+                    style="border-radius: 50%"
+                  />
+                  <div class="preview-content">
+                    <div class="preview-meta">
+                      <span class="preview-name">scrobbler</span>
+                      <span class="preview-badge">BOT</span>
+                      <span class="preview-time">Today at 12:00 PM</span>
+                    </div>
+                    <div id="embed-preview">
+                      <p class="pv-empty">Add components to see a preview…</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p
+                style="
+                  font-size: 0.7rem;
+                  color: var(--text3);
+                  margin-top: 0.5rem;
+                  line-height: 1.4;
+                "
+              >
+                Preview updates live as you fill in fields.
+              </p>
+            </div>
+          </div>
+          <div class="card" style="margin-top: 0.875rem">
+            <div class="card-hdr">
+              <span class="card-hdr-title">Syntax Reference</span>
+            </div>
+            <div class="card-body" style="overflow-x: auto">
+              <table class="param-table">
+                <tr>
+                  <th>Function</th>
+                  <th>Parameters</th>
+                </tr>
+                <tr>
+                  <td>$addContainer</td>
+                  <td>name;color;spoiler?</td>
+                </tr>
+                <tr>
+                  <td>$addTextDisplay</td>
+                  <td>content;container/sectionName?</td>
+                </tr>
+                <tr>
+                  <td>$addSeparator</td>
+                  <td>divider?;spacing?;containerName?</td>
+                </tr>
+                <tr>
+                  <td>$addSection</td>
+                  <td>name;containerName?</td>
+                </tr>
+                <tr>
+                  <td>$addThumbnail</td>
+                  <td>url;description;spoiler?;sectionName</td>
+                </tr>
+                <tr>
+                  <td>$addMediaGallery</td>
+                  <td>galleryID;containerID?</td>
+                </tr>
+                <tr>
+                  <td>$addMediaGalleryItem</td>
+                  <td>url;description;spoiler;galleryID</td>
+                </tr>
+                <tr>
+                  <td>$addActionRow</td>
+                  <td>ID;containerID?</td>
+                </tr>
+                <tr>
+                  <td>$addButtonCV2</td>
+                  <td>id;label;style;disabled;emoji;actionRowID/sectionID</td>
+                </tr>
+                <tr>
+                  <td>$addUserSelect</td>
+                  <td>id;placeholder;min;max;disabled;actionRowID</td>
+                </tr>
+                <tr>
+                  <td>$addRoleSelect</td>
+                  <td>id;placeholder;min;max;disabled;actionRowID</td>
+                </tr>
+                <tr>
+                  <td>$addMentionableSelect</td>
+                  <td>id;placeholder;min;max;disabled;actionRowID</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+      <div class="foot-links">
+        <a href="/tos">Terms</a><a href="/privacy">Privacy</a
+        ><a href="/contact">Contact</a>
+      </div>
+    </footer>
+    <script>
+      const ldrtxt = document.getElementById("ldrtxt");
+      let dc = 0;
+      const di = setInterval(() => {
+        dc = (dc + 1) % 4;
+        ldrtxt.textContent = "Loading" + ".".repeat(dc);
+      }, 350);
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          const l = document.getElementById("ldr");
+          l.classList.add("out");
+          setTimeout(() => l.remove(), 400);
+          clearInterval(di);
+        }, 900);
+      });
+      function toast(msg, type = "s") {
+        const box = document.getElementById("toasts");
+        const t = document.createElement("div");
+        t.className = `toast ${type}`;
+        t.style.position = "relative";
+        t.style.overflow = "hidden";
+        t.innerHTML = `<span>${msg}</span><div class="tbar"></div>`;
+        box.appendChild(t);
+        setTimeout(() => t.remove(), 4500);
+      }
+      function toggleTheme() {
+        const h = document.documentElement;
+        const t = document.getElementById("tog");
+        const dark = h.classList.toggle("dark");
+        h.classList.toggle("light", !dark);
+        localStorage.setItem("darkMode", dark ? "enabled" : "disabled");
+        t.classList.toggle("on", dark);
+      }
+      (function () {
+        document
+          .getElementById("tog")
+          .classList.toggle(
+            "on",
+            document.documentElement.classList.contains("dark"),
+          );
+      })();
+      let components = [];
+      let uidCounter = 0;
+      function uid() {
+        return "c" + ++uidCounter;
+      }
+
+      // ── localStorage persistence ──
+      const LS_KEY = "bdtools_compv2_state";
+      function saveState() {
+        try {
+          localStorage.setItem(
+            LS_KEY,
+            JSON.stringify({ uidCounter, components }),
+          );
+        } catch (e) {}
+      }
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(LS_KEY);
+          if (!raw) return;
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed.components)) {
+            components = parsed.components;
+            uidCounter = parsed.uidCounter || 0;
+          }
+        } catch (e) {}
+      }
+      function getContainerIds() {
+        return components
+          .filter((c) => c.type === "container")
+          .map((c) => c.fields.id || "")
+          .filter((id) => id);
+      }
+      function getSectionNames() {
+        return components
+          .filter((c) => c.type === "section")
+          .map((c) => c.fields.name || "")
+          .filter((n) => n);
+      }
+      function getGalleryIds() {
+        return components
+          .filter((c) => c.type === "mediagallery")
+          .map((c) => c.fields.galleryId || "")
+          .filter((n) => n);
+      }
+      function getActionRowIds() {
+        return components
+          .filter((c) => c.type === "actionrow")
+          .map((c) => c.fields.rowId || "")
+          .filter((n) => n);
+      }
+      // Build a plain <select> with optgroups
+      function buildSelect(field, current, groups) {
+        // groups: [{label, items:[{value,display}]}]
+        let opts = `<option value="">— none —</option>`;
+        groups.forEach((g) => {
+          if (!g.items.length) return;
+          opts += `<optgroup label="${esc(g.label)}">`;
+          g.items.forEach((item) => {
+            opts += `<option value="${esc(item.value)}" ${current === item.value ? "selected" : ""}>${esc(item.display)}</option>`;
+          });
+          opts += `</optgroup>`;
+        });
+        return `<select class="finput" data-field="${field}">${opts}</select>`;
+      }
+      function buildRequiredSelect(field, current, groups, placeholder) {
+        // required — no "none" option, just a placeholder
+        let opts = `<option value="">${esc(placeholder || "— select —")}</option>`;
+        groups.forEach((g) => {
+          if (!g.items.length) return;
+          opts += `<optgroup label="${esc(g.label)}">`;
+          g.items.forEach((item) => {
+            opts += `<option value="${esc(item.value)}" ${current === item.value ? "selected" : ""}>${esc(item.display)}</option>`;
+          });
+          opts += `</optgroup>`;
+        });
+        return `<select class="finput" data-field="${field}">${opts}</select>`;
+      }
+      function renderBuilder() {
+        const root = document.getElementById("components-root");
+        root.innerHTML = "";
+        components.forEach((comp, idx) => {
+          const el = buildCompBlock(comp, idx);
+          root.appendChild(el);
+        });
+        saveState();
+        updatePreview();
+      }
+      function buildCompBlock(comp, idx) {
+        const d = document.createElement("div");
+        d.className = "comp-block";
+        d.dataset.uid = comp.uid;
+        const containerIds = getContainerIds();
+        const sectionNames = getSectionNames();
+        const galleryIds = getGalleryIds();
+        const actionRowIds = getActionRowIds();
+        const num = idx + 1;
+        const chevronStyle = comp.collapsed
+          ? "transform:rotate(180deg);transition:transform .2s;"
+          : "transition:transform .2s;";
+        const collapseBtn = `<button class="icon-btn" data-collapse title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="${chevronStyle}"><polyline points="6 9 12 15 18 9"/></svg></button>`;
+        const numBadge = `<span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${num}</span>`;
+        const bodyStyle = comp.collapsed ? 'style="display:none"' : "";
+        let bodyHtml = "";
+
+        if (comp.type === "container") {
+          const header = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle" title="Drag to reorder">⠿</span><span class="type-badge container">Container</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
+          bodyHtml = `<div class="g3" style="margin-top:.625rem;"><div><label class="slabel">Name (required)</label><input class="finput" data-field="id" placeholder="e.g. main" value="${esc(comp.fields.id)}"/></div><div><label class="slabel">Color (hex, vacantable)</label><input class="finput" data-field="color" placeholder="#673ab7" value="${esc(comp.fields.color)}"/></div><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-field="spoiler" ${comp.fields.spoiler ? "checked" : ""}/><span>Spoiler</span></label></div></div>`;
+          d.innerHTML =
+            header + `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
+        } else if (comp.type === "textdisplay") {
+          const tdGroups = [
+            {
+              label: "Containers",
+              items: containerIds.map((id) => ({ value: id, display: id })),
+            },
+            {
+              label: "Sections",
+              items: sectionNames.map((n) => ({ value: n, display: n })),
+            },
+          ];
+          const tdHeader = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge textdisplay">Text Display</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
+          bodyHtml = `<div style="margin-top:.625rem;"><label class="slabel">Content (required)</label><textarea class="finput" data-field="content" rows="3" placeholder="Enter text content…">${esc(comp.fields.content)}</textarea></div><div style="margin-top:.5rem;"><label class="slabel">Container / Section</label>${buildSelect("container", comp.fields.container, tdGroups)}</div>`;
+          d.innerHTML =
+            tdHeader + `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
+        } else if (comp.type === "separator") {
+          const sepGroups = [
+            {
+              label: "Containers",
+              items: containerIds.map((id) => ({ value: id, display: id })),
+            },
+          ];
+          const sepHeader = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge separator">Separator</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
+          bodyHtml = `<div class="g3" style="margin-top:.625rem;"><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-field="divider" ${comp.fields.divider !== false ? "checked" : ""}/><span>Show divider line</span></label></div><div><label class="slabel">Spacing</label><select class="finput" data-field="spacing"><option value="" ${!comp.fields.spacing ? "selected" : ""}>Default (small)</option><option value="small" ${comp.fields.spacing === "small" ? "selected" : ""}>Small</option><option value="large" ${comp.fields.spacing === "large" ? "selected" : ""}>Large</option></select></div><div><label class="slabel">Container</label>${buildSelect("container", comp.fields.container, sepGroups)}</div></div>`;
+          d.innerHTML =
+            sepHeader + `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
+        } else if (comp.type === "section") {
+          const secGroups = [
+            {
+              label: "Containers",
+              items: containerIds.map((id) => ({ value: id, display: id })),
+            },
+          ];
+          const secHeader = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge section">Section</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
+          bodyHtml = `<div class="g2" style="margin-top:.625rem;"><div><label class="slabel">Name (required)</label><input class="finput" data-field="name" placeholder="e.g. mySection" value="${esc(comp.fields.name)}"/></div><div><label class="slabel">Container (opt)</label>${buildSelect("container", comp.fields.container, secGroups)}</div></div>`;
+          d.innerHTML =
+            secHeader + `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
+        } else if (comp.type === "thumbnail") {
+          const thumbGroups = [
+            {
+              label: "Sections",
+              items: sectionNames.map((n) => ({ value: n, display: n })),
+            },
+          ];
+          const thumbHeader = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge thumbnail">Thumbnail</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
+          bodyHtml = `<p style="font-size:.7rem;color:#f472b6;margin:.4rem 0 .1rem;">Thumbnails only go inside sections.</p><div class="g2" style="margin-top:.5rem;"><div><label class="slabel">URL (required)</label><input class="finput" data-field="url" placeholder="https://…" value="${esc(comp.fields.url)}"/></div><div><label class="slabel">Description (emptiable)</label><input class="finput" data-field="description" placeholder="Optional" value="${esc(comp.fields.description)}"/></div></div><div class="g2" style="margin-top:.5rem;"><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-field="spoiler" ${comp.fields.spoiler ? "checked" : ""}/><span>Spoiler</span></label></div><div><label class="slabel">Section Name (required)</label>${buildRequiredSelect("container", comp.fields.container, thumbGroups, "— select section —")}</div></div>`;
+          d.innerHTML =
+            thumbHeader +
+            `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
+        } else if (comp.type === "mediagallery") {
+          const mgGroups = [
+            {
+              label: "Containers",
+              items: containerIds.map((id) => ({ value: id, display: id })),
+            },
+          ];
+          const mgHeader = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge mediagallery">Media Gallery</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
+          bodyHtml = `<div class="g2" style="margin-top:.625rem;"><div><label class="slabel">Gallery ID (required)</label><input class="finput" data-field="galleryId" placeholder="e.g. gallery1" value="${esc(comp.fields.galleryId)}"/></div><div><label class="slabel">Container (opt)</label>${buildSelect("container", comp.fields.container, mgGroups)}</div></div>`;
+          d.innerHTML =
+            mgHeader + `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
+        } else if (comp.type === "mediagalleryitem") {
+          const mgiGroups = [
+            {
+              label: "Galleries",
+              items: galleryIds.map((id) => ({ value: id, display: id })),
+            },
+          ];
+          const mgiHeader = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge mediagallery">Media Item</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
+          bodyHtml = `<div class="g2" style="margin-top:.625rem;"><div><label class="slabel">URL (required)</label><input class="finput" data-field="url" placeholder="https://…" value="${esc(comp.fields.url)}"/></div><div><label class="slabel">Description (emptiable)</label><input class="finput" data-field="description" placeholder="Optional" value="${esc(comp.fields.description)}"/></div></div><div class="g2" style="margin-top:.5rem;"><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-field="spoiler" ${comp.fields.spoiler ? "checked" : ""}/><span>Spoiler</span></label></div><div><label class="slabel">Gallery ID (required)</label>${buildRequiredSelect("galleryId", comp.fields.galleryId, mgiGroups, "— select gallery —")}</div></div>`;
+          d.innerHTML =
+            mgiHeader + `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
+        } else if (comp.type === "actionrow") {
+          const arGroups = [
+            {
+              label: "Containers",
+              items: containerIds.map((id) => ({ value: id, display: id })),
+            },
+          ];
+          const arHeader = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge actionrow">Action Row</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
+          bodyHtml = `<div class="g2" style="margin-top:.625rem;"><div><label class="slabel">Action Row ID (required)</label><input class="finput" data-field="rowId" placeholder="e.g. row1" value="${esc(comp.fields.rowId)}"/></div><div><label class="slabel">Container (opt)</label>${buildSelect("container", comp.fields.container, arGroups)}</div></div>`;
+          d.innerHTML =
+            arHeader + `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
+        } else if (comp.type === "buttoncv2") {
+          const btnGroups = [
+            {
+              label: "Action Rows",
+              items: actionRowIds.map((id) => ({ value: id, display: id })),
+            },
+            {
+              label: "Sections",
+              items: sectionNames.map((n) => ({ value: n, display: n })),
+            },
+          ];
+          const btnHeader = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge button">Button CV2</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
+          bodyHtml = `<div class="g3" style="margin-top:.625rem;"><div><label class="slabel">ID / URL (required)</label><input class="finput" data-field="id" placeholder="button_id or https://…" value="${esc(comp.fields.id)}"/></div><div><label class="slabel">Label (emptiable)</label><input class="finput" data-field="label" placeholder="Click me" value="${esc(comp.fields.label)}"/></div><div><label class="slabel">Style (emptiable)</label><select class="finput" data-field="style"><option value="" ${!comp.fields.style ? "selected" : ""}>— default —</option><option value="primary" ${comp.fields.style === "primary" ? "selected" : ""}>Primary</option><option value="secondary" ${comp.fields.style === "secondary" ? "selected" : ""}>Secondary</option><option value="success" ${comp.fields.style === "success" ? "selected" : ""}>Success</option><option value="danger" ${comp.fields.style === "danger" ? "selected" : ""}>Danger</option><option value="link" ${comp.fields.style === "link" ? "selected" : ""}>Link</option></select></div></div><div class="g2" style="margin-top:.5rem;"><div><label class="slabel">Emoji (emptiable)</label><input class="finput" data-field="emoji" placeholder="Emoji ID or unicode" value="${esc(comp.fields.emoji)}"/></div><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-field="disabled" ${comp.fields.disabled ? "checked" : ""}/><span>Disabled</span></label></div></div><div style="margin-top:.5rem;"><label class="slabel">Action Row / Section (required)</label>${buildRequiredSelect("rowOrSection", comp.fields.rowOrSection, btnGroups, "— select action row or section —")}</div>`;
+          d.innerHTML =
+            btnHeader + `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
+        } else if (
+          comp.type === "userselect" ||
+          comp.type === "roleselect" ||
+          comp.type === "mentionableselect"
+        ) {
+          const typeName =
+            comp.type === "userselect"
+              ? "User Select"
+              : comp.type === "roleselect"
+                ? "Role Select"
+                : "Mentionable Select";
+          const selGroups = [
+            {
+              label: "Action Rows",
+              items: actionRowIds.map((id) => ({ value: id, display: id })),
+            },
+          ];
+          const selHeader = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge select">${typeName}</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
+          bodyHtml = `<div class="g2" style="margin-top:.625rem;"><div><label class="slabel">ID (required)</label><input class="finput" data-field="id" placeholder="select_id" value="${esc(comp.fields.id)}"/></div><div><label class="slabel">Placeholder (emptiable)</label><input class="finput" data-field="placeholder" placeholder="Optional" value="${esc(comp.fields.placeholder)}"/></div></div><div class="g3" style="margin-top:.5rem;"><div><label class="slabel">Min (emptiable)</label><input class="finput" type="number" data-field="min" placeholder="1" value="${esc(comp.fields.min)}"/></div><div><label class="slabel">Max (emptiable)</label><input class="finput" type="number" data-field="max" placeholder="1" value="${esc(comp.fields.max)}"/></div><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-field="disabled" ${comp.fields.disabled ? "checked" : ""}/><span>Disabled</span></label></div></div><div style="margin-top:.5rem;"><label class="slabel">Action Row ID (required)</label>${buildRequiredSelect("actionRowId", comp.fields.actionRowId, selGroups, "— select action row —")}</div>`;
+          d.innerHTML =
+            selHeader + `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
+        }
+
+        // Collapse toggle
+        const collapseEl = d.querySelector("[data-collapse]");
+        if (collapseEl) {
+          collapseEl.addEventListener("click", () => {
+            comp.collapsed = !comp.collapsed;
+            const body = d.querySelector(".comp-body");
+            const chevron = collapseEl.querySelector("svg");
+            body.style.display = comp.collapsed ? "none" : "";
+            chevron.style.transform = comp.collapsed ? "rotate(180deg)" : "";
+            saveState();
+          });
+        }
+
+        d.querySelector("[data-remove]").addEventListener("click", () => {
+          components = components.filter((c) => c.uid !== comp.uid);
+          renderBuilder();
+          toast("Removed", "s");
+        });
+        d.querySelectorAll("[data-field]").forEach((el) => {
+          const field = el.dataset.field;
+          const isIdField =
+            ["id", "name", "galleryId", "rowId"].includes(field) &&
+            ["container", "section", "mediagallery", "actionrow"].includes(
+              comp.type,
+            );
+          const ev = el.type === "checkbox" ? "change" : "input";
+          el.addEventListener(ev, () => {
+            comp.fields[field] = el.type === "checkbox" ? el.checked : el.value;
+            if (isIdField) refreshAllDropdowns();
+            saveState();
+            updatePreview();
+          });
+        });
+        makeDraggable(d);
+        return d;
+      }
+      function refreshAllDropdowns() {
+        const containerIds = getContainerIds();
+        const sectionNames = getSectionNames();
+        const galleryIds = getGalleryIds();
+        const actionRowIds = getActionRowIds();
+        document
+          .querySelectorAll("#components-root .comp-block")
+          .forEach((block) => {
+            const cuid = block.dataset.uid;
+            const comp = components.find((c) => c.uid === cuid);
+            if (!comp) return;
+            block.querySelectorAll("select[data-field]").forEach((sel) => {
+              const field = sel.dataset.field;
+              const current = comp.fields[field] || "";
+              let newHtml = null;
+              if (comp.type === "textdisplay" && field === "container") {
+                newHtml = buildSelect(field, current, [
+                  {
+                    label: "Containers",
+                    items: containerIds.map((id) => ({
+                      value: id,
+                      display: id,
+                    })),
+                  },
+                  {
+                    label: "Sections",
+                    items: sectionNames.map((n) => ({ value: n, display: n })),
+                  },
+                ]);
+              } else if (
+                (comp.type === "separator" ||
+                  comp.type === "mediagallery" ||
+                  comp.type === "actionrow" ||
+                  comp.type === "section") &&
+                field === "container"
+              ) {
+                newHtml = buildSelect(field, current, [
+                  {
+                    label: "Containers",
+                    items: containerIds.map((id) => ({
+                      value: id,
+                      display: id,
+                    })),
+                  },
+                ]);
+              } else if (comp.type === "thumbnail" && field === "container") {
+                newHtml = buildRequiredSelect(
+                  field,
+                  current,
+                  [
+                    {
+                      label: "Sections",
+                      items: sectionNames.map((n) => ({
+                        value: n,
+                        display: n,
+                      })),
+                    },
+                  ],
+                  "— select section —",
+                );
+              } else if (
+                comp.type === "mediagalleryitem" &&
+                field === "galleryId"
+              ) {
+                newHtml = buildRequiredSelect(
+                  field,
+                  current,
+                  [
+                    {
+                      label: "Galleries",
+                      items: galleryIds.map((id) => ({
+                        value: id,
+                        display: id,
+                      })),
+                    },
+                  ],
+                  "— select gallery —",
+                );
+              } else if (
+                comp.type === "buttoncv2" &&
+                field === "rowOrSection"
+              ) {
+                newHtml = buildRequiredSelect(
+                  field,
+                  current,
+                  [
+                    {
+                      label: "Action Rows",
+                      items: actionRowIds.map((id) => ({
+                        value: id,
+                        display: id,
+                      })),
+                    },
+                    {
+                      label: "Sections",
+                      items: sectionNames.map((n) => ({
+                        value: n,
+                        display: n,
+                      })),
+                    },
+                  ],
+                  "— select action row or section —",
+                );
+              } else if (
+                (comp.type === "userselect" ||
+                  comp.type === "roleselect" ||
+                  comp.type === "mentionableselect") &&
+                field === "actionRowId"
+              ) {
+                newHtml = buildRequiredSelect(
+                  field,
+                  current,
+                  [
+                    {
+                      label: "Action Rows",
+                      items: actionRowIds.map((id) => ({
+                        value: id,
+                        display: id,
+                      })),
+                    },
+                  ],
+                  "— select action row —",
+                );
+              }
+              if (newHtml) {
+                const tmp = document.createElement("div");
+                tmp.innerHTML = newHtml;
+                const newSel = tmp.firstElementChild;
+                newSel.addEventListener("change", () => {
+                  comp.fields[field] = newSel.value;
+                  saveState();
+                  updatePreview();
+                });
+                sel.replaceWith(newSel);
+              }
+            });
+          });
+      }
+      function esc(v) {
+        if (!v && v !== false) return "";
+        return String(v)
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+      document
+        .getElementById("add-container-btn")
+        .addEventListener("click", () => {
+          components.push({
+            uid: uid(),
+            type: "container",
+            fields: { id: "", color: "", spoiler: false },
+          });
+          renderBuilder();
+          toast("Container added", "s");
+        });
+      document
+        .getElementById("add-textdisplay-btn")
+        .addEventListener("click", () => {
+          components.push({
+            uid: uid(),
+            type: "textdisplay",
+            fields: { content: "", container: "" },
+          });
+          renderBuilder();
+          toast("Text Display added", "s");
+        });
+      document
+        .getElementById("add-separator-btn")
+        .addEventListener("click", () => {
+          components.push({
+            uid: uid(),
+            type: "separator",
+            fields: { divider: true, spacing: "", container: "" },
+          });
+          renderBuilder();
+          toast("Separator added", "s");
+        });
+      document
+        .getElementById("add-section-btn")
+        .addEventListener("click", () => {
+          components.push({
+            uid: uid(),
+            type: "section",
+            fields: { name: "", container: "" },
+          });
+          renderBuilder();
+          toast("Section added", "s");
+        });
+      document
+        .getElementById("add-thumbnail-btn")
+        .addEventListener("click", () => {
+          components.push({
+            uid: uid(),
+            type: "thumbnail",
+            fields: { url: "", description: "", spoiler: false, container: "" },
+          });
+          renderBuilder();
+          toast("Thumbnail added", "s");
+        });
+      document
+        .getElementById("add-mediagallery-btn")
+        .addEventListener("click", () => {
+          components.push({
+            uid: uid(),
+            type: "mediagallery",
+            fields: { galleryId: "", container: "" },
+          });
+          renderBuilder();
+          toast("Media Gallery added", "s");
+        });
+      document
+        .getElementById("add-mediagalleryitem-btn")
+        .addEventListener("click", () => {
+          components.push({
+            uid: uid(),
+            type: "mediagalleryitem",
+            fields: { url: "", description: "", spoiler: false, galleryId: "" },
+          });
+          renderBuilder();
+          toast("Media Item added", "s");
+        });
+      document
+        .getElementById("add-actionrow-btn")
+        .addEventListener("click", () => {
+          components.push({
+            uid: uid(),
+            type: "actionrow",
+            fields: { rowId: "", container: "" },
+          });
+          renderBuilder();
+          toast("Action Row added", "s");
+        });
+      document
+        .getElementById("add-buttoncv2-btn")
+        .addEventListener("click", () => {
+          components.push({
+            uid: uid(),
+            type: "buttoncv2",
+            fields: {
+              id: "",
+              label: "",
+              style: "",
+              disabled: false,
+              emoji: "",
+              rowOrSection: "",
+            },
+          });
+          renderBuilder();
+          toast("Button added", "s");
+        });
+      document
+        .getElementById("add-userselect-btn")
+        .addEventListener("click", () => {
+          components.push({
+            uid: uid(),
+            type: "userselect",
+            fields: {
+              id: "",
+              placeholder: "",
+              min: "",
+              max: "",
+              disabled: false,
+              actionRowId: "",
+            },
+          });
+          renderBuilder();
+          toast("User Select added", "s");
+        });
+      document
+        .getElementById("add-roleselect-btn")
+        .addEventListener("click", () => {
+          components.push({
+            uid: uid(),
+            type: "roleselect",
+            fields: {
+              id: "",
+              placeholder: "",
+              min: "",
+              max: "",
+              disabled: false,
+              actionRowId: "",
+            },
+          });
+          renderBuilder();
+          toast("Role Select added", "s");
+        });
+      document
+        .getElementById("add-mentionableselect-btn")
+        .addEventListener("click", () => {
+          components.push({
+            uid: uid(),
+            type: "mentionableselect",
+            fields: {
+              id: "",
+              placeholder: "",
+              min: "",
+              max: "",
+              disabled: false,
+              actionRowId: "",
+            },
+          });
+          renderBuilder();
+          toast("Mentionable Select added", "s");
+        });
+      document.getElementById("clear-btn").addEventListener("click", () => {
+        components = [];
+        uidCounter = 0;
+        document.getElementById("output-text").value = "";
+        localStorage.removeItem(LS_KEY);
+        renderBuilder();
+        toast("Cleared", "s");
+      });
+      let dragSrc = null;
+      function makeDraggable(el) {
+        el.draggable = true;
+        el.addEventListener("dragstart", () => {
+          dragSrc = el;
+          setTimeout(() => el.classList.add("dragging"), 0);
+        });
+        el.addEventListener("dragend", () => {
+          el.classList.remove("dragging");
+          document
+            .querySelectorAll(".drag-over")
+            .forEach((x) => x.classList.remove("drag-over"));
+          const root = document.getElementById("components-root");
+          const newOrder = [...root.children].map((c) => c.dataset.uid);
+          components.sort(
+            (a, b) => newOrder.indexOf(a.uid) - newOrder.indexOf(b.uid),
+          );
+          renderBuilder(); // renumbers all blocks after reorder
+        });
+        el.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          if (dragSrc && dragSrc !== el && dragSrc.parentNode === el.parentNode)
+            el.classList.add("drag-over");
+        });
+        el.addEventListener("dragleave", () =>
+          el.classList.remove("drag-over"),
+        );
+        el.addEventListener("drop", (e) => {
+          e.preventDefault();
+          el.classList.remove("drag-over");
+          if (
+            dragSrc &&
+            dragSrc !== el &&
+            dragSrc.parentNode === el.parentNode
+          ) {
+            const par = el.parentNode;
+            const kids = [...par.children];
+            const si = kids.indexOf(dragSrc),
+              ti = kids.indexOf(el);
+            if (si < ti) par.insertBefore(dragSrc, el.nextSibling);
+            else par.insertBefore(dragSrc, el);
+          }
+        });
+      }
+      function updatePreview() {
+        const root = document.getElementById("embed-preview");
+        if (components.length === 0) {
+          root.innerHTML = `<p class="pv-empty">Add components to see a preview…</p>`;
+          return;
+        }
+        // Build lookup maps
+        const containerChildren = {}; // containerName -> [comp]
+        const sectionMap = {}; // sectionName -> comp (with .children)
+        const galleryMap = {}; // galleryId -> comp (with .items)
+        const actionRowMap = {}; // rowId -> comp (with .buttons)
+        components.forEach((comp) => {
+          if (comp.type === "container") {
+            const cid = comp.fields.id || "__" + comp.uid;
+            containerChildren[cid] = [];
+          }
+          if (comp.type === "section") {
+            const sname = comp.fields.name || "__sec_" + comp.uid;
+            sectionMap[sname] = comp;
+            comp.children = [];
+            comp.buttons = [];
+          }
+          if (comp.type === "mediagallery") {
+            const gid = comp.fields.galleryId || "__gal_" + comp.uid;
+            galleryMap[gid] = comp;
+            comp.items = [];
+          }
+          if (comp.type === "actionrow") {
+            const rid = comp.fields.rowId || "__row_" + comp.uid;
+            actionRowMap[rid] = comp;
+            comp.buttons = [];
+            comp.selects = [];
+          }
+        });
+        const topItems = [];
+        components.forEach((comp) => {
+          if (comp.type === "container") {
+            const cid = comp.fields.id || "__" + comp.uid;
+            topItems.push({ kind: "container", cid, comp });
+          } else if (comp.type === "mediagalleryitem") {
+            // attach by galleryId field
+            const gid = comp.fields.galleryId;
+            if (gid && galleryMap[gid]) {
+              galleryMap[gid].items.push(comp);
+            }
+          } else if (comp.type === "buttoncv2") {
+            // attach by rowOrSection — could be actionRow or section
+            const target = comp.fields.rowOrSection;
+            if (target && actionRowMap[target]) {
+              actionRowMap[target].buttons.push(comp);
+            } else if (target && sectionMap[target]) {
+              // button as section accessory — store separately so preview can render it on the right
+              sectionMap[target].buttons = sectionMap[target].buttons || [];
+              sectionMap[target].buttons.push(comp);
+            }
+          } else if (
+            comp.type === "userselect" ||
+            comp.type === "roleselect" ||
+            comp.type === "mentionableselect"
+          ) {
+            const rid = comp.fields.actionRowId;
+            if (rid && actionRowMap[rid]) {
+              actionRowMap[rid].selects.push(comp);
+            }
+          } else if (comp.type === "textdisplay") {
+            const target = comp.fields.container;
+            if (target && sectionMap[target]) {
+              sectionMap[target].children.push(comp);
+            } else if (target && containerChildren[target] !== undefined) {
+              containerChildren[target].push(comp);
+            } else {
+              topItems.push({ kind: "comp", comp });
+            }
+          } else if (comp.type === "thumbnail") {
+            // thumbnails only go in sections
+            const target = comp.fields.container;
+            if (target && sectionMap[target]) {
+              sectionMap[target].children.push(comp);
+            }
+            // don't render at top level
+          } else if (
+            comp.type === "section" ||
+            comp.type === "mediagallery" ||
+            comp.type === "actionrow"
+          ) {
+            const cid = comp.fields.container;
+            if (cid && containerChildren[cid] !== undefined) {
+              containerChildren[cid].push(comp);
+            } else {
+              topItems.push({ kind: "comp", comp });
+            }
+          } else if (comp.type === "separator") {
+            const cid = comp.fields.container;
+            if (cid && containerChildren[cid] !== undefined) {
+              containerChildren[cid].push(comp);
+            } else {
+              topItems.push({ kind: "comp", comp });
+            }
+          }
+        });
+        let html = "";
+        topItems.forEach((item) => {
+          if (item.kind === "container") {
+            html += renderContainerPreview(
+              item.comp,
+              containerChildren[item.cid],
+            );
+          } else {
+            html += renderCompPreview(item.comp);
+          }
+        });
+        root.innerHTML =
+          html || `<p class="pv-empty">Add components to see a preview…</p>`;
+      }
+      function renderContainerPreview(comp, children) {
+        const color =
+          comp.fields.color &&
+          /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(comp.fields.color)
+            ? comp.fields.color
+            : null;
+        const spoiler = comp.fields.spoiler;
+        const colorStyle = color ? `--pv-accent:${color};` : "";
+        const colorClass = color ? " colored" : "";
+        let inner = "";
+        (children || []).forEach((c) => {
+          inner += renderCompPreview(c);
+        });
+        if (!inner)
+          inner = `<p style="font-size:.7rem;color:#72767d;font-style:italic;padding:.25rem 0;">Empty container</p>`;
+        const spoilerOverlay = spoiler
+          ? `<div class="pv-spoiler-overlay" onclick="this.style.display='none'"><span class="pv-spoiler-label">SPOILER</span></div>`
+          : "";
+        return `<div class="pv-container${colorClass}" style="${colorStyle}">${spoilerOverlay}<div class="pv-container-inner">${inner}</div></div>`;
+      }
+      function renderCompPreview(comp) {
+        if (comp.type === "textdisplay") {
+          const text = comp.fields.content || "";
+          return `<div class="pv-text-display"><p class="pv-text-content">${renderMarkdown(text) || '<span style="color:#72767d;font-style:italic;">Empty text display</span>'}</p></div>`;
+        }
+        if (comp.type === "separator") {
+          const divider = comp.fields.divider !== false;
+          const large = comp.fields.spacing === "large";
+          return divider
+            ? `<div class="pv-separator divider${large ? " large" : ""}"></div>`
+            : `<div class="pv-separator nodivider${large ? " large" : ""}"></div>`;
+        }
+        if (comp.type === "section") {
+          const children = comp.children || [];
+          let textItems = "";
+          let thumbItem = "";
+          children.forEach((c) => {
+            if (c.type === "textdisplay") {
+              textItems += `<div class="pv-text-display"><p class="pv-text-content">${renderMarkdown(c.fields.content) || '<span style="color:#72767d;font-style:italic;">Empty</span>'}</p></div>`;
+            } else if (c.type === "thumbnail") {
+              thumbItem = `<img class="pv-thumbnail" src="${escHtml(c.fields.url)}" alt="${escHtml(c.fields.description || "")}" onerror="this.style.display='none'"/>`;
+            }
+          });
+          let btnAccessory = "";
+          (comp.buttons || []).forEach((btn) => {
+            const style = btn.fields.style || "primary";
+            const disabled = btn.fields.disabled ? "disabled" : "";
+            btnAccessory += `<button class="pv-btn ${style}" ${disabled} style="align-self:center;">${escHtml(btn.fields.label) || "Button"}</button>`;
+          });
+          const accessory = thumbItem || btnAccessory;
+          const inner =
+            textItems || accessory
+              ? `<div style="flex:1;">${textItems}</div>${accessory}`
+              : `<p style="font-size:.7rem;color:#72767d;font-style:italic;">Empty section</p>`;
+          return `<div class="pv-section">${inner}</div>`;
+        }
+        if (comp.type === "mediagallery") {
+          let imgs = "";
+          (comp.items || []).forEach((item) => {
+            imgs += `<img src="${escHtml(item.fields.url)}" alt="${escHtml(item.fields.description || "")}" onerror="this.style.display='none'"/>`;
+          });
+          return `<div class="pv-media-gallery">${imgs || '<p style="font-size:.7rem;color:#72767d;font-style:italic;padding:.5rem;">No images</p>'}</div>`;
+        }
+        if (comp.type === "actionrow") {
+          let btns = "";
+          (comp.buttons || []).forEach((btn) => {
+            const style = btn.fields.style || "primary";
+            const disabled = btn.fields.disabled ? "disabled" : "";
+            btns += `<button class="pv-btn ${style}" ${disabled}>${escHtml(btn.fields.label) || "Button"}</button>`;
+          });
+          let sels = "";
+          (comp.selects || []).forEach((sel) => {
+            sels += `<div class="pv-select">${escHtml(sel.fields.placeholder || "Select…")}</div>`;
+          });
+          return `<div class="pv-buttons">${btns || sels || '<p style="font-size:.7rem;color:#72767d;font-style:italic;">Empty action row</p>'}</div>${sels && btns ? `<div>${sels}</div>` : ""}`;
+        }
+        return "";
+      }
+      function escHtml(v) {
+        return String(v)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+      function renderMarkdown(text) {
+        if (!text) return "";
+        let s = escHtml(text);
+        // Headings: # H1, ## H2, ### H3 (line-start)
+        s = s.replace(
+          /^### (.+)$/gm,
+          '<span style="font-size:.85em;font-weight:700;color:#dbdee1;">$1</span>',
+        );
+        s = s.replace(
+          /^## (.+)$/gm,
+          '<span style="font-size:.95em;font-weight:700;color:#dbdee1;">$1</span>',
+        );
+        s = s.replace(
+          /^# (.+)$/gm,
+          '<span style="font-size:1.1em;font-weight:700;color:#dbdee1;">$1</span>',
+        );
+        // Bold+italic ***text***
+        s = s.replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>");
+        // Bold **text**
+        s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+        // Italic *text* or _text_
+        s = s.replace(/\*(.+?)\*/g, "<em>$1</em>");
+        s = s.replace(/_(.+?)_/g, "<em>$1</em>");
+        // Underline __text__
+        s = s.replace(/__(.+?)__/g, "<u>$1</u>");
+        // Strikethrough ~~text~~
+        s = s.replace(/~~(.+?)~~/g, "<s>$1</s>");
+        // Inline code `text`
+        s = s.replace(
+          /`([^`]+)`/g,
+          '<code style="background:#2e3035;padding:.1em .3em;border-radius:3px;font-family:monospace;font-size:.875em;">$1</code>',
+        );
+        // Code block ```text```
+        s = s.replace(
+          /```([\s\S]+?)```/g,
+          '<pre style="background:#2e3035;padding:.5em .75em;border-radius:4px;font-family:monospace;font-size:.8em;overflow-x:auto;margin:.25em 0;">$1</pre>',
+        );
+        // Block quote > text
+        s = s.replace(
+          /^&gt; (.+)$/gm,
+          '<div style="border-left:3px solid #4f545c;padding-left:.5em;color:#b9bbbe;margin:.1em 0;">$1</div>',
+        );
+        // Newlines
+        s = s.replace(/\n/g, "<br>");
+        return s;
+      }
+      function generateCode() {
+        const errors = [];
+        const isUrl = (v) => /^https?:\/\/.+/.test((v || "").trim());
+        const isHex = (v) =>
+          /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test((v || "").trim());
+
+        // Collect all defined container names and section names for uniqueness + cross-ref checks
+        const containerNames = [];
+        const sectionNames = [];
+        const galleryIds = [];
+        const actionRowIds = [];
+
+        components.forEach((comp) => {
+          if (comp.type === "container")
+            containerNames.push((comp.fields.id || "").trim());
+          if (comp.type === "section")
+            sectionNames.push((comp.fields.name || "").trim());
+          if (comp.type === "mediagallery")
+            galleryIds.push((comp.fields.galleryId || "").trim());
+          if (comp.type === "actionrow")
+            actionRowIds.push((comp.fields.rowId || "").trim());
+        });
+
+        // --- Per-component field validation ---
+        components.forEach((comp) => {
+          if (comp.type === "container") {
+            const id = (comp.fields.id || "").trim();
+            if (!id) {
+              errors.push("A container is missing its Name");
+              return;
+            }
+            const color = (comp.fields.color || "").trim();
+            if (color && !isHex(color))
+              errors.push(`Container "${id}": invalid hex color "${color}"`);
+          }
+
+          if (comp.type === "textdisplay") {
+            if (!(comp.fields.content || "").trim())
+              errors.push("A Text Display has empty content");
+          }
+
+          if (comp.type === "section") {
+            const name = (comp.fields.name || "").trim();
+            if (!name) errors.push("A section is missing its Name");
+          }
+
+          if (comp.type === "thumbnail") {
+            const url = (comp.fields.url || "").trim();
+            const sec = (comp.fields.container || "").trim();
+            if (!url) errors.push("A Thumbnail is missing its URL");
+            else if (!isUrl(url))
+              errors.push(`Thumbnail: invalid URL "${url}"`);
+            if (!sec) errors.push("A Thumbnail is missing its Section Name");
+          }
+
+          if (comp.type === "mediagallery") {
+            if (!(comp.fields.galleryId || "").trim())
+              errors.push("A Media Gallery is missing its Gallery ID");
+          }
+
+          if (comp.type === "mediagalleryitem") {
+            const url = (comp.fields.url || "").trim();
+            const gid = (comp.fields.galleryId || "").trim();
+            if (!url) errors.push("A Media Item is missing its URL");
+            else if (!isUrl(url))
+              errors.push(`Media Item: invalid URL "${url}"`);
+            if (!gid) errors.push("A Media Item is missing its Gallery ID");
+            else if (!galleryIds.includes(gid))
+              errors.push(`Media Item references unknown Gallery ID "${gid}"`);
+          }
+
+          if (comp.type === "actionrow") {
+            if (!(comp.fields.rowId || "").trim())
+              errors.push("An Action Row is missing its ID");
+          }
+
+          if (comp.type === "buttoncv2") {
+            if (!(comp.fields.id || "").trim())
+              errors.push("A Button CV2 is missing its ID");
+            if (!(comp.fields.rowOrSection || "").trim())
+              errors.push("A Button CV2 is missing its Action Row / Section");
+          }
+
+          if (
+            comp.type === "userselect" ||
+            comp.type === "roleselect" ||
+            comp.type === "mentionableselect"
+          ) {
+            const label =
+              comp.type === "userselect"
+                ? "User Select"
+                : comp.type === "roleselect"
+                  ? "Role Select"
+                  : "Mentionable Select";
+            if (!(comp.fields.id || "").trim())
+              errors.push(`A ${label} is missing its ID`);
+            if (!(comp.fields.actionRowId || "").trim())
+              errors.push(`A ${label} is missing its Action Row ID`);
+          }
+        });
+
+        // --- Uniqueness: container + section names must not clash ---
+        const allNames = [];
+        components.forEach((comp) => {
+          if (comp.type === "container") {
+            const id = (comp.fields.id || "").trim();
+            if (!id) return;
+            if (allNames.includes(id)) errors.push(`Duplicate name: "${id}"`);
+            else allNames.push(id);
+          }
+        });
+        components.forEach((comp) => {
+          if (comp.type === "section") {
+            const name = (comp.fields.name || "").trim();
+            if (!name) return;
+            if (allNames.includes(name))
+              errors.push(
+                `Name "${name}" clashes with an existing container or section name`,
+              );
+            else allNames.push(name);
+          }
+        });
+
+        // --- Section cross-reference validation ---
+        components.forEach((comp) => {
+          if (comp.type !== "section") return;
+          const name = (comp.fields.name || "").trim();
+          if (!name) return;
+          const hasText = components.some(
+            (c) =>
+              c.type === "textdisplay" &&
+              (c.fields.container || "").trim() === name,
+          );
+          const hasAccessory = components.some(
+            (c) =>
+              (c.type === "thumbnail" &&
+                (c.fields.container || "").trim() === name) ||
+              (c.type === "buttoncv2" &&
+                (c.fields.rowOrSection || "").trim() === name),
+          );
+          if (!hasText)
+            errors.push(`Section "${name}": needs at least one Text Display`);
+          if (!hasAccessory)
+            errors.push(
+              `Section "${name}": needs an accessory (Thumbnail or Button CV2)`,
+            );
+          const total = components.filter(
+            (c) =>
+              (c.type === "textdisplay" &&
+                (c.fields.container || "").trim() === name) ||
+              (c.type === "thumbnail" &&
+                (c.fields.container || "").trim() === name),
+          ).length;
+          if (total > 3)
+            errors.push(`Section "${name}": max 3 components (has ${total})`);
+        });
+
+        // --- Action Row cross-reference validation ---
+        components.forEach((comp) => {
+          if (comp.type !== "actionrow") return;
+          const rid = (comp.fields.rowId || "").trim();
+          if (!rid) return; // already caught above
+          const selTypes = ["userselect", "roleselect", "mentionableselect"];
+          const buttons = components.filter(
+            (c) =>
+              c.type === "buttoncv2" &&
+              (c.fields.rowOrSection || "").trim() === rid,
+          );
+          const selects = components.filter(
+            (c) =>
+              selTypes.includes(c.type) &&
+              (c.fields.actionRowId || "").trim() === rid,
+          );
+          if (buttons.length === 0 && selects.length === 0)
+            errors.push(
+              `Action Row "${rid}": must contain at least one button or select menu`,
+            );
+          if (selects.length > 1)
+            errors.push(
+              `Action Row "${rid}": can only contain one select menu`,
+            );
+          if (buttons.length > 0 && selects.length > 0)
+            errors.push(
+              `Action Row "${rid}": cannot mix buttons and select menus in the same row`,
+            );
+          if (buttons.length > 5)
+            errors.push(
+              `Action Row "${rid}": maximum 5 buttons per row (has ${buttons.length})`,
+            );
+        });
+
+        // --- Button CV2 label/emoji validation ---
+        components.forEach((comp) => {
+          if (comp.type !== "buttoncv2") return;
+          const id = (comp.fields.id || "").trim();
+          if (!id) return; // already caught above
+          const label = (comp.fields.label || "").trim();
+          const emoji = (comp.fields.emoji || "").trim();
+          if (!label && !emoji)
+            errors.push(`Button "${id}": must have a label or an emoji`);
+        });
+
+        // Show all errors and bail
+        if (errors.length > 0) {
+          errors.forEach((msg) => toast(msg, "e"));
+          return null;
+        }
+
+        // --- Code generation ---
+        const lines = [];
+
+        // Containers first
+        components
+          .filter((c) => c.type === "container")
+          .forEach((comp) => {
+            const id = comp.fields.id.trim();
+            const color = (comp.fields.color || "").trim();
+            const spoiler = comp.fields.spoiler;
+            let params = [id, color, spoiler ? "true" : ""];
+            while (params.length > 1 && params[params.length - 1] === "")
+              params.pop();
+            lines.push(`$addContainer[${params.join(";")}]`);
+          });
+
+        // All non-container components in list order
+        components
+          .filter((c) => c.type !== "container")
+          .forEach((comp) => {
+            if (comp.type === "textdisplay") {
+              const content = comp.fields.content || "";
+              const target = comp.fields.container || "";
+              let params = [content, target];
+              while (params.length > 1 && params[params.length - 1] === "")
+                params.pop();
+              lines.push(`$addTextDisplay[${params.join(";")}]`);
+            } else if (comp.type === "separator") {
+              const divider = comp.fields.divider !== false ? "true" : "false";
+              const spacing = comp.fields.spacing || "";
+              const cid = comp.fields.container || "";
+              let params = [divider, spacing, cid];
+              while (params.length > 0 && params[params.length - 1] === "")
+                params.pop();
+              if (params.length === 1 && params[0] === "true") params = [];
+              lines.push(`$addSeparator[${params.join(";")}]`);
+            } else if (comp.type === "section") {
+              const name = comp.fields.name.trim();
+              const cid = comp.fields.container || "";
+              let params = [name, cid];
+              while (params.length > 1 && params[params.length - 1] === "")
+                params.pop();
+              lines.push(`$addSection[${params.join(";")}]`);
+            } else if (comp.type === "thumbnail") {
+              const url = comp.fields.url.trim();
+              const desc = comp.fields.description || "";
+              const spoiler = comp.fields.spoiler ? "true" : "";
+              const sectionName = comp.fields.container.trim();
+              lines.push(
+                `$addThumbnail[${[url, desc, spoiler, sectionName].join(";")}]`,
+              );
+            } else if (comp.type === "mediagallery") {
+              const gid = comp.fields.galleryId.trim();
+              const cid = comp.fields.container || "";
+              let params = [gid, cid];
+              while (params.length > 1 && params[params.length - 1] === "")
+                params.pop();
+              lines.push(`$addMediaGallery[${params.join(";")}]`);
+            } else if (comp.type === "mediagalleryitem") {
+              const url = comp.fields.url.trim();
+              const desc = comp.fields.description || "";
+              const spoiler = comp.fields.spoiler ? "true" : "";
+              const gid = comp.fields.galleryId.trim();
+              lines.push(
+                `$addMediaGalleryItem[${[url, desc, spoiler, gid].join(";")}]`,
+              );
+            } else if (comp.type === "actionrow") {
+              const rid = comp.fields.rowId.trim();
+              const cid = comp.fields.container || "";
+              let params = [rid, cid];
+              while (params.length > 1 && params[params.length - 1] === "")
+                params.pop();
+              lines.push(`$addActionRow[${params.join(";")}]`);
+            } else if (comp.type === "buttoncv2") {
+              const id = comp.fields.id.trim();
+              const label = comp.fields.label || "";
+              const style = comp.fields.style || "";
+              const disabled = comp.fields.disabled ? "true" : "";
+              const emoji = comp.fields.emoji || "";
+              const target = comp.fields.rowOrSection.trim();
+              lines.push(
+                `$addButtonCV2[${[id, label, style, disabled, emoji, target].join(";")}]`,
+              );
+            } else if (
+              comp.type === "userselect" ||
+              comp.type === "roleselect" ||
+              comp.type === "mentionableselect"
+            ) {
+              const id = comp.fields.id.trim();
+              const placeholder = comp.fields.placeholder || "";
+              const min = comp.fields.min || "";
+              const max = comp.fields.max || "";
+              const disabled = comp.fields.disabled ? "true" : "";
+              const rowId = comp.fields.actionRowId.trim();
+              const funcName =
+                comp.type === "userselect"
+                  ? "$addUserSelect"
+                  : comp.type === "roleselect"
+                    ? "$addRoleSelect"
+                    : "$addMentionableSelect";
+              lines.push(
+                `${funcName}[${[id, placeholder, min, max, disabled, rowId].join(";")}]`,
+              );
+            }
+          });
+
+        return lines.join("\n");
+      }
+      document.getElementById("generate-btn").addEventListener("click", () => {
+        const code = generateCode();
+        if (code !== null) {
+          document.getElementById("output-text").value = code;
+          toast("Code generated!", "s");
+        }
+      });
+      document.getElementById("copy-output").addEventListener("click", () => {
+        const val = document.getElementById("output-text").value;
+        if (!val) {
+          toast("Nothing to copy", "e");
+          return;
+        }
+        navigator.clipboard
+          .writeText(val)
+          .then(() => toast("Copied!", "s"))
+          .catch(() => toast("Copy failed", "e"));
+      });
+      loadState();
+      renderBuilder();
+    </script>
+  </body>
+</html>
