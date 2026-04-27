@@ -1910,6 +1910,10 @@
                   inp.addEventListener("input", ebSaveState);
                   inp.addEventListener("change", ebSaveState);
                 });
+                // Re-attach drag functionality
+                el.querySelectorAll(".comp-block").forEach((block) => {
+                  makeDraggable(block);
+                });
               }
             });
           }
@@ -1945,6 +1949,48 @@
         });
       }
 
+      /* ── drag and drop helper ── */
+      let dragSrc = null;
+      function makeDraggable(el) {
+        el.draggable = true;
+        el.addEventListener("dragstart", () => {
+          dragSrc = el;
+          setTimeout(() => el.classList.add("dragging"), 0);
+        });
+        el.addEventListener("dragend", () => {
+          el.classList.remove("dragging");
+          document
+            .querySelectorAll(".drag-over")
+            .forEach((x) => x.classList.remove("drag-over"));
+          ebSaveState();
+          updatePreview();
+        });
+        el.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          if (dragSrc && dragSrc !== el && dragSrc.parentNode === el.parentNode)
+            el.classList.add("drag-over");
+        });
+        el.addEventListener("dragleave", () =>
+          el.classList.remove("drag-over"),
+        );
+        el.addEventListener("drop", (e) => {
+          e.preventDefault();
+          el.classList.remove("drag-over");
+          if (
+            dragSrc &&
+            dragSrc !== el &&
+            dragSrc.parentNode === el.parentNode
+          ) {
+            const par = el.parentNode;
+            const kids = [...par.children];
+            const si = kids.indexOf(dragSrc),
+              ti = kids.indexOf(el);
+            if (si < ti) par.insertBefore(dragSrc, el.nextSibling);
+            else par.insertBefore(dragSrc, el);
+          }
+        });
+      }
+
       /* ── Fields ── */
       document.getElementById("add-field-btn").addEventListener("click", () => {
         toast(`Field #${fieldCount + 1} added`, "s");
@@ -1953,7 +1999,7 @@
         d.className = "comp-block";
         d.innerHTML = `
     <div class="comp-actions">
-      <div style="display:flex;align-items:center;gap:.5rem;"><span class="type-badge field">Field</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
+      <div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge field">Field</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
       <div style="display:flex;gap:.25rem;"><button class="icon-btn" data-collapse title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></button><button class="icon-btn remove-comp" data-idx="${idx}" style="color:#f87171;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     </div>
     <div class="comp-body">
@@ -1964,6 +2010,7 @@
     ${chk(`field-inline-${idx}`, "Inline")}
     </div>`;
         makeCollapsible(d);
+        makeDraggable(d);
         d.querySelector(".remove-comp").addEventListener("click", () => {
           d.remove();
           ebSaveState();
@@ -1995,7 +2042,7 @@
           d.className = "comp-block";
           d.innerHTML = `
     <div class="comp-actions">
-      <div style="display:flex;align-items:center;gap:.5rem;"><span class="type-badge button">Button</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
+      <div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge button">Button</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
       <div style="display:flex;gap:.25rem;"><button class="icon-btn" data-collapse title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></button><button class="icon-btn remove-comp" style="color:#f87171;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     </div>
     <div class="comp-body">
@@ -2014,6 +2061,7 @@
     </div>
     </div>`;
           makeCollapsible(d);
+          makeDraggable(d);
           d.querySelector(".remove-comp").addEventListener("click", () => {
             d.remove();
             ebSaveState();
@@ -2042,7 +2090,10 @@
         od.className = "comp-block-inner";
         od.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;">
-        <span style="font-size:.7rem;font-weight:600;color:var(--text3);">Option #${oIdx + 1}</span>
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <span class="type-badge selectmenu">Option</span>
+          <span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${oIdx + 1}</span>
+        </div>
         <button class="icon-btn remove-opt" style="color:#f87171;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.375rem;">
@@ -2079,7 +2130,7 @@
           d.className = "comp-block";
           d.innerHTML = `
     <div class="comp-actions">
-      <div style="display:flex;align-items:center;gap:.5rem;"><span class="type-badge selectmenu">Select Menu</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
+      <div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge selectmenu">Select Menu</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
       <div style="display:flex;gap:.25rem;">
         <button class="btn btn-ghost add-opt-btn" style="padding:.25rem .625rem;font-size:.7rem;" data-idx="${idx}">+ Option</button>
         <button class="icon-btn" data-collapse title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></button>
@@ -2097,6 +2148,7 @@
     <div id="select-options-${idx}" style="margin-top:.5rem;display:flex;flex-direction:column;gap:.5rem;"></div>
     </div>`;
           makeCollapsible(d);
+          makeDraggable(d);
           d.querySelector(".remove-comp").addEventListener("click", () => {
             d.remove();
             ebSaveState();
@@ -2122,7 +2174,10 @@
         id.className = "comp-block-inner";
         id.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;">
-        <span style="font-size:.7rem;font-weight:600;color:var(--text3);">Text Input #${iIdx + 1}</span>
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <span class="type-badge modal">Text Input</span>
+          <span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${iIdx + 1}</span>
+        </div>
         <button class="icon-btn remove-tinput" style="color:#f87171;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.375rem;">
@@ -2158,7 +2213,7 @@
         d.className = "comp-block";
         d.innerHTML = `
     <div class="comp-actions">
-      <div style="display:flex;align-items:center;gap:.5rem;"><span class="type-badge modal">Modal</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
+      <div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge modal">Modal</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
       <div style="display:flex;gap:.25rem;">
         <button class="btn btn-ghost add-input-btn" style="padding:.25rem .625rem;font-size:.7rem;" data-idx="${idx}">+ Text Input</button>
         <button class="icon-btn" data-collapse title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></button>
@@ -2173,6 +2228,7 @@
     <div id="modal-textinputs-${idx}" style="margin-top:.5rem;display:flex;flex-direction:column;gap:.5rem;"></div>
     </div>`;
         makeCollapsible(d);
+        makeDraggable(d);
         d.querySelector(".remove-comp").addEventListener("click", () => {
           d.remove();
           ebSaveState();
@@ -2293,20 +2349,98 @@
           toast("Colour: must be a valid hex code (e.g. #5865F2)", "e");
           return;
         }
-        let code = "$nomention\n";
-        if (author) code += `$author[${author}]\n`;
-        if (authorIcon) code += `$authorIcon[${authorIcon}]\n`;
-        if (authorURL) code += `$authorURL[${authorURL}]\n`;
-        if (title) code += `$title[${title}]\n`;
-        if (titleURL) code += `$embeddedURL[${titleURL}]\n`;
-        if (description) code += `$description[${description}]\n`;
-        if (thumbnail) code += `$thumbnail[${thumbnail}]\n`;
-        if (image) code += `$image[${image}]\n`;
-        if (color) code += `$color[${color}]\n`;
-        if (footer) code += `$footer[${footer}]\n`;
-        if (footerIcon) code += `$footerIcon[${footerIcon}]\n`;
-        if (document.getElementById("timestamp-input").checked)
-          code += `$addTimestamp\n`;
+
+        // Validate duplicate IDs for buttons
+        const buttonIds = [];
+        document
+          .querySelectorAll("#buttons-container .comp-block")
+          .forEach((bd, i) => {
+            const id =
+              bd.querySelector('input[id^="button-idlink-"]')?.value.trim() ||
+              "";
+            if (id && !isValidURL(id)) {
+              // Only check non-URL IDs
+              if (buttonIds.includes(id)) {
+                toast(
+                  `Button ${i + 1}: Duplicate ID "${id}" found. Each button must have a unique ID.`,
+                  "e",
+                );
+                errorFlag = true;
+              } else {
+                buttonIds.push(id);
+              }
+            }
+          });
+
+        // Validate duplicate IDs for select menus
+        const selectMenuIds = [];
+        document
+          .querySelectorAll("#selects-container .comp-block")
+          .forEach((sd, i) => {
+            const menuId =
+              sd.querySelector('input[id^="select-id-"]')?.value.trim() || "";
+            if (menuId) {
+              if (selectMenuIds.includes(menuId)) {
+                toast(
+                  `Select Menu ${i + 1}: Duplicate ID "${menuId}" found. Each select menu must have a unique ID.`,
+                  "e",
+                );
+                errorFlag = true;
+              } else {
+                selectMenuIds.push(menuId);
+              }
+            }
+          });
+
+        // Validate duplicate IDs for modals
+        const modalIds = [];
+        document
+          .querySelectorAll("#modals-container .comp-block")
+          .forEach((md, i) => {
+            const modalId =
+              md.querySelector('input[id^="modal-id-"]')?.value.trim() || "";
+            if (modalId) {
+              if (modalIds.includes(modalId)) {
+                toast(
+                  `Modal ${i + 1}: Duplicate ID "${modalId}" found. Each modal must have a unique ID.`,
+                  "e",
+                );
+                errorFlag = true;
+              } else {
+                modalIds.push(modalId);
+              }
+            }
+          });
+
+        // Validate duplicate IDs for modal text inputs within each modal
+        document
+          .querySelectorAll("#modals-container .comp-block")
+          .forEach((md, i) => {
+            const textInputIds = [];
+            const inputs = md.querySelectorAll(".comp-block-inner");
+            inputs.forEach((tid, j) => {
+              const inputId =
+                tid
+                  .querySelector('input[id^="modal-text-id-"]')
+                  ?.value.trim() || "";
+              if (inputId) {
+                if (textInputIds.includes(inputId)) {
+                  toast(
+                    `Modal ${i + 1}: Duplicate text input ID "${inputId}" found. Each text input must have a unique ID within the modal.`,
+                    "e",
+                  );
+                  errorFlag = true;
+                } else {
+                  textInputIds.push(inputId);
+                }
+              }
+            });
+          });
+
+        if (errorFlag) return;
+
+        // Validate fields
+        const fieldData = [];
         document
           .querySelectorAll("#fields-container .comp-block")
           .forEach((fd, i) => {
@@ -2329,8 +2463,13 @@
               errorFlag = true;
               return;
             }
-            code += `$addField[${n};${v};${inl}]\n`;
+            fieldData.push({ n, v, inl });
           });
+
+        if (errorFlag) return;
+
+        // Validate buttons
+        const buttonData = [];
         document
           .querySelectorAll("#buttons-container .comp-block")
           .forEach((bd, i) => {
@@ -2361,14 +2500,22 @@
             );
             if (!id) {
               toast(`Button ${i + 1}: ID/URL required`, "e");
+              errorFlag = true;
               return;
             }
             if (!lbl) {
               toast(`Button ${i + 1}: Label required`, "e");
+              errorFlag = true;
               return;
             }
-            code += `$addButton[${nr};${id};${lbl};${style};${dis};${emoji};${msgid}]\n`;
+            buttonData.push({ nr, id, lbl, style, dis, emoji, msgid });
           });
+
+        if (errorFlag) return;
+        if (errorFlag) return;
+
+        // Validate select menus
+        const selectData = [];
         document
           .querySelectorAll("#selects-container .comp-block")
           .forEach((sd, i) => {
@@ -2402,7 +2549,8 @@
               errorFlag = true;
               return;
             }
-            code += `$newSelectMenu[${menuId};${min};${max};${ph};${msgid}]\n`;
+
+            const options = [];
             opts.forEach((od, j) => {
               const optId = sanitizeInput(
                 od
@@ -2455,9 +2603,17 @@
                 errorFlag = true;
                 return;
               }
-              code += `$addSelectMenuOption[${optId};${lbl};${val};${desc};${def};${emoji};${omid}]\n`;
+              options.push({ optId, lbl, val, desc, def, emoji, omid });
             });
+
+            selectData.push({ menuId, min, max, ph, msgid, options });
           });
+
+        if (errorFlag) return;
+        if (errorFlag) return;
+
+        // Validate modals
+        const modalData = [];
         document
           .querySelectorAll("#modals-container .comp-block")
           .forEach((md, i) => {
@@ -2472,14 +2628,16 @@
               errorFlag = true;
               return;
             }
-            code += `$newModal[${modalId};${modalTitle}]\n`;
+
             const inputs = md.querySelectorAll(".comp-block-inner");
             if (!inputs.length) {
               toast(`Modal ${i + 1}: Add at least one text input`, "e");
               errorFlag = true;
               return;
             }
+
             let validCount = 0;
+            const textInputs = [];
             inputs.forEach((tid, j) => {
               const inputId = sanitizeInput(
                 tid
@@ -2545,14 +2703,70 @@
                 errorFlag = true;
                 return;
               }
-              code += `$addTextInput[${inputId};${style};${label};${min};${max};${req};${val};${ph}]\n`;
+              textInputs.push({
+                inputId,
+                style,
+                label,
+                min,
+                max,
+                req,
+                val,
+                ph,
+              });
             });
             if (validCount === 0) {
               toast(`Modal ${i + 1}: Add at least one valid input`, "e");
               errorFlag = true;
             }
+
+            modalData.push({ modalId, modalTitle, textInputs });
           });
+
         if (errorFlag) return;
+
+        // All validation passed, now build the code
+        let code = "$nomention\n";
+        if (author) code += `$author[${author}]\n`;
+        if (authorIcon) code += `$authorIcon[${authorIcon}]\n`;
+        if (authorURL) code += `$authorURL[${authorURL}]\n`;
+        if (title) code += `$title[${title}]\n`;
+        if (titleURL) code += `$embeddedURL[${titleURL}]\n`;
+        if (description) code += `$description[${description}]\n`;
+        if (thumbnail) code += `$thumbnail[${thumbnail}]\n`;
+        if (image) code += `$image[${image}]\n`;
+        if (color) code += `$color[${color}]\n`;
+        if (footer) code += `$footer[${footer}]\n`;
+        if (footerIcon) code += `$footerIcon[${footerIcon}]\n`;
+        if (document.getElementById("timestamp-input").checked)
+          code += `$addTimestamp\n`;
+
+        // Add fields
+        fieldData.forEach(({ n, v, inl }) => {
+          code += `$addField[${n};${v};${inl}]\n`;
+        });
+
+        // Add buttons
+        buttonData.forEach(({ nr, id, lbl, style, dis, emoji, msgid }) => {
+          code += `$addButton[${nr};${id};${lbl};${style};${dis};${emoji};${msgid}]\n`;
+        });
+
+        // Add select menus
+        selectData.forEach(({ menuId, min, max, ph, msgid, options }) => {
+          code += `$newSelectMenu[${menuId};${min};${max};${ph};${msgid}]\n`;
+          options.forEach(({ optId, lbl, val, desc, def, emoji, omid }) => {
+            code += `$addSelectMenuOption[${optId};${lbl};${val};${desc};${def};${emoji};${omid}]\n`;
+          });
+        });
+
+        // Add modals
+        modalData.forEach(({ modalId, modalTitle, textInputs }) => {
+          code += `$newModal[${modalId};${modalTitle}]\n`;
+          textInputs.forEach(
+            ({ inputId, style, label, min, max, req, val, ph }) => {
+              code += `$addTextInput[${inputId};${style};${label};${min};${max};${req};${val};${ph}]\n`;
+            },
+          );
+        });
         document.getElementById("output-text").value = code.trim();
         toast("Embed code generated", "s");
         updatePreview();

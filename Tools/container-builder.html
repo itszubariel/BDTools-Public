@@ -448,6 +448,20 @@
         position: relative;
         animation: compIn 0.2s ease both;
       }
+      .stringselect-option {
+        background: var(--bg4);
+        border: 1px solid var(--border2);
+        border-radius: var(--r);
+        padding: 0.75rem;
+        margin-top: 0.625rem;
+        position: relative;
+      }
+      .stringselect-options {
+        margin-top: 0.625rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
       .comp-actions {
         display: flex;
         align-items: center;
@@ -942,9 +956,9 @@
           <div class="callout fu fd1">
             <strong>How it works:</strong> Components are a flat list. Add a
             <strong>Container</strong> first, then add other components and
-            assign them by name. <strong>Sections</strong> have their own name —
+            assign them by name. <strong>Sections</strong> have their own name,
             text displays and thumbnails attach to a section by selecting its
-            name. <strong>Action Rows</strong> have their own ID — buttons and
+            name. <strong>Action Rows</strong> have their own ID, buttons and
             selects attach to them by ID. Containers are output first in the
             generated code.
           </div>
@@ -1025,6 +1039,9 @@
             </button>
             <button class="btn btn-ghost" id="add-mentionableselect-btn">
               + Mentionable Select
+            </button>
+            <button class="btn btn-ghost" id="add-stringselect-btn">
+              + String Select
             </button>
             <button class="btn btn-primary" id="add-container-btn">
               + Container
@@ -1291,6 +1308,32 @@
                   </td>
                   <td>id;placeholder;min;max;disabled;actionRowID</td>
                 </tr>
+                <tr>
+                  <td>
+                    <a
+                      href="https://wiki.botdesignerdiscord.com/bdscript/addStringSelect.html"
+                      target="_blank"
+                      style="color: var(--accent); text-decoration: none"
+                      onmouseover="this.style.textDecoration = 'underline'"
+                      onmouseout="this.style.textDecoration = 'none'"
+                      >$addStringSelect</a
+                    >
+                  </td>
+                  <td>id;placeholder;min;max;disabled;actionRowID</td>
+                </tr>
+                <tr>
+                  <td>
+                    <a
+                      href="https://wiki.botdesignerdiscord.com/bdscript/addStringSelectOption.html"
+                      target="_blank"
+                      style="color: var(--accent); text-decoration: none"
+                      onmouseover="this.style.textDecoration = 'underline'"
+                      onmouseout="this.style.textDecoration = 'none'"
+                      >$addStringSelectOption</a
+                    >
+                  </td>
+                  <td>label;value;description;emoji;default;selectMenuID</td>
+                </tr>
               </table>
             </div>
           </div>
@@ -1399,7 +1442,7 @@
       // Build a plain <select> with optgroups
       function buildSelect(field, current, groups) {
         // groups: [{label, items:[{value,display}]}]
-        let opts = `<option value="">— none —</option>`;
+        let opts = `<option value="">None</option>`;
         groups.forEach((g) => {
           if (!g.items.length) return;
           opts += `<optgroup label="${esc(g.label)}">`;
@@ -1423,6 +1466,36 @@
         });
         return `<select class="finput" data-field="${field}">${opts}</select>`;
       }
+      function syncAllFields() {
+        document
+          .querySelectorAll("#components-root .comp-block")
+          .forEach((block) => {
+            const comp = components.find((c) => c.uid === block.dataset.uid);
+            if (!comp) return;
+            block.querySelectorAll("[data-field]").forEach((el) => {
+              comp.fields[el.dataset.field] =
+                el.type === "checkbox" ? el.checked : el.value;
+            });
+            block.querySelectorAll("[data-f]").forEach((el) => {
+              comp.fields[el.dataset.f] =
+                el.type === "checkbox" ? el.checked : el.value;
+            });
+            // Sync string select options
+            if (comp.type === "stringselect") {
+              const options = [];
+              block.querySelectorAll(".stringselect-option").forEach((opt) => {
+                const data = {};
+                opt.querySelectorAll("[data-optfield]").forEach((el) => {
+                  data[el.dataset.optfield] =
+                    el.type === "checkbox" ? el.checked : el.value;
+                });
+                options.push(data);
+              });
+              comp.options = options;
+            }
+          });
+      }
+
       function renderBuilder() {
         const root = document.getElementById("components-root");
         root.innerHTML = "";
@@ -1500,7 +1573,7 @@
             },
           ];
           const thumbHeader = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge thumbnail">Thumbnail</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
-          bodyHtml = `<p style="font-size:.7rem;color:#f472b6;margin:.4rem 0 .1rem;">Thumbnails only go inside sections.</p><div class="g2" style="margin-top:.5rem;"><div><label class="slabel">URL (required)</label><input class="finput" data-field="url" placeholder="https://…" value="${esc(comp.fields.url)}"/></div><div><label class="slabel">Description (emptiable)</label><input class="finput" data-field="description" placeholder="Optional" value="${esc(comp.fields.description)}"/></div></div><div class="g2" style="margin-top:.5rem;"><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-field="spoiler" ${comp.fields.spoiler ? "checked" : ""}/><span>Spoiler</span></label></div><div><label class="slabel">Section Name (required)</label>${buildRequiredSelect("container", comp.fields.container, thumbGroups, "— select section —")}</div></div>`;
+          bodyHtml = `<p style="font-size:.7rem;color:#f472b6;margin:.4rem 0 .1rem;">Thumbnails only go inside sections.</p><div class="g2" style="margin-top:.5rem;"><div><label class="slabel">URL (required)</label><input class="finput" data-field="url" placeholder="https://…" value="${esc(comp.fields.url)}"/></div><div><label class="slabel">Description (emptiable)</label><input class="finput" data-field="description" placeholder="Optional" value="${esc(comp.fields.description)}"/></div></div><div class="g2" style="margin-top:.5rem;"><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-field="spoiler" ${comp.fields.spoiler ? "checked" : ""}/><span>Spoiler</span></label></div><div><label class="slabel">Section Name (required)</label>${buildRequiredSelect("container", comp.fields.container, thumbGroups, "Choose a section")}</div></div>`;
           d.innerHTML =
             thumbHeader +
             `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
@@ -1523,7 +1596,7 @@
             },
           ];
           const mgiHeader = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge mediagallery">Media Item</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
-          bodyHtml = `<div class="g2" style="margin-top:.625rem;"><div><label class="slabel">URL (required)</label><input class="finput" data-field="url" placeholder="https://…" value="${esc(comp.fields.url)}"/></div><div><label class="slabel">Description (emptiable)</label><input class="finput" data-field="description" placeholder="Optional" value="${esc(comp.fields.description)}"/></div></div><div class="g2" style="margin-top:.5rem;"><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-field="spoiler" ${comp.fields.spoiler ? "checked" : ""}/><span>Spoiler</span></label></div><div><label class="slabel">Gallery ID (required)</label>${buildRequiredSelect("galleryId", comp.fields.galleryId, mgiGroups, "— select gallery —")}</div></div>`;
+          bodyHtml = `<div class="g2" style="margin-top:.625rem;"><div><label class="slabel">URL (required)</label><input class="finput" data-field="url" placeholder="https://…" value="${esc(comp.fields.url)}"/></div><div><label class="slabel">Description (emptiable)</label><input class="finput" data-field="description" placeholder="Optional" value="${esc(comp.fields.description)}"/></div></div><div class="g2" style="margin-top:.5rem;"><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-field="spoiler" ${comp.fields.spoiler ? "checked" : ""}/><span>Spoiler</span></label></div><div><label class="slabel">Gallery ID (required)</label>${buildRequiredSelect("galleryId", comp.fields.galleryId, mgiGroups, "Choose a media gallery")}</div></div>`;
           d.innerHTML =
             mgiHeader + `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
         } else if (comp.type === "actionrow") {
@@ -1549,7 +1622,7 @@
             },
           ];
           const btnHeader = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge button">Button CV2</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
-          bodyHtml = `<div class="g3" style="margin-top:.625rem;"><div><label class="slabel">ID / URL (required)</label><input class="finput" data-field="id" placeholder="button_id or https://…" value="${esc(comp.fields.id)}"/></div><div><label class="slabel">Label (emptiable)</label><input class="finput" data-field="label" placeholder="Click me" value="${esc(comp.fields.label)}"/></div><div><label class="slabel">Style (emptiable)</label><select class="finput" data-field="style"><option value="" ${!comp.fields.style ? "selected" : ""}>— default —</option><option value="primary" ${comp.fields.style === "primary" ? "selected" : ""}>Primary</option><option value="secondary" ${comp.fields.style === "secondary" ? "selected" : ""}>Secondary</option><option value="success" ${comp.fields.style === "success" ? "selected" : ""}>Success</option><option value="danger" ${comp.fields.style === "danger" ? "selected" : ""}>Danger</option><option value="link" ${comp.fields.style === "link" ? "selected" : ""}>Link</option></select></div></div><div class="g2" style="margin-top:.5rem;"><div><label class="slabel">Emoji (emptiable)</label><input class="finput" data-field="emoji" placeholder="Emoji ID or unicode" value="${esc(comp.fields.emoji)}"/></div><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-field="disabled" ${comp.fields.disabled ? "checked" : ""}/><span>Disabled</span></label></div></div><div style="margin-top:.5rem;"><label class="slabel">Action Row / Section (required)</label>${buildRequiredSelect("rowOrSection", comp.fields.rowOrSection, btnGroups, "— select action row or section —")}</div>`;
+          bodyHtml = `<div class="g3" style="margin-top:.625rem;"><div><label class="slabel">ID / URL (required)</label><input class="finput" data-f="id" placeholder="button_id or https://…" value="${esc(comp.fields.id)}"/></div><div><label class="slabel">Label (emptiable)</label><input class="finput" data-f="label" placeholder="Click me" value="${esc(comp.fields.label)}"/></div><div><label class="slabel">Style (emptiable)</label><select class="finput" data-f="style"><option value="" ${!comp.fields.style ? "selected" : ""}>— default —</option><option value="primary" ${comp.fields.style === "primary" ? "selected" : ""}>Primary</option><option value="secondary" ${comp.fields.style === "secondary" ? "selected" : ""}>Secondary</option><option value="success" ${comp.fields.style === "success" ? "selected" : ""}>Success</option><option value="danger" ${comp.fields.style === "danger" ? "selected" : ""}>Danger</option><option value="link" ${comp.fields.style === "link" ? "selected" : ""}>Link</option></select></div></div><div class="g2" style="margin-top:.5rem;"><div><label class="slabel">Emoji (emptiable)</label><input class="finput" data-f="emoji" placeholder="Emoji ID or unicode" value="${esc(comp.fields.emoji)}"/></div><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-f="disabled" ${comp.fields.disabled ? "checked" : ""}/><span>Disabled</span></label></div></div><div style="margin-top:.5rem;"><label class="slabel">Action Row / Section (required)</label>${buildRequiredSelect("actionRowOrSection", comp.fields.actionRowOrSection, btnGroups, "Choose an action row or section")}</div>`;
           d.innerHTML =
             btnHeader + `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
         } else if (
@@ -1570,9 +1643,20 @@
             },
           ];
           const selHeader = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge select">${typeName}</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
-          bodyHtml = `<div class="g2" style="margin-top:.625rem;"><div><label class="slabel">ID (required)</label><input class="finput" data-field="id" placeholder="select_id" value="${esc(comp.fields.id)}"/></div><div><label class="slabel">Placeholder (emptiable)</label><input class="finput" data-field="placeholder" placeholder="Optional" value="${esc(comp.fields.placeholder)}"/></div></div><div class="g3" style="margin-top:.5rem;"><div><label class="slabel">Min (emptiable)</label><input class="finput" type="number" data-field="min" placeholder="1" value="${esc(comp.fields.min)}"/></div><div><label class="slabel">Max (emptiable)</label><input class="finput" type="number" data-field="max" placeholder="1" value="${esc(comp.fields.max)}"/></div><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-field="disabled" ${comp.fields.disabled ? "checked" : ""}/><span>Disabled</span></label></div></div><div style="margin-top:.5rem;"><label class="slabel">Action Row ID (required)</label>${buildRequiredSelect("actionRowId", comp.fields.actionRowId, selGroups, "— select action row —")}</div>`;
+          bodyHtml = `<div class="g2" style="margin-top:.625rem;"><div><label class="slabel">ID (required)</label><input class="finput" data-f="id" placeholder="select_id" value="${esc(comp.fields.id)}"/></div><div><label class="slabel">Placeholder (emptiable)</label><input class="finput" data-f="placeholder" placeholder="Optional" value="${esc(comp.fields.placeholder)}"/></div></div><div class="g3" style="margin-top:.5rem;"><div><label class="slabel">Min (0-25)</label><input class="finput" type="number" min="0" max="25" data-f="min" placeholder="0" value="${esc(comp.fields.min)}"/></div><div><label class="slabel">Max (1-25)</label><input class="finput" type="number" min="1" max="25" data-f="max" placeholder="1" value="${esc(comp.fields.max)}"/></div><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-f="disabled" ${comp.fields.disabled ? "checked" : ""}/><span>Disabled</span></label></div></div><div style="margin-top:.5rem;"><label class="slabel">Action Row ID (required)</label>${buildRequiredSelect("actionRowId", comp.fields.actionRowId, selGroups, "Choose an action row")}</div>`;
           d.innerHTML =
             selHeader + `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
+        } else if (comp.type === "stringselect") {
+          const ssGroups = [
+            {
+              label: "Action Rows",
+              items: actionRowIds.map((id) => ({ value: id, display: id })),
+            },
+          ];
+          const ssHeader = `<div class="comp-actions"><div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge select">String Select</span>${numBadge}</div><div style="display:flex;gap:.25rem;">${collapseBtn}<button class="icon-btn" data-remove style="color:#f87171;">✕</button></div></div>`;
+          bodyHtml = `<div class="g2" style="margin-top:.625rem;"><div><label class="slabel">Select Menu ID (required)</label><input class="finput" data-f="id" placeholder="select_id" value="${esc(comp.fields.id)}"/></div><div><label class="slabel">Placeholder (emptiable)</label><input class="finput" data-f="placeholder" placeholder="Optional" value="${esc(comp.fields.placeholder)}"/></div></div><div class="g3" style="margin-top:.5rem;"><div><label class="slabel">Min (0-25)</label><input class="finput" type="number" min="0" max="25" data-f="min" placeholder="0" value="${esc(comp.fields.min)}"/></div><div><label class="slabel">Max (1-25)</label><input class="finput" type="number" min="1" max="25" data-f="max" placeholder="1" value="${esc(comp.fields.max)}"/></div><div style="display:flex;align-items:flex-end;padding-bottom:.1rem;"><label class="chk"><input type="checkbox" data-f="disabled" ${comp.fields.disabled ? "checked" : ""}/><span>Disabled</span></label></div></div><div style="margin-top:.5rem;"><label class="slabel">Action Row ID (required)</label>${buildRequiredSelect("actionRowId", comp.fields.actionRowId, ssGroups, "Choose an action row")}</div><div style="margin-top:.625rem;"><button class="btn btn-ghost btn-add-option" style="width:100%;">+ Add Option</button></div><div class="stringselect-options"></div>`;
+          d.innerHTML =
+            ssHeader + `<div class="comp-body" ${bodyStyle}>${bodyHtml}</div>`;
         }
 
         // Collapse toggle
@@ -1589,28 +1673,177 @@
         }
 
         d.querySelector("[data-remove]").addEventListener("click", () => {
+          syncAllFields();
+          const typeMap = {
+            container: "Container",
+            textdisplay: "Text Display",
+            separator: "Separator",
+            section: "Section",
+            thumbnail: "Thumbnail",
+            mediagallery: "Media Gallery",
+            mediagalleryitem: "Media Item",
+            actionrow: "Action Row",
+            buttoncv2: "Button CV2",
+            userselect: "User Select",
+            roleselect: "Role Select",
+            mentionableselect: "Mentionable Select",
+            stringselect: "String Select",
+          };
+          const typeName = typeMap[comp.type] || comp.type;
           components = components.filter((c) => c.uid !== comp.uid);
           renderBuilder();
-          toast("Removed", "s");
+          toast(`${typeName} #${num} removed`, "s");
         });
+
+        // Wire up String Select option button if this is a stringselect
+        if (comp.type === "stringselect") {
+          const optionsContainer = d.querySelector(".stringselect-options");
+          const addOptBtn = d.querySelector(".btn-add-option");
+
+          // Initialize option counter in fields
+          if (comp.fields.optionCounter === undefined)
+            comp.fields.optionCounter = 0;
+
+          // Restore existing options if any
+          if (comp.options && Array.isArray(comp.options)) {
+            comp.options.forEach((optData) => {
+              const optIdx = comp.fields.optionCounter++;
+              const optCard = createStringSelectOption(comp, optIdx, optData);
+              optionsContainer.appendChild(optCard);
+            });
+          }
+
+          addOptBtn.addEventListener("click", () => {
+            const optIdx = comp.fields.optionCounter++;
+            const optCard = createStringSelectOption(comp, optIdx, {});
+            optionsContainer.appendChild(optCard);
+            saveCV2State();
+            toast(`Option #${optIdx + 1} added`, "s");
+          });
+        }
+
+        // Handle data-field attributes (used by container, section, etc.)
         d.querySelectorAll("[data-field]").forEach((el) => {
           const field = el.dataset.field;
+          const ev = el.type === "checkbox" ? "change" : "input";
+          el.addEventListener(ev, () => {
+            comp.fields[field] = el.type === "checkbox" ? el.checked : el.value;
+            // Refresh dropdowns when a parent ID/name changes
+            if (
+              (comp.type === "container" && field === "id") ||
+              (comp.type === "section" && field === "name") ||
+              (comp.type === "mediagallery" && field === "galleryId") ||
+              (comp.type === "actionrow" && field === "rowId")
+            ) {
+              refreshAllDropdowns();
+            }
+            saveCV2State();
+            updatePreview();
+          });
+        });
+
+        d.querySelectorAll("[data-f]").forEach((el) => {
+          const field = el.dataset.f;
           const isIdField =
             ["id", "name", "galleryId", "rowId"].includes(field) &&
-            ["container", "section", "mediagallery", "actionrow"].includes(
-              comp.type,
-            );
+            [
+              "container",
+              "section",
+              "mediagallery",
+              "actionrow",
+              "stringselect",
+            ].includes(comp.type);
           const ev = el.type === "checkbox" ? "change" : "input";
           el.addEventListener(ev, () => {
             comp.fields[field] = el.type === "checkbox" ? el.checked : el.value;
             if (isIdField) refreshAllDropdowns();
-            saveState();
+            saveCV2State();
             updatePreview();
           });
         });
         makeDraggable(d);
         return d;
       }
+
+      function createStringSelectOption(parentComp, optIdx, optData = {}) {
+        const od = document.createElement("div");
+        od.className = "stringselect-option";
+        od.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;">
+            <div style="display:flex;align-items:center;gap:.5rem;">
+              <span class="type-badge select">Option</span>
+              <span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${optIdx + 1}</span>
+            </div>
+            <div style="display:flex;gap:.25rem;">
+              <button class="icon-btn opt-collapse" title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></button>
+              <button class="icon-btn opt-remove" style="color:#f87171;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+          </div>
+          <div class="opt-body">
+            <div class="g2" style="margin-bottom:.5rem;">
+              <div><label class="slabel">Label (required, max 100)</label><input class="finput" data-optfield="label" maxlength="100" placeholder="Option label" value="${esc(optData.label || "")}"/></div>
+              <div><label class="slabel">Value (required, max 100)</label><input class="finput" data-optfield="value" maxlength="100" placeholder="option_value" value="${esc(optData.value || "")}"/></div>
+            </div>
+            <div class="g2" style="margin-bottom:.5rem;">
+              <div><label class="slabel">Description (opt, max 100)</label><input class="finput" data-optfield="description" maxlength="100" placeholder="Optional description" value="${esc(optData.description || "")}"/></div>
+              <div><label class="slabel">Emoji (optional)</label><input class="finput" data-optfield="emoji" placeholder="Emoji ID or unicode" value="${esc(optData.emoji || "")}"/></div>
+            </div>
+            <div style="display:flex;align-items:center;">
+              <label class="chk"><input type="checkbox" data-optfield="default" ${optData.default ? "checked" : ""}/><span>Default</span></label>
+            </div>
+          </div>
+        `;
+
+        // Collapse toggle
+        const collapseBtn = od.querySelector(".opt-collapse");
+        const optBody = od.querySelector(".opt-body");
+        collapseBtn.addEventListener("click", () => {
+          const collapsed = optBody.style.display === "none";
+          optBody.style.display = collapsed ? "" : "none";
+          collapseBtn.querySelector("svg").style.transform = collapsed
+            ? ""
+            : "rotate(180deg)";
+        });
+
+        // Remove button
+        od.querySelector(".opt-remove").addEventListener("click", () => {
+          od.remove();
+          saveCV2State();
+          toast(`Option #${optIdx + 1} removed`, "s");
+        });
+
+        // Input listeners
+        od.querySelectorAll("[data-optfield]").forEach((el) => {
+          const ev = el.type === "checkbox" ? "change" : "input";
+          el.addEventListener(ev, saveCV2State);
+        });
+
+        return od;
+      }
+
+      function saveCV2State() {
+        try {
+          // Collect options for each stringselect
+          components.forEach((comp) => {
+            if (comp.type === "stringselect") {
+              const card = document.querySelector(`[data-uid="${comp.uid}"]`);
+              if (!card) return;
+              const options = [];
+              card.querySelectorAll(".stringselect-option").forEach((opt) => {
+                const data = {};
+                opt.querySelectorAll("[data-optfield]").forEach((el) => {
+                  data[el.dataset.optfield] =
+                    el.type === "checkbox" ? el.checked : el.value;
+                });
+                options.push(data);
+              });
+              comp.options = options;
+            }
+          });
+          saveState();
+        } catch (e) {}
+      }
+
       function refreshAllDropdowns() {
         const containerIds = getContainerIds();
         const sectionNames = getSectionNames();
@@ -1622,8 +1855,15 @@
             const cuid = block.dataset.uid;
             const comp = components.find((c) => c.uid === cuid);
             if (!comp) return;
-            block.querySelectorAll("select[data-field]").forEach((sel) => {
-              const field = sel.dataset.field;
+
+            // Handle both data-f and data-field selects
+            const allSelects = [
+              ...block.querySelectorAll("select[data-f]"),
+              ...block.querySelectorAll("select[data-field]"),
+            ];
+
+            allSelects.forEach((sel) => {
+              const field = sel.dataset.f || sel.dataset.field;
               const current = comp.fields[field] || "";
               let newHtml = null;
               if (comp.type === "textdisplay" && field === "container") {
@@ -1669,7 +1909,7 @@
                       })),
                     },
                   ],
-                  "— select section —",
+                  "Choose a section",
                 );
               } else if (
                 comp.type === "mediagalleryitem" &&
@@ -1687,11 +1927,11 @@
                       })),
                     },
                   ],
-                  "— select gallery —",
+                  "Choose a media gallery",
                 );
               } else if (
                 comp.type === "buttoncv2" &&
-                field === "rowOrSection"
+                field === "actionRowOrSection"
               ) {
                 newHtml = buildRequiredSelect(
                   field,
@@ -1712,12 +1952,13 @@
                       })),
                     },
                   ],
-                  "— select action row or section —",
+                  "Choose an action row or section",
                 );
               } else if (
                 (comp.type === "userselect" ||
                   comp.type === "roleselect" ||
-                  comp.type === "mentionableselect") &&
+                  comp.type === "mentionableselect" ||
+                  comp.type === "stringselect") &&
                 field === "actionRowId"
               ) {
                 newHtml = buildRequiredSelect(
@@ -1732,7 +1973,7 @@
                       })),
                     },
                   ],
-                  "— select action row —",
+                  "Choose an action row",
                 );
               }
               if (newHtml) {
@@ -1741,7 +1982,7 @@
                 const newSel = tmp.firstElementChild;
                 newSel.addEventListener("change", () => {
                   comp.fields[field] = newSel.value;
-                  saveState();
+                  saveCV2State();
                   updatePreview();
                 });
                 sel.replaceWith(newSel);
@@ -1760,94 +2001,112 @@
       document
         .getElementById("add-container-btn")
         .addEventListener("click", () => {
+          syncAllFields();
+          const num = components.filter((c) => c.type === "container").length + 1;
           components.push({
             uid: uid(),
             type: "container",
             fields: { id: "", color: "", spoiler: false },
           });
           renderBuilder();
-          toast("Container added", "s");
+          toast(`Container #${num} added`, "s");
         });
       document
         .getElementById("add-textdisplay-btn")
         .addEventListener("click", () => {
+          syncAllFields();
+          const num = components.filter((c) => c.type === "textdisplay").length + 1;
           components.push({
             uid: uid(),
             type: "textdisplay",
             fields: { content: "", container: "" },
           });
           renderBuilder();
-          toast("Text Display added", "s");
+          toast(`Text Display #${num} added`, "s");
         });
       document
         .getElementById("add-separator-btn")
         .addEventListener("click", () => {
+          syncAllFields();
+          const num = components.filter((c) => c.type === "separator").length + 1;
           components.push({
             uid: uid(),
             type: "separator",
             fields: { divider: true, spacing: "", container: "" },
           });
           renderBuilder();
-          toast("Separator added", "s");
+          toast(`Separator #${num} added`, "s");
         });
       document
         .getElementById("add-section-btn")
         .addEventListener("click", () => {
+          syncAllFields();
+          const num = components.filter((c) => c.type === "section").length + 1;
           components.push({
             uid: uid(),
             type: "section",
             fields: { name: "", container: "" },
           });
           renderBuilder();
-          toast("Section added", "s");
+          toast(`Section #${num} added`, "s");
         });
       document
         .getElementById("add-thumbnail-btn")
         .addEventListener("click", () => {
+          syncAllFields();
+          const num = components.filter((c) => c.type === "thumbnail").length + 1;
           components.push({
             uid: uid(),
             type: "thumbnail",
             fields: { url: "", description: "", spoiler: false, container: "" },
           });
           renderBuilder();
-          toast("Thumbnail added", "s");
+          toast(`Thumbnail #${num} added`, "s");
         });
       document
         .getElementById("add-mediagallery-btn")
         .addEventListener("click", () => {
+          syncAllFields();
+          const num = components.filter((c) => c.type === "mediagallery").length + 1;
           components.push({
             uid: uid(),
             type: "mediagallery",
             fields: { galleryId: "", container: "" },
           });
           renderBuilder();
-          toast("Media Gallery added", "s");
+          toast(`Media Gallery #${num} added`, "s");
         });
       document
         .getElementById("add-mediagalleryitem-btn")
         .addEventListener("click", () => {
+          syncAllFields();
+          const num = components.filter((c) => c.type === "mediagalleryitem").length + 1;
           components.push({
             uid: uid(),
             type: "mediagalleryitem",
             fields: { url: "", description: "", spoiler: false, galleryId: "" },
           });
           renderBuilder();
-          toast("Media Item added", "s");
+          toast(`Media Item #${num} added`, "s");
         });
       document
         .getElementById("add-actionrow-btn")
         .addEventListener("click", () => {
+          syncAllFields();
+          const num = components.filter((c) => c.type === "actionrow").length + 1;
           components.push({
             uid: uid(),
             type: "actionrow",
             fields: { rowId: "", container: "" },
           });
           renderBuilder();
-          toast("Action Row added", "s");
+          toast(`Action Row #${num} added`, "s");
         });
       document
         .getElementById("add-buttoncv2-btn")
         .addEventListener("click", () => {
+          syncAllFields();
+          const num = components.filter((c) => c.type === "buttoncv2").length + 1;
           components.push({
             uid: uid(),
             type: "buttoncv2",
@@ -1857,15 +2116,17 @@
               style: "",
               disabled: false,
               emoji: "",
-              rowOrSection: "",
+              actionRowOrSection: "",
             },
           });
           renderBuilder();
-          toast("Button added", "s");
+          toast(`Button CV2 #${num} added`, "s");
         });
       document
         .getElementById("add-userselect-btn")
         .addEventListener("click", () => {
+          syncAllFields();
+          const num = components.filter((c) => c.type === "userselect").length + 1;
           components.push({
             uid: uid(),
             type: "userselect",
@@ -1879,11 +2140,13 @@
             },
           });
           renderBuilder();
-          toast("User Select added", "s");
+          toast(`User Select #${num} added`, "s");
         });
       document
         .getElementById("add-roleselect-btn")
         .addEventListener("click", () => {
+          syncAllFields();
+          const num = components.filter((c) => c.type === "roleselect").length + 1;
           components.push({
             uid: uid(),
             type: "roleselect",
@@ -1897,11 +2160,13 @@
             },
           });
           renderBuilder();
-          toast("Role Select added", "s");
+          toast(`Role Select #${num} added`, "s");
         });
       document
         .getElementById("add-mentionableselect-btn")
         .addEventListener("click", () => {
+          syncAllFields();
+          const num = components.filter((c) => c.type === "mentionableselect").length + 1;
           components.push({
             uid: uid(),
             type: "mentionableselect",
@@ -1915,7 +2180,29 @@
             },
           });
           renderBuilder();
-          toast("Mentionable Select added", "s");
+          toast(`Mentionable Select #${num} added`, "s");
+        });
+      document
+        .getElementById("add-stringselect-btn")
+        .addEventListener("click", () => {
+          syncAllFields();
+          const num = components.filter((c) => c.type === "stringselect").length + 1;
+          components.push({
+            uid: uid(),
+            type: "stringselect",
+            fields: {
+              id: "",
+              placeholder: "",
+              min: "",
+              max: "",
+              disabled: false,
+              actionRowId: "",
+              optionCounter: 0,
+            },
+            options: [],
+          });
+          renderBuilder();
+          toast(`String Select #${num} added`, "s");
         });
       document.getElementById("clear-btn").addEventListener("click", () => {
         components = [];
@@ -1937,6 +2224,7 @@
           document
             .querySelectorAll(".drag-over")
             .forEach((x) => x.classList.remove("drag-over"));
+          syncAllFields();
           const root = document.getElementById("components-root");
           const newOrder = [...root.children].map((c) => c.dataset.uid);
           components.sort(
@@ -2015,8 +2303,8 @@
               galleryMap[gid].items.push(comp);
             }
           } else if (comp.type === "buttoncv2") {
-            // attach by rowOrSection — could be actionRow or section
-            const target = comp.fields.rowOrSection;
+            // attach by actionRowOrSection — could be actionRow or section
+            const target = comp.fields.actionRowOrSection;
             if (target && actionRowMap[target]) {
               actionRowMap[target].buttons.push(comp);
             } else if (target && sectionMap[target]) {
@@ -2027,7 +2315,8 @@
           } else if (
             comp.type === "userselect" ||
             comp.type === "roleselect" ||
-            comp.type === "mentionableselect"
+            comp.type === "mentionableselect" ||
+            comp.type === "stringselect"
           ) {
             const rid = comp.fields.actionRowId;
             if (rid && actionRowMap[rid]) {
@@ -2220,21 +2509,46 @@
         const isHex = (v) =>
           /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test((v || "").trim());
 
-        // Collect all defined container names and section names for uniqueness + cross-ref checks
+        // Collect all defined IDs for parent components
         const containerNames = [];
         const sectionNames = [];
         const galleryIds = [];
         const actionRowIds = [];
+        const allParentIds = []; // For duplicate detection across parent types
 
         components.forEach((comp) => {
-          if (comp.type === "container")
-            containerNames.push((comp.fields.id || "").trim());
-          if (comp.type === "section")
-            sectionNames.push((comp.fields.name || "").trim());
-          if (comp.type === "mediagallery")
-            galleryIds.push((comp.fields.galleryId || "").trim());
-          if (comp.type === "actionrow")
-            actionRowIds.push((comp.fields.rowId || "").trim());
+          if (comp.type === "container") {
+            const id = (comp.fields.id || "").trim();
+            containerNames.push(id);
+            if (id) allParentIds.push({ id, type: "Container" });
+          }
+          if (comp.type === "section") {
+            const name = (comp.fields.name || "").trim();
+            sectionNames.push(name);
+            if (name) allParentIds.push({ id: name, type: "Section" });
+          }
+          if (comp.type === "mediagallery") {
+            const gid = (comp.fields.galleryId || "").trim();
+            galleryIds.push(gid);
+            if (gid) allParentIds.push({ id: gid, type: "Media Gallery" });
+          }
+          if (comp.type === "actionrow") {
+            const rid = (comp.fields.rowId || "").trim();
+            actionRowIds.push(rid);
+            if (rid) allParentIds.push({ id: rid, type: "Action Row" });
+          }
+        });
+
+        // Check for duplicate parent IDs
+        const seenParentIds = {};
+        allParentIds.forEach(({ id, type }) => {
+          if (seenParentIds[id]) {
+            errors.push(
+              `'${id}' is already used by another ${seenParentIds[id]}`,
+            );
+          } else {
+            seenParentIds[id] = type;
+          }
         });
 
         // --- Per-component field validation ---
@@ -2291,10 +2605,18 @@
           }
 
           if (comp.type === "buttoncv2") {
-            if (!(comp.fields.id || "").trim())
-              errors.push("A Button CV2 is missing its ID");
-            if (!(comp.fields.rowOrSection || "").trim())
-              errors.push("A Button CV2 is missing its Action Row / Section");
+            const id = (comp.fields.id || "").trim();
+            const label = (comp.fields.label || "").trim();
+            const emoji = (comp.fields.emoji || "").trim();
+            if (!id) errors.push("A Button CV2 is missing its ID");
+            if (!label && !emoji)
+              errors.push(
+                `Button '${id || "unnamed"}': must have a label or emoji`,
+              );
+            if (!(comp.fields.actionRowOrSection || "").trim())
+              errors.push(
+                `Button '${id || "unnamed"}': Action Row / Section is required`,
+              );
           }
 
           if (
@@ -2308,34 +2630,71 @@
                 : comp.type === "roleselect"
                   ? "Role Select"
                   : "Mentionable Select";
-            if (!(comp.fields.id || "").trim())
-              errors.push(`A ${label} is missing its ID`);
+            const id = (comp.fields.id || "").trim();
+            if (!id) errors.push(`A ${label} is missing its ID`);
             if (!(comp.fields.actionRowId || "").trim())
-              errors.push(`A ${label} is missing its Action Row ID`);
+              errors.push(
+                `${label} '${id || "unnamed"}': Action Row ID is required`,
+              );
+          }
+
+          if (comp.type === "stringselect") {
+            const id = (comp.fields.id || "").trim();
+            if (!id) {
+              errors.push("A String Select is missing its ID");
+            } else {
+              // Check for at least one option
+              if (!comp.options || comp.options.length === 0) {
+                errors.push(`String Select '${id}': add at least one option`);
+              } else {
+                // Validate each option
+                const optionValues = [];
+                comp.options.forEach((opt, idx) => {
+                  const label = (opt.label || "").trim();
+                  const value = (opt.value || "").trim();
+                  const description = (opt.description || "").trim();
+
+                  if (!label || !value) {
+                    errors.push(
+                      `String Select '${id}' Option ${idx + 1}: label and value required`,
+                    );
+                  }
+
+                  if (label && label.length > 100) {
+                    errors.push(
+                      `String Select '${id}' Option ${idx + 1}: label max 100 characters`,
+                    );
+                  }
+                  if (value && value.length > 100) {
+                    errors.push(
+                      `String Select '${id}' Option ${idx + 1}: value max 100 characters`,
+                    );
+                  }
+                  if (description && description.length > 100) {
+                    errors.push(
+                      `String Select '${id}' Option ${idx + 1}: description max 100 characters`,
+                    );
+                  }
+
+                  // Check for duplicate values
+                  if (value && optionValues.includes(value)) {
+                    errors.push(
+                      `String Select '${id}': duplicate option value '${value}'`,
+                    );
+                  } else if (value) {
+                    optionValues.push(value);
+                  }
+                });
+              }
+            }
+            if (!(comp.fields.actionRowId || "").trim())
+              errors.push(
+                `String Select '${id || "unnamed"}': Action Row ID is required`,
+              );
           }
         });
 
-        // --- Uniqueness: container + section names must not clash ---
-        const allNames = [];
-        components.forEach((comp) => {
-          if (comp.type === "container") {
-            const id = (comp.fields.id || "").trim();
-            if (!id) return;
-            if (allNames.includes(id)) errors.push(`Duplicate name: "${id}"`);
-            else allNames.push(id);
-          }
-        });
-        components.forEach((comp) => {
-          if (comp.type === "section") {
-            const name = (comp.fields.name || "").trim();
-            if (!name) return;
-            if (allNames.includes(name))
-              errors.push(
-                `Name "${name}" clashes with an existing container or section name`,
-              );
-            else allNames.push(name);
-          }
-        });
+        // --- Uniqueness: container + section names must not clash (removed, now handled by allParentIds) ---
 
         // --- Section cross-reference validation ---
         components.forEach((comp) => {
@@ -2352,7 +2711,7 @@
               (c.type === "thumbnail" &&
                 (c.fields.container || "").trim() === name) ||
               (c.type === "buttoncv2" &&
-                (c.fields.rowOrSection || "").trim() === name),
+                (c.fields.actionRowOrSection || "").trim() === name),
           );
           if (!hasText)
             errors.push(`Section "${name}": needs at least one Text Display`);
@@ -2376,11 +2735,16 @@
           if (comp.type !== "actionrow") return;
           const rid = (comp.fields.rowId || "").trim();
           if (!rid) return; // already caught above
-          const selTypes = ["userselect", "roleselect", "mentionableselect"];
+          const selTypes = [
+            "userselect",
+            "roleselect",
+            "mentionableselect",
+            "stringselect",
+          ];
           const buttons = components.filter(
             (c) =>
               c.type === "buttoncv2" &&
-              (c.fields.rowOrSection || "").trim() === rid,
+              (c.fields.actionRowOrSection || "").trim() === rid,
           );
           const selects = components.filter(
             (c) =>
@@ -2405,16 +2769,7 @@
             );
         });
 
-        // --- Button CV2 label/emoji validation ---
-        components.forEach((comp) => {
-          if (comp.type !== "buttoncv2") return;
-          const id = (comp.fields.id || "").trim();
-          if (!id) return; // already caught above
-          const label = (comp.fields.label || "").trim();
-          const emoji = (comp.fields.emoji || "").trim();
-          if (!label && !emoji)
-            errors.push(`Button "${id}": must have a label or an emoji`);
-        });
+        // --- Button CV2 label/emoji validation (removed, now handled above) ---
 
         // Show all errors and bail
         if (errors.length > 0) {
@@ -2424,109 +2779,237 @@
 
         // --- Code generation ---
         const lines = [];
+        const generated = new Set();
 
-        // Containers first
-        components
-          .filter((c) => c.type === "container")
-          .forEach((comp) => {
+        // Helper to trim trailing empty params but keep minimum required
+        function trimParams(params, minKeep) {
+          const result = [...params];
+          while (result.length > minKeep && result[result.length - 1] === "") {
+            result.pop();
+          }
+          return result;
+        }
+
+        // Helper to generate a single component and its dependencies
+        function generateComponent(comp) {
+          if (generated.has(comp.uid)) return;
+          generated.add(comp.uid);
+
+          // Generate dependencies first (things this component references)
+          if (comp.type === "textdisplay") {
+            const target = (comp.fields.container || "").trim();
+            if (target) {
+              // Find the container or section this references
+              const dep = components.find(
+                (c) =>
+                  (c.type === "container" || c.type === "section") &&
+                  (c.fields.id || c.fields.name || "").trim() === target,
+              );
+              if (dep) generateComponent(dep);
+            }
+          } else if (comp.type === "separator") {
+            const cid = (comp.fields.container || "").trim();
+            if (cid) {
+              const dep = components.find(
+                (c) =>
+                  c.type === "container" && (c.fields.id || "").trim() === cid,
+              );
+              if (dep) generateComponent(dep);
+            }
+          } else if (comp.type === "section") {
+            const cid = (comp.fields.container || "").trim();
+            if (cid) {
+              const dep = components.find(
+                (c) =>
+                  c.type === "container" && (c.fields.id || "").trim() === cid,
+              );
+              if (dep) generateComponent(dep);
+            }
+          } else if (comp.type === "thumbnail") {
+            const sectionName = (comp.fields.container || "").trim();
+            if (sectionName) {
+              const dep = components.find(
+                (c) =>
+                  c.type === "section" &&
+                  (c.fields.name || "").trim() === sectionName,
+              );
+              if (dep) generateComponent(dep);
+            }
+          } else if (comp.type === "mediagallery") {
+            const cid = (comp.fields.container || "").trim();
+            if (cid) {
+              const dep = components.find(
+                (c) =>
+                  c.type === "container" && (c.fields.id || "").trim() === cid,
+              );
+              if (dep) generateComponent(dep);
+            }
+          } else if (comp.type === "mediagalleryitem") {
+            const gid = (comp.fields.galleryId || "").trim();
+            if (gid) {
+              const dep = components.find(
+                (c) =>
+                  c.type === "mediagallery" &&
+                  (c.fields.galleryId || "").trim() === gid,
+              );
+              if (dep) generateComponent(dep);
+            }
+          } else if (comp.type === "actionrow") {
+            const cid = (comp.fields.container || "").trim();
+            if (cid) {
+              const dep = components.find(
+                (c) =>
+                  c.type === "container" && (c.fields.id || "").trim() === cid,
+              );
+              if (dep) generateComponent(dep);
+            }
+          } else if (comp.type === "buttoncv2") {
+            const target = (comp.fields.actionRowOrSection || "").trim();
+            if (target) {
+              const dep = components.find(
+                (c) =>
+                  (c.type === "actionrow" &&
+                    (c.fields.rowId || "").trim() === target) ||
+                  (c.type === "section" &&
+                    (c.fields.name || "").trim() === target),
+              );
+              if (dep) generateComponent(dep);
+            }
+          } else if (
+            comp.type === "userselect" ||
+            comp.type === "roleselect" ||
+            comp.type === "mentionableselect" ||
+            comp.type === "stringselect"
+          ) {
+            const rowId = (comp.fields.actionRowId || "").trim();
+            if (rowId) {
+              const dep = components.find(
+                (c) =>
+                  c.type === "actionrow" &&
+                  (c.fields.rowId || "").trim() === rowId,
+              );
+              if (dep) generateComponent(dep);
+            }
+          }
+
+          // Now generate this component's code
+          if (comp.type === "container") {
             const id = comp.fields.id.trim();
             const color = (comp.fields.color || "").trim();
             const spoiler = comp.fields.spoiler;
-            let params = [id, color, spoiler ? "true" : ""];
-            while (params.length > 1 && params[params.length - 1] === "")
-              params.pop();
+            let params = trimParams([id, color, spoiler ? "true" : ""], 1);
             lines.push(`$addContainer[${params.join(";")}]`);
-          });
+          } else if (comp.type === "textdisplay") {
+            const content = comp.fields.content || "";
+            const target = comp.fields.container || "";
+            let params = trimParams([content, target], 1);
+            lines.push(`$addTextDisplay[${params.join(";")}]`);
+          } else if (comp.type === "separator") {
+            const divider = comp.fields.divider !== false ? "true" : "false";
+            const spacing = comp.fields.spacing || "";
+            const cid = comp.fields.container || "";
+            let params = trimParams([divider, spacing, cid], 0);
+            if (params.length === 1 && params[0] === "true") params = [];
+            lines.push(`$addSeparator[${params.join(";")}]`);
+          } else if (comp.type === "section") {
+            const name = comp.fields.name.trim();
+            const cid = comp.fields.container || "";
+            let params = trimParams([name, cid], 1);
+            lines.push(`$addSection[${params.join(";")}]`);
+          } else if (comp.type === "thumbnail") {
+            const url = comp.fields.url.trim();
+            const desc = comp.fields.description || "";
+            const spoiler = comp.fields.spoiler ? "true" : "";
+            const sectionName = comp.fields.container.trim();
+            const params = trimParams([url, desc, spoiler, sectionName], 4);
+            lines.push(`$addThumbnail[${params.join(";")}]`);
+          } else if (comp.type === "mediagallery") {
+            const gid = comp.fields.galleryId.trim();
+            const cid = comp.fields.container || "";
+            let params = trimParams([gid, cid], 1);
+            lines.push(`$addMediaGallery[${params.join(";")}]`);
+          } else if (comp.type === "mediagalleryitem") {
+            const url = comp.fields.url.trim();
+            const desc = comp.fields.description || "";
+            const spoiler = comp.fields.spoiler ? "true" : "";
+            const gid = comp.fields.galleryId.trim();
+            const params = trimParams([url, desc, spoiler, gid], 4);
+            lines.push(`$addMediaGalleryItem[${params.join(";")}]`);
+          } else if (comp.type === "actionrow") {
+            const rid = comp.fields.rowId.trim();
+            const cid = comp.fields.container || "";
+            let params = trimParams([rid, cid], 1);
+            lines.push(`$addActionRow[${params.join(";")}]`);
+          } else if (comp.type === "buttoncv2") {
+            const id = comp.fields.id.trim();
+            const label = comp.fields.label || "";
+            const style = comp.fields.style || "";
+            const disabled = comp.fields.disabled ? "true" : "";
+            const emoji = comp.fields.emoji || "";
+            const target = comp.fields.actionRowOrSection.trim();
+            const params = trimParams(
+              [id, label, style, disabled, emoji, target],
+              6,
+            );
+            lines.push(`$addButtonCV2[${params.join(";")}]`);
+          } else if (
+            comp.type === "userselect" ||
+            comp.type === "roleselect" ||
+            comp.type === "mentionableselect"
+          ) {
+            const id = comp.fields.id.trim();
+            const placeholder = comp.fields.placeholder || "";
+            const min = comp.fields.min || "";
+            const max = comp.fields.max || "";
+            const disabled = comp.fields.disabled ? "true" : "";
+            const rowId = comp.fields.actionRowId.trim();
+            const funcName =
+              comp.type === "userselect"
+                ? "$addUserSelect"
+                : comp.type === "roleselect"
+                  ? "$addRoleSelect"
+                  : "$addMentionableSelect";
+            const params = trimParams(
+              [id, placeholder, min, max, disabled, rowId],
+              6,
+            );
+            lines.push(`${funcName}[${params.join(";")}]`);
+          } else if (comp.type === "stringselect") {
+            const id = comp.fields.id.trim();
+            const placeholder = comp.fields.placeholder || "";
+            const min = comp.fields.min || "";
+            const max = comp.fields.max || "";
+            const disabled = comp.fields.disabled ? "true" : "";
+            const rowId = comp.fields.actionRowId.trim();
+            const params = trimParams(
+              [id, placeholder, min, max, disabled, rowId],
+              6,
+            );
+            lines.push(`$addStringSelect[${params.join(";")}]`);
 
-        // All non-container components in list order
-        components
-          .filter((c) => c.type !== "container")
-          .forEach((comp) => {
-            if (comp.type === "textdisplay") {
-              const content = comp.fields.content || "";
-              const target = comp.fields.container || "";
-              let params = [content, target];
-              while (params.length > 1 && params[params.length - 1] === "")
-                params.pop();
-              lines.push(`$addTextDisplay[${params.join(";")}]`);
-            } else if (comp.type === "separator") {
-              const divider = comp.fields.divider !== false ? "true" : "false";
-              const spacing = comp.fields.spacing || "";
-              const cid = comp.fields.container || "";
-              let params = [divider, spacing, cid];
-              while (params.length > 0 && params[params.length - 1] === "")
-                params.pop();
-              if (params.length === 1 && params[0] === "true") params = [];
-              lines.push(`$addSeparator[${params.join(";")}]`);
-            } else if (comp.type === "section") {
-              const name = comp.fields.name.trim();
-              const cid = comp.fields.container || "";
-              let params = [name, cid];
-              while (params.length > 1 && params[params.length - 1] === "")
-                params.pop();
-              lines.push(`$addSection[${params.join(";")}]`);
-            } else if (comp.type === "thumbnail") {
-              const url = comp.fields.url.trim();
-              const desc = comp.fields.description || "";
-              const spoiler = comp.fields.spoiler ? "true" : "";
-              const sectionName = comp.fields.container.trim();
-              lines.push(
-                `$addThumbnail[${[url, desc, spoiler, sectionName].join(";")}]`,
-              );
-            } else if (comp.type === "mediagallery") {
-              const gid = comp.fields.galleryId.trim();
-              const cid = comp.fields.container || "";
-              let params = [gid, cid];
-              while (params.length > 1 && params[params.length - 1] === "")
-                params.pop();
-              lines.push(`$addMediaGallery[${params.join(";")}]`);
-            } else if (comp.type === "mediagalleryitem") {
-              const url = comp.fields.url.trim();
-              const desc = comp.fields.description || "";
-              const spoiler = comp.fields.spoiler ? "true" : "";
-              const gid = comp.fields.galleryId.trim();
-              lines.push(
-                `$addMediaGalleryItem[${[url, desc, spoiler, gid].join(";")}]`,
-              );
-            } else if (comp.type === "actionrow") {
-              const rid = comp.fields.rowId.trim();
-              const cid = comp.fields.container || "";
-              let params = [rid, cid];
-              while (params.length > 1 && params[params.length - 1] === "")
-                params.pop();
-              lines.push(`$addActionRow[${params.join(";")}]`);
-            } else if (comp.type === "buttoncv2") {
-              const id = comp.fields.id.trim();
-              const label = comp.fields.label || "";
-              const style = comp.fields.style || "";
-              const disabled = comp.fields.disabled ? "true" : "";
-              const emoji = comp.fields.emoji || "";
-              const target = comp.fields.rowOrSection.trim();
-              lines.push(
-                `$addButtonCV2[${[id, label, style, disabled, emoji, target].join(";")}]`,
-              );
-            } else if (
-              comp.type === "userselect" ||
-              comp.type === "roleselect" ||
-              comp.type === "mentionableselect"
-            ) {
-              const id = comp.fields.id.trim();
-              const placeholder = comp.fields.placeholder || "";
-              const min = comp.fields.min || "";
-              const max = comp.fields.max || "";
-              const disabled = comp.fields.disabled ? "true" : "";
-              const rowId = comp.fields.actionRowId.trim();
-              const funcName =
-                comp.type === "userselect"
-                  ? "$addUserSelect"
-                  : comp.type === "roleselect"
-                    ? "$addRoleSelect"
-                    : "$addMentionableSelect";
-              lines.push(
-                `${funcName}[${[id, placeholder, min, max, disabled, rowId].join(";")}]`,
-              );
+            // Immediately output options for this string select
+            if (comp.options && Array.isArray(comp.options)) {
+              comp.options.forEach((opt) => {
+                const label = (opt.label || "").trim();
+                const value = (opt.value || "").trim();
+                const description = (opt.description || "").trim();
+                const emoji = (opt.emoji || "").trim();
+                const defaultVal = opt.default ? "true" : "";
+                const selectMenuID = id; // Parent string select ID
+                const optParams = trimParams(
+                  [label, value, description, emoji, defaultVal, selectMenuID],
+                  6,
+                );
+                lines.push(`$addStringSelectOption[${optParams.join(";")}]`);
+              });
             }
-          });
+          }
+        }
+
+        // Generate all components in dependency order
+        components.forEach((comp) => {
+          generateComponent(comp);
+        });
 
         return lines.join("\n");
       }
