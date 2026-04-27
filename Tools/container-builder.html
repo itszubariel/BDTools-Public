@@ -2002,7 +2002,8 @@
         .getElementById("add-container-btn")
         .addEventListener("click", () => {
           syncAllFields();
-          const num = components.filter((c) => c.type === "container").length + 1;
+          const num =
+            components.filter((c) => c.type === "container").length + 1;
           components.push({
             uid: uid(),
             type: "container",
@@ -2015,7 +2016,8 @@
         .getElementById("add-textdisplay-btn")
         .addEventListener("click", () => {
           syncAllFields();
-          const num = components.filter((c) => c.type === "textdisplay").length + 1;
+          const num =
+            components.filter((c) => c.type === "textdisplay").length + 1;
           components.push({
             uid: uid(),
             type: "textdisplay",
@@ -2028,7 +2030,8 @@
         .getElementById("add-separator-btn")
         .addEventListener("click", () => {
           syncAllFields();
-          const num = components.filter((c) => c.type === "separator").length + 1;
+          const num =
+            components.filter((c) => c.type === "separator").length + 1;
           components.push({
             uid: uid(),
             type: "separator",
@@ -2054,7 +2057,8 @@
         .getElementById("add-thumbnail-btn")
         .addEventListener("click", () => {
           syncAllFields();
-          const num = components.filter((c) => c.type === "thumbnail").length + 1;
+          const num =
+            components.filter((c) => c.type === "thumbnail").length + 1;
           components.push({
             uid: uid(),
             type: "thumbnail",
@@ -2067,7 +2071,8 @@
         .getElementById("add-mediagallery-btn")
         .addEventListener("click", () => {
           syncAllFields();
-          const num = components.filter((c) => c.type === "mediagallery").length + 1;
+          const num =
+            components.filter((c) => c.type === "mediagallery").length + 1;
           components.push({
             uid: uid(),
             type: "mediagallery",
@@ -2080,7 +2085,8 @@
         .getElementById("add-mediagalleryitem-btn")
         .addEventListener("click", () => {
           syncAllFields();
-          const num = components.filter((c) => c.type === "mediagalleryitem").length + 1;
+          const num =
+            components.filter((c) => c.type === "mediagalleryitem").length + 1;
           components.push({
             uid: uid(),
             type: "mediagalleryitem",
@@ -2093,7 +2099,8 @@
         .getElementById("add-actionrow-btn")
         .addEventListener("click", () => {
           syncAllFields();
-          const num = components.filter((c) => c.type === "actionrow").length + 1;
+          const num =
+            components.filter((c) => c.type === "actionrow").length + 1;
           components.push({
             uid: uid(),
             type: "actionrow",
@@ -2106,7 +2113,8 @@
         .getElementById("add-buttoncv2-btn")
         .addEventListener("click", () => {
           syncAllFields();
-          const num = components.filter((c) => c.type === "buttoncv2").length + 1;
+          const num =
+            components.filter((c) => c.type === "buttoncv2").length + 1;
           components.push({
             uid: uid(),
             type: "buttoncv2",
@@ -2126,7 +2134,8 @@
         .getElementById("add-userselect-btn")
         .addEventListener("click", () => {
           syncAllFields();
-          const num = components.filter((c) => c.type === "userselect").length + 1;
+          const num =
+            components.filter((c) => c.type === "userselect").length + 1;
           components.push({
             uid: uid(),
             type: "userselect",
@@ -2146,7 +2155,8 @@
         .getElementById("add-roleselect-btn")
         .addEventListener("click", () => {
           syncAllFields();
-          const num = components.filter((c) => c.type === "roleselect").length + 1;
+          const num =
+            components.filter((c) => c.type === "roleselect").length + 1;
           components.push({
             uid: uid(),
             type: "roleselect",
@@ -2166,7 +2176,8 @@
         .getElementById("add-mentionableselect-btn")
         .addEventListener("click", () => {
           syncAllFields();
-          const num = components.filter((c) => c.type === "mentionableselect").length + 1;
+          const num =
+            components.filter((c) => c.type === "mentionableselect").length + 1;
           components.push({
             uid: uid(),
             type: "mentionableselect",
@@ -2186,7 +2197,8 @@
         .getElementById("add-stringselect-btn")
         .addEventListener("click", () => {
           syncAllFields();
-          const num = components.filter((c) => c.type === "stringselect").length + 1;
+          const num =
+            components.filter((c) => c.type === "stringselect").length + 1;
           components.push({
             uid: uid(),
             type: "stringselect",
@@ -2214,12 +2226,18 @@
       });
       let dragSrc = null;
       function makeDraggable(el) {
-        el.draggable = true;
-        el.addEventListener("dragstart", () => {
+        const handle = el.querySelector(".drag-handle");
+        if (!handle) return;
+
+        handle.draggable = true;
+        handle.addEventListener("dragstart", (e) => {
           dragSrc = el;
+          // Set the entire component block as the drag image
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setDragImage(el, 0, 0);
           setTimeout(() => el.classList.add("dragging"), 0);
         });
-        el.addEventListener("dragend", () => {
+        handle.addEventListener("dragend", () => {
           el.classList.remove("dragging");
           document
             .querySelectorAll(".drag-over")

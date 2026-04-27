@@ -1952,12 +1952,18 @@
       /* ── drag and drop helper ── */
       let dragSrc = null;
       function makeDraggable(el) {
-        el.draggable = true;
-        el.addEventListener("dragstart", () => {
+        const handle = el.querySelector(".drag-handle");
+        if (!handle) return;
+
+        handle.draggable = true;
+        handle.addEventListener("dragstart", (e) => {
           dragSrc = el;
+          // Set the entire component block as the drag image
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setDragImage(el, 0, 0);
           setTimeout(() => el.classList.add("dragging"), 0);
         });
-        el.addEventListener("dragend", () => {
+        handle.addEventListener("dragend", () => {
           el.classList.remove("dragging");
           document
             .querySelectorAll(".drag-over")
