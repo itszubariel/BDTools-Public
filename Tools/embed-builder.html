@@ -2791,6 +2791,66 @@
           .catch(() => toast("Copy failed", "e"));
       });
 
+      /* ── Markdown rendering helper ── */
+      function escHtml(text) {
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+      function renderMarkdown(text) {
+        if (!text) return "";
+        let s = escHtml(text);
+        // Subheading: -# text (Discord's smaller heading)
+        s = s.replace(
+          /^-# (.+)$/gm,
+          '<span style="font-size:.875em;font-weight:600;color:#b5bac1;">$1</span>',
+        );
+        // Headings: # H1, ## H2, ### H3 (line-start)
+        s = s.replace(
+          /^### (.+)$/gm,
+          '<span style="font-size:.85em;font-weight:700;color:#dbdee1;">$1</span>',
+        );
+        s = s.replace(
+          /^## (.+)$/gm,
+          '<span style="font-size:.95em;font-weight:700;color:#dbdee1;">$1</span>',
+        );
+        s = s.replace(
+          /^# (.+)$/gm,
+          '<span style="font-size:1.1em;font-weight:700;color:#dbdee1;">$1</span>',
+        );
+        // Bold+italic ***text***
+        s = s.replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>");
+        // Bold **text**
+        s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+        // Italic *text* or _text_
+        s = s.replace(/\*(.+?)\*/g, "<em>$1</em>");
+        s = s.replace(/_(.+?)_/g, "<em>$1</em>");
+        // Underline __text__
+        s = s.replace(/__(.+?)__/g, "<u>$1</u>");
+        // Strikethrough ~~text~~
+        s = s.replace(/~~(.+?)~~/g, "<s>$1</s>");
+        // Inline code `text`
+        s = s.replace(
+          /`([^`]+)`/g,
+          '<code style="background:#2e3035;padding:.1em .3em;border-radius:3px;font-family:monospace;font-size:.875em;">$1</code>',
+        );
+        // Code block ```text```
+        s = s.replace(
+          /```([\s\S]+?)```/g,
+          '<pre style="background:#2e3035;padding:.5em .75em;border-radius:4px;font-family:monospace;font-size:.8em;overflow-x:auto;margin:.25em 0;">$1</pre>',
+        );
+        // Block quote > text
+        s = s.replace(
+          /^&gt; (.+)$/gm,
+          '<span style="display:inline-block;border-left:4px solid #4e5058;padding-left:.5em;">$1</span>',
+        );
+        // Newlines
+        s = s.replace(/\n/g, "<br>");
+        return s;
+      }
+
       /* ── EXACT original updatePreview ── */
       function updatePreview() {
         const author = document.getElementById("author-input").value.trim();
@@ -2887,7 +2947,7 @@
           <div class="embed-body" style="padding-right:${thumbnail ? "88px" : ".75rem"}">
             ${author ? `<div class="embed-author">${authorIcon ? `<img src="${authorIcon}" onerror="this.style.display='none'">` : ""}${authorURL ? `<a href="${authorURL}" style="color:#00b0f4">${author}</a>` : author}</div>` : ""}
             ${title ? `<div class="embed-title">${titleURL ? `<a href="${titleURL}">${title}</a>` : title}</div>` : ""}
-            ${description ? `<div class="embed-desc">${description}</div>` : ""}
+            ${description ? `<div class="embed-desc">${renderMarkdown(description)}</div>` : ""}
             ${fieldsHTML ? `<div class="embed-fields">${fieldsHTML}</div>` : ""}
             ${image ? `<div class="embed-image"><img src="${image}" onerror="this.style.display='none'"></div>` : ""}
             ${footer || timestamp ? `<div class="embed-footer">${footerIcon ? `<img src="${footerIcon}" onerror="this.style.display='none'">` : ""}${footer}${footer && timestamp ? " · " : ""}${timestamp ? ts : ""}</div>` : ""}

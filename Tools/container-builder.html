@@ -2478,6 +2478,11 @@
       function renderMarkdown(text) {
         if (!text) return "";
         let s = escHtml(text);
+        // Subheading: -# text (Discord's smaller heading)
+        s = s.replace(
+          /^-# (.+)$/gm,
+          '<span style="font-size:.875em;font-weight:600;color:#b5bac1;">$1</span>',
+        );
         // Headings: # H1, ## H2, ### H3 (line-start)
         s = s.replace(
           /^### (.+)$/gm,
@@ -2515,7 +2520,7 @@
         // Block quote > text
         s = s.replace(
           /^&gt; (.+)$/gm,
-          '<div style="border-left:3px solid #4f545c;padding-left:.5em;color:#b9bbbe;margin:.1em 0;">$1</div>',
+          '<span style="display:inline-block;border-left:4px solid #4e5058;padding-left:.5em;">$1</span>',
         );
         // Newlines
         s = s.replace(/\n/g, "<br>");
