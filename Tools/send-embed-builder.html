@@ -766,6 +766,69 @@
       .fd2 {
         animation-delay: 0.1s;
       }
+
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(6px);
+        z-index: 60;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal {
+        background: var(--bg2);
+        border: 1px solid var(--border2);
+        border-radius: var(--r2);
+        padding: 1.25rem;
+        width: 360px;
+        max-width: calc(100vw - 2rem);
+        position: relative;
+      }
+
+      .modal h3 {
+        font-size: 0.9375rem;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 1rem;
+        letter-spacing: -0.02em;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 0.875rem;
+        right: 0.875rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text3);
+        transition: color 0.15s;
+      }
+
+      .modal-close:hover {
+        color: var(--text);
+      }
+
+      .icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text3);
+        transition: all 0.15s;
+      }
+
+      .icon-btn:hover {
+        color: var(--text);
+        background: var(--bg4);
+      }
     </style>
   </head>
 
@@ -1124,6 +1187,38 @@
                   margin-top: 0.5rem;
                 "
               >
+                <button class="btn btn-ghost" id="save-preset">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                  >
+                    <path
+                      d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
+                    />
+                    <polyline points="17 21 17 13 7 13 7 21" />
+                    <polyline points="7 3 7 8 15 8" />
+                  </svg>
+                  Save Preset
+                </button>
+                <button class="btn btn-ghost" id="load-preset">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                  >
+                    <path
+                      d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 002-2v-4M17 8l-5-5-5 5M12 3v12"
+                    />
+                  </svg>
+                  Load Preset
+                </button>
                 <button class="btn btn-ghost" id="copy-output">
                   <svg
                     width="12"
@@ -1238,6 +1333,87 @@
         </div>
       </div>
     </main>
+
+    <!-- Preset Modal -->
+    <div class="overlay" id="preset-modal">
+      <div class="modal" style="width: 500px; max-width: 90%">
+        <button class="modal-close" id="close-preset-modal">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Manage Presets</h3>
+        <div
+          id="preset-list"
+          style="max-height: 50vh; overflow-y: auto; scrollbar-width: thin"
+        ></div>
+        <p
+          id="no-presets"
+          style="
+            font-size: 0.8rem;
+            color: var(--text3);
+            text-align: center;
+            padding: 2rem 0;
+            display: none;
+          "
+        >
+          No presets saved yet.
+        </p>
+      </div>
+    </div>
+
+    <!-- Save Preset Name Modal -->
+    <div class="overlay" id="save-preset-modal">
+      <div class="modal" style="width: 380px">
+        <button class="modal-close" id="close-save-preset-modal">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Save Preset</h3>
+        <div style="margin-bottom: 1rem">
+          <span
+            style="
+              font-size: 0.6875rem;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.07em;
+              color: var(--text3);
+              display: block;
+              margin-bottom: 0.5rem;
+            "
+            >Preset Name</span
+          >
+          <input
+            type="text"
+            id="preset-name-input"
+            class="finput"
+            placeholder="Enter preset name..."
+            style="width: 100%"
+          />
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
+          <button class="btn btn-ghost" id="cancel-save-preset">Cancel</button>
+          <button class="btn btn-primary" id="confirm-save-preset">Save</button>
+        </div>
+      </div>
+    </div>
 
     <footer>
       <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
@@ -1613,6 +1789,217 @@
           .then(() => toast("Copied", "s"))
           .catch(() => toast("Copy failed", "e"));
       });
+
+      /* ── Preset Management ── */
+      const PRESETS_KEY = "bdtools_sendembed_presets";
+
+      function getPresets() {
+        try {
+          const raw = localStorage.getItem(PRESETS_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function savePresets(presets) {
+        try {
+          localStorage.setItem(PRESETS_KEY, JSON.stringify(presets));
+        } catch (e) {
+          toast("Failed to save presets", "e");
+        }
+      }
+
+      function esc(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      document.getElementById("save-preset").addEventListener("click", () => {
+        document.getElementById("preset-name-input").value = "";
+        document.getElementById("save-preset-modal").style.display = "flex";
+      });
+
+      document
+        .getElementById("close-save-preset-modal")
+        .addEventListener("click", () => {
+          document.getElementById("save-preset-modal").style.display = "none";
+        });
+
+      document
+        .getElementById("cancel-save-preset")
+        .addEventListener("click", () => {
+          document.getElementById("save-preset-modal").style.display = "none";
+        });
+
+      // Close save preset modal on backdrop click
+      document
+        .getElementById("save-preset-modal")
+        .addEventListener("click", (e) => {
+          if (e.target.id === "save-preset-modal") {
+            document.getElementById("save-preset-modal").style.display = "none";
+          }
+        });
+
+      document
+        .getElementById("confirm-save-preset")
+        .addEventListener("click", () => {
+          const name = document.getElementById("preset-name-input").value;
+          if (!name || !name.trim()) {
+            toast("Preset name required", "e");
+            return;
+          }
+
+          const presets = getPresets();
+
+          // Collect current state
+          const state = {};
+          SEB_FIELD_IDS.forEach((id) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            state[id] = el.type === "checkbox" ? el.checked : el.value;
+          });
+
+          const preset = {
+            id: Date.now(),
+            name: name.trim(),
+            date: new Date().toISOString(),
+            data: state,
+          };
+
+          presets.push(preset);
+          savePresets(presets);
+          document.getElementById("save-preset-modal").style.display = "none";
+          toast(`Preset "${name}" saved!`, "s");
+        });
+
+      document.getElementById("load-preset").addEventListener("click", () => {
+        const presets = getPresets();
+        if (presets.length === 0) {
+          document.getElementById("no-presets").style.display = "block";
+        } else {
+          document.getElementById("no-presets").style.display = "none";
+          renderPresetList(presets);
+        }
+        document.getElementById("preset-modal").style.display = "flex";
+      });
+
+      document
+        .getElementById("close-preset-modal")
+        .addEventListener("click", () => {
+          document.getElementById("preset-modal").style.display = "none";
+        });
+
+      // Close modal on backdrop click
+      document.getElementById("preset-modal").addEventListener("click", (e) => {
+        if (e.target.id === "preset-modal") {
+          document.getElementById("preset-modal").style.display = "none";
+        }
+      });
+
+      function renderPresetList(presets) {
+        const list = document.getElementById("preset-list");
+        list.innerHTML = "";
+
+        presets
+          .sort((a, b) => b.id - a.id)
+          .forEach((preset) => {
+            const date = new Date(preset.date);
+            const dateStr =
+              date.toLocaleDateString() +
+              " " +
+              date.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+
+            // Count how many fields are filled
+            const fieldCount = Object.values(preset.data).filter(
+              (v) => v && v !== false,
+            ).length;
+
+            const item = document.createElement("div");
+            item.style.cssText =
+              "background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:0.75rem;display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:0.5rem;";
+            item.innerHTML = `
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.875rem;font-weight:600;color:var(--text);margin-bottom:0.25rem;">${esc(preset.name)}</div>
+              <div style="font-size:0.7rem;color:var(--text3);">${dateStr} • ${fieldCount} field${fieldCount !== 1 ? "s" : ""} filled</div>
+            </div>
+            <div style="display:flex;gap:0.25rem;">
+              <button class="btn btn-ghost" data-load="${preset.id}" style="padding:0.3rem 0.625rem;font-size:0.75rem;">Load</button>
+              <button class="icon-btn" data-delete="${preset.id}" style="color:#f87171;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                </svg>
+              </button>
+            </div>
+          `;
+
+            item
+              .querySelector(`[data-load="${preset.id}"]`)
+              .addEventListener("click", () => {
+                // Check if there's current work
+                const hasWork = SEB_FIELD_IDS.some((id) => {
+                  const el = document.getElementById(id);
+                  if (!el) return false;
+                  return el.type === "checkbox"
+                    ? el.checked
+                    : el.value.trim() !== "";
+                });
+
+                if (hasWork) {
+                  if (
+                    !confirm(
+                      "Loading this preset will replace your current work. Continue?",
+                    )
+                  ) {
+                    return;
+                  }
+                }
+
+                // Load preset data
+                SEB_FIELD_IDS.forEach((id) => {
+                  const el = document.getElementById(id);
+                  if (!el || preset.data[id] === undefined) return;
+                  if (el.type === "checkbox") el.checked = preset.data[id];
+                  else el.value = preset.data[id];
+                });
+
+                sebSaveState();
+                updatePreview();
+
+                document.getElementById("preset-modal").style.display = "none";
+                toast(`Preset "${preset.name}" loaded!`, "s");
+              });
+
+            item
+              .querySelector(`[data-delete="${preset.id}"]`)
+              .addEventListener("click", () => {
+                if (!confirm(`Delete preset "${preset.name}"?`)) {
+                  return;
+                }
+
+                const presets = getPresets();
+                const filtered = presets.filter((p) => p.id !== preset.id);
+                savePresets(filtered);
+
+                if (filtered.length === 0) {
+                  document.getElementById("no-presets").style.display = "block";
+                  list.innerHTML = "";
+                } else {
+                  renderPresetList(filtered);
+                }
+
+                toast(`Preset "${preset.name}" deleted`, "s");
+              });
+
+            list.appendChild(item);
+          });
+      }
+
       document.getElementById("clear-input").addEventListener("click", () => {
         [
           "channelID-input",

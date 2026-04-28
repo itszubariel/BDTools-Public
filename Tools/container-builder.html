@@ -551,6 +551,45 @@
         color: #c084fc;
         border: 1px solid rgba(168, 85, 247, 0.2);
       }
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(6px);
+        z-index: 60;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal {
+        background: var(--bg2);
+        border: 1px solid var(--border2);
+        border-radius: var(--r2);
+        padding: 1.25rem;
+        width: 360px;
+        max-width: calc(100vw - 2rem);
+        position: relative;
+      }
+      .modal h3 {
+        font-size: 0.9375rem;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 1rem;
+        letter-spacing: -0.02em;
+      }
+      .modal-close {
+        position: absolute;
+        top: 0.875rem;
+        right: 0.875rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text3);
+        transition: color 0.15s;
+      }
+      .modal-close:hover {
+        color: var(--text);
+      }
       .preview-wrap {
         background: #1e1f22;
         border-radius: var(--r2);
@@ -905,7 +944,7 @@
             </h1>
             <p class="text-gray-400 text-sm mt-1">
               Build Discord Component V2 layouts visually with containers,
-              sections, text displays, media galleries, separators and buttons —
+              sections, text displays, media galleries, separators and buttons,
               then generate your BDFD code.
             </p>
             <div class="flex flex-wrap gap-1.5 mt-3">
@@ -1083,6 +1122,38 @@
                   margin-top: 0.5rem;
                 "
               >
+                <button class="btn btn-ghost" id="save-preset">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                  >
+                    <path
+                      d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
+                    />
+                    <polyline points="17 21 17 13 7 13 7 21" />
+                    <polyline points="7 3 7 8 15 8" />
+                  </svg>
+                  Save Preset
+                </button>
+                <button class="btn btn-ghost" id="load-preset">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                  >
+                    <path
+                      d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 002-2v-4M17 8l-5-5-5 5M12 3v12"
+                    />
+                  </svg>
+                  Load Preset
+                </button>
                 <button class="btn btn-ghost" id="copy-output">
                   <svg
                     width="12"
@@ -1340,6 +1411,88 @@
         </div>
       </div>
     </main>
+
+    <!-- Preset Modal -->
+    <div class="overlay" id="preset-modal">
+      <div class="modal" style="width: 500px; max-width: 90%">
+        <button class="modal-close" id="close-preset-modal">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Manage Presets</h3>
+        <div
+          id="preset-list"
+          style="max-height: 50vh; overflow-y: auto; scrollbar-width: thin"
+        ></div>
+        <p
+          id="no-presets"
+          style="
+            font-size: 0.8rem;
+            color: var(--text3);
+            text-align: center;
+            padding: 2rem 0;
+            display: none;
+          "
+        >
+          No presets saved yet.
+        </p>
+      </div>
+    </div>
+
+    <!-- Save Preset Name Modal -->
+    <div class="overlay" id="save-preset-modal">
+      <div class="modal" style="width: 380px">
+        <button class="modal-close" id="close-save-preset-modal">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Save Preset</h3>
+        <div style="margin-bottom: 1rem">
+          <span
+            style="
+              font-size: 0.6875rem;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.07em;
+              color: var(--text3);
+              display: block;
+              margin-bottom: 0.5rem;
+            "
+            >Preset Name</span
+          >
+          <input
+            type="text"
+            id="preset-name-input"
+            class="finput"
+            placeholder="Enter preset name..."
+            style="width: 100%"
+          />
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
+          <button class="btn btn-ghost" id="cancel-save-preset">Cancel</button>
+          <button class="btn btn-primary" id="confirm-save-preset">Save</button>
+        </div>
+      </div>
+    </div>
+
     <footer>
       <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
       <div class="foot-links">
@@ -1514,7 +1667,13 @@
         const sectionNames = getSectionNames();
         const galleryIds = getGalleryIds();
         const actionRowIds = getActionRowIds();
-        const num = idx + 1;
+
+        // Calculate type-specific number (position within components of same type)
+        const typeSpecificNum = components.filter(
+          (c, i) => c.type === comp.type && i <= idx,
+        ).length;
+        const num = typeSpecificNum;
+
         const chevronStyle = comp.collapsed
           ? "transform:rotate(180deg);transition:transform .2s;"
           : "transition:transform .2s;";
@@ -1690,9 +1849,16 @@
             stringselect: "String Select",
           };
           const typeName = typeMap[comp.type] || comp.type;
+
+          // Calculate the type-specific number before removing
+          const compIndex = components.findIndex((c) => c.uid === comp.uid);
+          const typeSpecificNum = components.filter(
+            (c, i) => c.type === comp.type && i <= compIndex,
+          ).length;
+
           components = components.filter((c) => c.uid !== comp.uid);
           renderBuilder();
-          toast(`${typeName} #${num} removed`, "s");
+          toast(`${typeName} #${typeSpecificNum} removed`, "s");
         });
 
         // Wire up String Select option button if this is a stringselect
@@ -1700,25 +1866,32 @@
           const optionsContainer = d.querySelector(".stringselect-options");
           const addOptBtn = d.querySelector(".btn-add-option");
 
-          // Initialize option counter in fields
-          if (comp.fields.optionCounter === undefined)
-            comp.fields.optionCounter = 0;
-
           // Restore existing options if any
           if (comp.options && Array.isArray(comp.options)) {
-            comp.options.forEach((optData) => {
-              const optIdx = comp.fields.optionCounter++;
-              const optCard = createStringSelectOption(comp, optIdx, optData);
+            comp.options.forEach((optData, idx) => {
+              const optCard = createStringSelectOption(
+                comp,
+                idx,
+                optData,
+                optionsContainer,
+              );
               optionsContainer.appendChild(optCard);
             });
           }
 
           addOptBtn.addEventListener("click", () => {
-            const optIdx = comp.fields.optionCounter++;
-            const optCard = createStringSelectOption(comp, optIdx, {});
+            const currentOptionCount = optionsContainer.querySelectorAll(
+              ".stringselect-option",
+            ).length;
+            const optCard = createStringSelectOption(
+              comp,
+              currentOptionCount,
+              {},
+              optionsContainer,
+            );
             optionsContainer.appendChild(optCard);
             saveCV2State();
-            toast(`Option #${optIdx + 1} added`, "s");
+            toast(`Option #${currentOptionCount + 1} added`, "s");
           });
         }
 
@@ -1765,14 +1938,30 @@
         return d;
       }
 
-      function createStringSelectOption(parentComp, optIdx, optData = {}) {
+      function createStringSelectOption(
+        parentComp,
+        optIdx,
+        optData = {},
+        optionsContainer,
+      ) {
         const od = document.createElement("div");
         od.className = "stringselect-option";
+
+        // Function to get current position in the list
+        const getCurrentPosition = () => {
+          if (!optionsContainer) return optIdx + 1;
+          const allOptions = Array.from(
+            optionsContainer.querySelectorAll(".stringselect-option"),
+          );
+          const currentIdx = allOptions.indexOf(od);
+          return currentIdx >= 0 ? currentIdx + 1 : optIdx + 1;
+        };
+
         od.innerHTML = `
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;">
             <div style="display:flex;align-items:center;gap:.5rem;">
               <span class="type-badge select">Option</span>
-              <span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${optIdx + 1}</span>
+              <span class="option-number" style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${optIdx + 1}</span>
             </div>
             <div style="display:flex;gap:.25rem;">
               <button class="icon-btn opt-collapse" title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></button>
@@ -1807,9 +1996,21 @@
 
         // Remove button
         od.querySelector(".opt-remove").addEventListener("click", () => {
+          const currentPos = getCurrentPosition();
           od.remove();
+
+          // Update all remaining option numbers
+          if (optionsContainer) {
+            optionsContainer
+              .querySelectorAll(".stringselect-option")
+              .forEach((opt, idx) => {
+                const numSpan = opt.querySelector(".option-number");
+                if (numSpan) numSpan.textContent = `#${idx + 1}`;
+              });
+          }
+
           saveCV2State();
-          toast(`Option #${optIdx + 1} removed`, "s");
+          toast(`Option #${currentPos} removed`, "s");
         });
 
         // Input listeners
@@ -3054,6 +3255,181 @@
           .then(() => toast("Copied!", "s"))
           .catch(() => toast("Copy failed", "e"));
       });
+
+      // ── Preset Management ──
+      const PRESETS_KEY = "bdtools_compv2_presets";
+
+      function getPresets() {
+        try {
+          const raw = localStorage.getItem(PRESETS_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function savePresets(presets) {
+        try {
+          localStorage.setItem(PRESETS_KEY, JSON.stringify(presets));
+        } catch (e) {
+          toast("Failed to save presets", "e");
+        }
+      }
+
+      document.getElementById("save-preset").addEventListener("click", () => {
+        syncAllFields();
+        document.getElementById("preset-name-input").value = "";
+        document.getElementById("save-preset-modal").style.display = "flex";
+      });
+
+      document
+        .getElementById("close-save-preset-modal")
+        .addEventListener("click", () => {
+          document.getElementById("save-preset-modal").style.display = "none";
+        });
+
+      document
+        .getElementById("cancel-save-preset")
+        .addEventListener("click", () => {
+          document.getElementById("save-preset-modal").style.display = "none";
+        });
+
+      // Close save preset modal on backdrop click
+      document
+        .getElementById("save-preset-modal")
+        .addEventListener("click", (e) => {
+          if (e.target.id === "save-preset-modal") {
+            document.getElementById("save-preset-modal").style.display = "none";
+          }
+        });
+
+      document
+        .getElementById("confirm-save-preset")
+        .addEventListener("click", () => {
+          const name = document.getElementById("preset-name-input").value;
+          if (!name || !name.trim()) {
+            toast("Preset name required", "e");
+            return;
+          }
+
+          const presets = getPresets();
+          const preset = {
+            id: Date.now(),
+            name: name.trim(),
+            date: new Date().toISOString(),
+            data: {
+              uidCounter,
+              components: JSON.parse(JSON.stringify(components)),
+            },
+          };
+
+          presets.push(preset);
+          savePresets(presets);
+          document.getElementById("save-preset-modal").style.display = "none";
+          toast(`Preset "${name}" saved!`, "s");
+        });
+
+      document.getElementById("load-preset").addEventListener("click", () => {
+        const presets = getPresets();
+        if (presets.length === 0) {
+          document.getElementById("no-presets").style.display = "block";
+        } else {
+          document.getElementById("no-presets").style.display = "none";
+          renderPresetList(presets);
+        }
+        document.getElementById("preset-modal").style.display = "flex";
+      });
+
+      document
+        .getElementById("close-preset-modal")
+        .addEventListener("click", () => {
+          document.getElementById("preset-modal").style.display = "none";
+        });
+
+      // Close modal on backdrop click
+      document.getElementById("preset-modal").addEventListener("click", (e) => {
+        if (e.target.id === "preset-modal") {
+          document.getElementById("preset-modal").style.display = "none";
+        }
+      });
+
+      function renderPresetList(presets) {
+        const list = document.getElementById("preset-list");
+        list.innerHTML = "";
+
+        presets
+          .sort((a, b) => b.id - a.id)
+          .forEach((preset) => {
+            const date = new Date(preset.date);
+            const dateStr =
+              date.toLocaleDateString() +
+              " " +
+              date.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+
+            const item = document.createElement("div");
+            item.style.cssText =
+              "background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:0.75rem;display:flex;align-items:center;justify-content:space-between;gap:0.5rem;";
+            item.innerHTML = `
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.875rem;font-weight:600;color:var(--text);margin-bottom:0.25rem;">${esc(preset.name)}</div>
+              <div style="font-size:0.7rem;color:var(--text3);">${dateStr} • ${preset.data.components.length} component${preset.data.components.length !== 1 ? "s" : ""}</div>
+            </div>
+            <div style="display:flex;gap:0.25rem;">
+              <button class="btn btn-ghost" data-load="${preset.id}" style="padding:0.3rem 0.625rem;font-size:0.75rem;">Load</button>
+              <button class="icon-btn" data-delete="${preset.id}" style="color:#f87171;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                </svg>
+              </button>
+            </div>
+          `;
+
+            item
+              .querySelector(`[data-load="${preset.id}"]`)
+              .addEventListener("click", () => {
+                if (components.length > 0) {
+                  if (
+                    !confirm(
+                      "Loading this preset will replace your current work. Continue?",
+                    )
+                  ) {
+                    return;
+                  }
+                }
+
+                components = JSON.parse(JSON.stringify(preset.data.components));
+                uidCounter = preset.data.uidCounter;
+                renderBuilder();
+                document.getElementById("preset-modal").style.display = "none";
+                toast(`Preset "${preset.name}" loaded!`, "s");
+              });
+
+            item
+              .querySelector(`[data-delete="${preset.id}"]`)
+              .addEventListener("click", () => {
+                if (!confirm(`Delete preset "${preset.name}"?`)) {
+                  return;
+                }
+
+                const presets = getPresets();
+                const filtered = presets.filter((p) => p.id !== preset.id);
+                savePresets(filtered);
+                renderPresetList(filtered);
+                toast(`Preset "${preset.name}" deleted`, "s");
+
+                if (filtered.length === 0) {
+                  document.getElementById("no-presets").style.display = "block";
+                }
+              });
+
+            list.appendChild(item);
+          });
+      }
+
       loadState();
       renderBuilder();
     </script>

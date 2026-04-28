@@ -558,6 +558,50 @@
         background: var(--bg4);
       }
 
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(6px);
+        z-index: 60;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .preset-modal-box {
+        background: var(--bg2);
+        border: 1px solid var(--border2);
+        border-radius: var(--r2);
+        padding: 1.25rem;
+        width: 360px;
+        max-width: calc(100vw - 2rem);
+        position: relative;
+      }
+
+      .preset-modal-box h3 {
+        font-size: 0.9375rem;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 1rem;
+        letter-spacing: -0.02em;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 0.875rem;
+        right: 0.875rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text3);
+        transition: color 0.15s;
+      }
+
+      .modal-close:hover {
+        color: var(--text);
+      }
+
       /* comp block */
       .comp-block {
         background: var(--bg3);
@@ -611,6 +655,8 @@
         border-radius: 5px;
         text-transform: uppercase;
         letter-spacing: 0.05em;
+        pointer-events: none;
+        user-select: none;
       }
       .type-badge.field {
         background: rgba(251, 191, 36, 0.12);
@@ -1288,6 +1334,38 @@
                   margin-top: 0.5rem;
                 "
               >
+                <button class="btn btn-ghost" id="save-preset">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                  >
+                    <path
+                      d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
+                    />
+                    <polyline points="17 21 17 13 7 13 7 21" />
+                    <polyline points="7 3 7 8 15 8" />
+                  </svg>
+                  Save Preset
+                </button>
+                <button class="btn btn-ghost" id="load-preset">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                  >
+                    <path
+                      d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 002-2v-4M17 8l-5-5-5 5M12 3v12"
+                    />
+                  </svg>
+                  Load Preset
+                </button>
                 <button class="btn btn-ghost" id="copy-output">
                   <svg
                     width="12"
@@ -1700,6 +1778,87 @@
       </div>
     </main>
 
+    <!-- Preset Modal -->
+    <div class="overlay" id="preset-modal">
+      <div class="preset-modal-box" style="width: 500px; max-width: 90%">
+        <button class="modal-close" id="close-preset-modal">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Manage Presets</h3>
+        <div
+          id="preset-list"
+          style="max-height: 50vh; overflow-y: auto; scrollbar-width: thin"
+        ></div>
+        <p
+          id="no-presets"
+          style="
+            font-size: 0.8rem;
+            color: var(--text3);
+            text-align: center;
+            padding: 2rem 0;
+            display: none;
+          "
+        >
+          No presets saved yet.
+        </p>
+      </div>
+    </div>
+
+    <!-- Save Preset Name Modal -->
+    <div class="overlay" id="save-preset-modal">
+      <div class="preset-modal-box" style="width: 380px">
+        <button class="modal-close" id="close-save-preset-modal">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Save Preset</h3>
+        <div style="margin-bottom: 1rem">
+          <span
+            style="
+              font-size: 0.6875rem;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.07em;
+              color: var(--text3);
+              display: block;
+              margin-bottom: 0.5rem;
+            "
+            >Preset Name</span
+          >
+          <input
+            type="text"
+            id="preset-name-input"
+            class="finput"
+            placeholder="Enter preset name..."
+            style="width: 100%"
+          />
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
+          <button class="btn btn-ghost" id="cancel-save-preset">Cancel</button>
+          <button class="btn btn-primary" id="confirm-save-preset">Save</button>
+        </div>
+      </div>
+    </div>
+
     <footer>
       <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
       <div class="foot-links">
@@ -1999,13 +2158,17 @@
 
       /* ── Fields ── */
       document.getElementById("add-field-btn").addEventListener("click", () => {
-        toast(`Field #${fieldCount + 1} added`, "s");
+        const currentCount = document.querySelectorAll(
+          "#fields-container .comp-block",
+        ).length;
+        const num = currentCount + 1;
         const idx = fieldCount++;
+        toast(`Field #${num} added`, "s");
         const d = document.createElement("div");
         d.className = "comp-block";
         d.innerHTML = `
     <div class="comp-actions">
-      <div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge field">Field</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
+      <div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge field">Field</span><span class="field-number" style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${num}</span></div>
       <div style="display:flex;gap:.25rem;"><button class="icon-btn" data-collapse title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></button><button class="icon-btn remove-comp" data-idx="${idx}" style="color:#f87171;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     </div>
     <div class="comp-body">
@@ -2018,10 +2181,20 @@
         makeCollapsible(d);
         makeDraggable(d);
         d.querySelector(".remove-comp").addEventListener("click", () => {
+          const container = document.getElementById("fields-container");
+          const allFields = Array.from(
+            container.querySelectorAll(".comp-block"),
+          );
+          const position = allFields.indexOf(d) + 1;
           d.remove();
+          // Renumber remaining fields
+          container.querySelectorAll(".comp-block").forEach((field, i) => {
+            const numSpan = field.querySelector(".field-number");
+            if (numSpan) numSpan.textContent = `#${i + 1}`;
+          });
           ebSaveState();
           updatePreview();
-          toast(`Field #${idx + 1} removed`, "s");
+          toast(`Field #${position} removed`, "s");
         });
         d.querySelectorAll("input,textarea,select").forEach((el) => {
           el.addEventListener("input", () => {
@@ -2042,13 +2215,17 @@
       document
         .getElementById("add-button-btn")
         .addEventListener("click", () => {
-          toast(`Button #${buttonCount + 1} added`, "s");
+          const currentCount = document.querySelectorAll(
+            "#buttons-container .comp-block",
+          ).length;
+          const num = currentCount + 1;
           const idx = buttonCount++;
+          toast(`Button #${num} added`, "s");
           const d = document.createElement("div");
           d.className = "comp-block";
           d.innerHTML = `
     <div class="comp-actions">
-      <div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge button">Button</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
+      <div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge button">Button</span><span class="button-number" style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${num}</span></div>
       <div style="display:flex;gap:.25rem;"><button class="icon-btn" data-collapse title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></button><button class="icon-btn remove-comp" style="color:#f87171;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     </div>
     <div class="comp-body">
@@ -2069,10 +2246,20 @@
           makeCollapsible(d);
           makeDraggable(d);
           d.querySelector(".remove-comp").addEventListener("click", () => {
+            const container = document.getElementById("buttons-container");
+            const allButtons = Array.from(
+              container.querySelectorAll(".comp-block"),
+            );
+            const position = allButtons.indexOf(d) + 1;
             d.remove();
+            // Renumber remaining buttons
+            container.querySelectorAll(".comp-block").forEach((button, i) => {
+              const numSpan = button.querySelector(".button-number");
+              if (numSpan) numSpan.textContent = `#${i + 1}`;
+            });
             ebSaveState();
             updatePreview();
-            toast(`Button #${idx + 1} removed`, "s");
+            toast(`Button #${position} removed`, "s");
           });
           d.querySelectorAll("input,textarea,select").forEach((el) => {
             el.addEventListener("input", () => {
@@ -2091,36 +2278,52 @@
 
       /* ── addSelectOption helper ── */
       function addSelectOption(idx) {
-        const oIdx = selectOptionCount[idx]++;
+        const optionsContainer = document.getElementById(
+          `select-options-${idx}`,
+        );
+        const oIdx =
+          optionsContainer.querySelectorAll(".comp-block-inner").length;
         const od = document.createElement("div");
         od.className = "comp-block-inner";
         od.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;">
         <div style="display:flex;align-items:center;gap:.5rem;">
           <span class="type-badge selectmenu">Option</span>
-          <span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${oIdx + 1}</span>
+          <span class="option-number" style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${oIdx + 1}</span>
         </div>
         <button class="icon-btn remove-opt" style="color:#f87171;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.375rem;">
-        ${inp(`select-option-id-${idx}-${oIdx}`, "Option ID")}
-        ${inp(`select-option-label-${idx}-${oIdx}`, "Label")}
-        ${inp(`select-option-value-${idx}-${oIdx}`, "Value")}
-        ${inp(`select-option-description-${idx}-${oIdx}`, "Description")}
-        ${inp(`select-option-emoji-${idx}-${oIdx}`, "Emoji (opt)")}
-        ${inp(`select-option-messageid-${idx}-${oIdx}`, "Msg ID (opt)")}
+        ${inp(`select-option-id-${idx}-${selectOptionCount[idx]}`, "Option ID")}
+        ${inp(`select-option-label-${idx}-${selectOptionCount[idx]}`, "Label")}
+        ${inp(`select-option-value-${idx}-${selectOptionCount[idx]}`, "Value")}
+        ${inp(`select-option-description-${idx}-${selectOptionCount[idx]}`, "Description")}
+        ${inp(`select-option-emoji-${idx}-${selectOptionCount[idx]}`, "Emoji (opt)")}
+        ${inp(`select-option-messageid-${idx}-${selectOptionCount[idx]}`, "Msg ID (opt)")}
       </div>
-      ${chk(`select-option-default-${idx}-${oIdx}`, "Default?")}`;
+      ${chk(`select-option-default-${idx}-${selectOptionCount[idx]}`, "Default?")}`;
+        selectOptionCount[idx]++;
         od.querySelector(".remove-opt").addEventListener("click", () => {
+          const currentPos =
+            Array.from(
+              optionsContainer.querySelectorAll(".comp-block-inner"),
+            ).indexOf(od) + 1;
           od.remove();
+          // Renumber remaining options
+          optionsContainer
+            .querySelectorAll(".comp-block-inner")
+            .forEach((opt, i) => {
+              const numSpan = opt.querySelector(".option-number");
+              if (numSpan) numSpan.textContent = `#${i + 1}`;
+            });
           ebSaveState();
-          toast(`Option #${oIdx + 1} removed`, "s");
+          toast(`Option #${currentPos} removed`, "s");
         });
         od.querySelectorAll("input,select").forEach((el) => {
           el.addEventListener("input", ebSaveState);
           el.addEventListener("change", ebSaveState);
         });
-        document.getElementById(`select-options-${idx}`).appendChild(od);
+        optionsContainer.appendChild(od);
         ebSaveState();
         toast(`Option #${oIdx + 1} added to Menu #${idx + 1}`, "s");
       }
@@ -2129,14 +2332,18 @@
       document
         .getElementById("add-selectmenu-btn")
         .addEventListener("click", () => {
-          toast(`Select Menu #${selectCount + 1} added`, "s");
+          const currentCount = document.querySelectorAll(
+            "#selects-container .comp-block",
+          ).length;
+          const num = currentCount + 1;
           const idx = selectCount++;
+          toast(`Select Menu #${num} added`, "s");
           selectOptionCount[idx] = 0;
           const d = document.createElement("div");
           d.className = "comp-block";
           d.innerHTML = `
     <div class="comp-actions">
-      <div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge selectmenu">Select Menu</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
+      <div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge selectmenu">Select Menu</span><span class="select-number" style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${num}</span></div>
       <div style="display:flex;gap:.25rem;">
         <button class="btn btn-ghost add-opt-btn" style="padding:.25rem .625rem;font-size:.7rem;" data-idx="${idx}">+ Option</button>
         <button class="icon-btn" data-collapse title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></button>
@@ -2156,10 +2363,20 @@
           makeCollapsible(d);
           makeDraggable(d);
           d.querySelector(".remove-comp").addEventListener("click", () => {
+            const container = document.getElementById("selects-container");
+            const allSelects = Array.from(
+              container.querySelectorAll(".comp-block"),
+            );
+            const position = allSelects.indexOf(d) + 1;
             d.remove();
+            // Renumber remaining select menus
+            container.querySelectorAll(".comp-block").forEach((select, i) => {
+              const numSpan = select.querySelector(".select-number");
+              if (numSpan) numSpan.textContent = `#${i + 1}`;
+            });
             ebSaveState();
             updatePreview();
-            toast(`Select Menu #${idx + 1} removed`, "s");
+            toast(`Select Menu #${position} removed`, "s");
             delete selectOptionCount[idx];
           });
           d.querySelector(".add-opt-btn").addEventListener("click", () =>
@@ -2175,51 +2392,71 @@
 
       /* ── addModalInput helper ── */
       function addModalInput(idx) {
-        const iIdx = modalInputCount[idx]++;
+        const inputsContainer = document.getElementById(
+          `modal-textinputs-${idx}`,
+        );
+        const iIdx =
+          inputsContainer.querySelectorAll(".comp-block-inner").length;
         const id = document.createElement("div");
         id.className = "comp-block-inner";
         id.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;">
         <div style="display:flex;align-items:center;gap:.5rem;">
           <span class="type-badge modal">Text Input</span>
-          <span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${iIdx + 1}</span>
+          <span class="input-number" style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${iIdx + 1}</span>
         </div>
         <button class="icon-btn remove-tinput" style="color:#f87171;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.375rem;">
-        ${inp(`modal-text-id-${idx}-${iIdx}`, "Input ID")}
-        ${sel(`modal-text-style-${idx}-${iIdx}`, '<option value="short">Short</option><option value="paragraph">Paragraph</option>')}
-        ${inp(`modal-text-label-${idx}-${iIdx}`, "Label")}
-        ${inp(`modal-text-min-${idx}-${iIdx}`, "Min Length", "number")}
-        ${inp(`modal-text-max-${idx}-${iIdx}`, "Max Length", "number")}
-        ${inp(`modal-text-value-${idx}-${iIdx}`, "Default Value (opt)")}
-        ${inp(`modal-text-placeholder-${idx}-${iIdx}`, "Placeholder (opt)")}
+        ${inp(`modal-text-id-${idx}-${modalInputCount[idx]}`, "Input ID")}
+        ${sel(`modal-text-style-${idx}-${modalInputCount[idx]}`, '<option value="short">Short</option><option value="paragraph">Paragraph</option>')}
+        ${inp(`modal-text-label-${idx}-${modalInputCount[idx]}`, "Label")}
+        ${inp(`modal-text-min-${idx}-${modalInputCount[idx]}`, "Min Length", "number")}
+        ${inp(`modal-text-max-${idx}-${modalInputCount[idx]}`, "Max Length", "number")}
+        ${inp(`modal-text-value-${idx}-${modalInputCount[idx]}`, "Default Value (opt)")}
+        ${inp(`modal-text-placeholder-${idx}-${modalInputCount[idx]}`, "Placeholder (opt)")}
       </div>
-      ${chk(`modal-text-required-${idx}-${iIdx}`, "Required")}`;
+      ${chk(`modal-text-required-${idx}-${modalInputCount[idx]}`, "Required")}`;
+        modalInputCount[idx]++;
         id.querySelector(".remove-tinput").addEventListener("click", () => {
+          const currentPos =
+            Array.from(
+              inputsContainer.querySelectorAll(".comp-block-inner"),
+            ).indexOf(id) + 1;
           id.remove();
+          // Renumber remaining inputs
+          inputsContainer
+            .querySelectorAll(".comp-block-inner")
+            .forEach((input, i) => {
+              const numSpan = input.querySelector(".input-number");
+              if (numSpan) numSpan.textContent = `#${i + 1}`;
+            });
           ebSaveState();
-          toast(`Text Input #${iIdx + 1} removed`, "s");
+          toast(`Text Input #${currentPos} removed`, "s");
         });
         id.querySelectorAll("input,select").forEach((el) => {
           el.addEventListener("input", ebSaveState);
           el.addEventListener("change", ebSaveState);
         });
-        document.getElementById(`modal-textinputs-${idx}`).appendChild(id);
+        inputsContainer.appendChild(id);
         ebSaveState();
         toast(`Text Input #${iIdx + 1} added to Modal #${idx + 1}`, "s");
       }
 
       /* ── Modals ── */
       document.getElementById("add-modal-btn").addEventListener("click", () => {
-        toast(`Modal #${modalCount + 1} added`, "s");
+        const currentCount = document.querySelectorAll(
+          "#modals-container .comp-block",
+        ).length;
+        const num = currentCount + 1;
         const idx = modalCount++;
+        toast(`Modal #${num} added`, "s");
         modalInputCount[idx] = 0;
         const d = document.createElement("div");
         d.className = "comp-block";
         d.innerHTML = `
     <div class="comp-actions">
-      <div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge modal">Modal</span><span style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${idx + 1}</span></div>
+      <div style="display:flex;align-items:center;gap:.5rem;"><span class="drag-handle">⠿</span><span class="type-badge modal">Modal</span><span class="modal-number" style="font-size:.6rem;font-family:var(--mono);color:var(--text3);font-weight:600;">#${num}</span></div>
       <div style="display:flex;gap:.25rem;">
         <button class="btn btn-ghost add-input-btn" style="padding:.25rem .625rem;font-size:.7rem;" data-idx="${idx}">+ Text Input</button>
         <button class="icon-btn" data-collapse title="Collapse" style="color:var(--text3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></button>
@@ -2236,9 +2473,19 @@
         makeCollapsible(d);
         makeDraggable(d);
         d.querySelector(".remove-comp").addEventListener("click", () => {
+          const container = document.getElementById("modals-container");
+          const allModals = Array.from(
+            container.querySelectorAll(".comp-block"),
+          );
+          const position = allModals.indexOf(d) + 1;
           d.remove();
+          // Renumber remaining modals
+          container.querySelectorAll(".comp-block").forEach((modal, i) => {
+            const numSpan = modal.querySelector(".modal-number");
+            if (numSpan) numSpan.textContent = `#${i + 1}`;
+          });
           ebSaveState();
-          toast(`Modal #${idx + 1} removed`, "s");
+          toast(`Modal #${position} removed`, "s");
         });
         d.querySelector(".add-input-btn").addEventListener("click", () =>
           addModalInput(idx),
@@ -2790,6 +3037,240 @@
           .then(() => toast("Copied", "s"))
           .catch(() => toast("Copy failed", "e"));
       });
+
+      /* ── Preset Management ── */
+      const PRESETS_KEY = "bdtools_embed_presets";
+
+      function getPresets() {
+        try {
+          const raw = localStorage.getItem(PRESETS_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function savePresets(presets) {
+        try {
+          localStorage.setItem(PRESETS_KEY, JSON.stringify(presets));
+        } catch (e) {
+          toast("Failed to save presets", "e");
+        }
+      }
+
+      function esc(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      document.getElementById("save-preset").addEventListener("click", () => {
+        document.getElementById("preset-name-input").value = "";
+        document.getElementById("save-preset-modal").style.display = "flex";
+      });
+
+      document
+        .getElementById("close-save-preset-modal")
+        .addEventListener("click", () => {
+          document.getElementById("save-preset-modal").style.display = "none";
+        });
+
+      document
+        .getElementById("cancel-save-preset")
+        .addEventListener("click", () => {
+          document.getElementById("save-preset-modal").style.display = "none";
+        });
+
+      // Close save preset modal on backdrop click
+      document
+        .getElementById("save-preset-modal")
+        .addEventListener("click", (e) => {
+          if (e.target.id === "save-preset-modal") {
+            document.getElementById("save-preset-modal").style.display = "none";
+          }
+        });
+
+      document
+        .getElementById("confirm-save-preset")
+        .addEventListener("click", () => {
+          const name = document.getElementById("preset-name-input").value;
+          if (!name || !name.trim()) {
+            toast("Preset name required", "e");
+            return;
+          }
+
+          // Capture current full state from the DOM the same way ebSaveState does
+          const state = { fields: {}, counters: {}, dynamics: {} };
+          EB_STATIC_IDS.forEach((id) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            state.fields[id] = el.type === "checkbox" ? el.checked : el.value;
+          });
+          state.counters = { fieldCount, buttonCount, selectCount, modalCount };
+          [
+            "fields-container",
+            "buttons-container",
+            "selects-container",
+            "modals-container",
+          ].forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) state.dynamics[id] = el.innerHTML;
+          });
+
+          const presets = getPresets();
+          presets.push({
+            id: Date.now(),
+            name: name.trim(),
+            date: new Date().toISOString(),
+            data: state,
+          });
+          savePresets(presets);
+          document.getElementById("save-preset-modal").style.display = "none";
+          toast(`Preset "${name.trim()}" saved!`, "s");
+        });
+
+      document.getElementById("load-preset").addEventListener("click", () => {
+        const presets = getPresets();
+        if (presets.length === 0) {
+          document.getElementById("no-presets").style.display = "block";
+        } else {
+          document.getElementById("no-presets").style.display = "none";
+          renderPresetList(presets);
+        }
+        document.getElementById("preset-modal").style.display = "flex";
+      });
+
+      document
+        .getElementById("close-preset-modal")
+        .addEventListener("click", () => {
+          document.getElementById("preset-modal").style.display = "none";
+        });
+
+      // Close modal on backdrop click
+      document.getElementById("preset-modal").addEventListener("click", (e) => {
+        if (e.target.id === "preset-modal") {
+          document.getElementById("preset-modal").style.display = "none";
+        }
+      });
+
+      function renderPresetList(presets) {
+        const list = document.getElementById("preset-list");
+        list.innerHTML = "";
+
+        presets
+          .sort((a, b) => b.id - a.id)
+          .forEach((preset) => {
+            const date = new Date(preset.date);
+            const dateStr =
+              date.toLocaleDateString() +
+              " " +
+              date.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+
+            const item = document.createElement("div");
+            item.style.cssText =
+              "background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:0.75rem;display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:0.5rem;";
+            item.innerHTML = `
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.875rem;font-weight:600;color:var(--text);margin-bottom:0.25rem;">${esc(preset.name)}</div>
+              <div style="font-size:0.7rem;color:var(--text3);">${dateStr}</div>
+            </div>
+            <div style="display:flex;gap:0.25rem;">
+              <button class="btn btn-ghost" data-load="${preset.id}" style="padding:0.3rem 0.625rem;font-size:0.75rem;">Load</button>
+              <button class="icon-btn" data-delete="${preset.id}" style="color:#f87171;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                </svg>
+              </button>
+            </div>
+          `;
+
+            item
+              .querySelector(`[data-load="${preset.id}"]`)
+              .addEventListener("click", () => {
+                // Check if there's current work
+                const hasWork =
+                  fieldCount > 0 ||
+                  buttonCount > 0 ||
+                  selectCount > 0 ||
+                  modalCount > 0;
+                if (hasWork) {
+                  if (
+                    !confirm(
+                      "Loading this preset will replace your current work. Continue?",
+                    )
+                  ) {
+                    return;
+                  }
+                }
+
+                // Write preset data into localStorage under EB_LS_KEY then reload
+                localStorage.setItem(EB_LS_KEY, JSON.stringify(preset.data));
+                fieldCount = preset.data.counters?.fieldCount || 0;
+                buttonCount = preset.data.counters?.buttonCount || 0;
+                selectCount = preset.data.counters?.selectCount || 0;
+                modalCount = preset.data.counters?.modalCount || 0;
+                selectOptionCount =
+                  preset.data.counters?.selectOptionCount || {};
+                modalInputCount = preset.data.counters?.modalInputCount || {};
+
+                // Restore static fields
+                EB_STATIC_IDS.forEach((id) => {
+                  const el = document.getElementById(id);
+                  if (!el) return;
+                  const val = preset.data.fields?.[id];
+                  if (val !== undefined) {
+                    if (el.type === "checkbox") el.checked = val;
+                    else el.value = val;
+                  }
+                });
+
+                // Restore dynamic containers
+                [
+                  "fields-container",
+                  "buttons-container",
+                  "selects-container",
+                  "modals-container",
+                ].forEach((id) => {
+                  const el = document.getElementById(id);
+                  if (el && preset.data.dynamics?.[id] !== undefined)
+                    el.innerHTML = preset.data.dynamics[id];
+                });
+
+                // Re-attach all listeners
+                ebLoadState();
+
+                document.getElementById("preset-modal").style.display = "none";
+                toast(`Preset "${preset.name}" loaded!`, "s");
+              });
+
+            item
+              .querySelector(`[data-delete="${preset.id}"]`)
+              .addEventListener("click", () => {
+                if (!confirm(`Delete preset "${preset.name}"?`)) {
+                  return;
+                }
+
+                const presets = getPresets();
+                const filtered = presets.filter((p) => p.id !== preset.id);
+                savePresets(filtered);
+
+                if (filtered.length === 0) {
+                  document.getElementById("no-presets").style.display = "block";
+                  list.innerHTML = "";
+                } else {
+                  renderPresetList(filtered);
+                }
+
+                toast(`Preset "${preset.name}" deleted`, "s");
+              });
+
+            list.appendChild(item);
+          });
+      }
 
       /* ── Markdown rendering helper ── */
       function escHtml(text) {
