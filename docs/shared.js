@@ -247,11 +247,6 @@ function initScrollSpy() {
   }
 })();
 
-/* ══════════════════════════════════════════════════════════════════════════════
-   DOCS PAGE FUNCTIONALITY - Section Switching & Mobile Drawer
-   ══════════════════════════════════════════════════════════════════════════════ */
-
-/* ── Section Switching (One at a Time) ── */
 function showSection(sectionId) {
   // Hide all sections
   document.querySelectorAll(".endpoint-section").forEach((section) => {
