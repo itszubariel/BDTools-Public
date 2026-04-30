@@ -1,0 +1,1202 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Node Status — BDTools API Docs</title>
+    <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Geist", "sans-serif"],
+              mono: ["Geist Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="stylesheet" href="shared.css" />
+  </head>
+
+  <body class="bg-[#080a10] text-gray-100 min-h-screen flex flex-col">
+    <!-- ── LOGIN GATE ── -->
+    <div id="loginOverlay">
+      <div class="fu text-center px-6 w-full max-w-sm">
+        <img
+          src="/images/bdfd_logo.png"
+          alt="BDTools"
+          class="w-16 h-16 rounded-2xl mx-auto mb-6 shadow-2xl"
+          onerror="this.style.display = 'none'"
+        />
+        <h1
+          class="dark-text text-2xl font-black text-white mb-2 tracking-tight"
+        >
+          BDTools API Docs
+        </h1>
+        <p class="text-gray-400 text-sm mb-8">
+          Sign in with Discord to access the full API documentation, your
+          personal API key, and the interactive tester.
+        </p>
+        <button
+          id="loginBtn"
+          onclick="loginDiscord()"
+          class="inline-flex items-center gap-3 px-7 py-3 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold rounded-xl transition-all shadow-lg text-base w-full justify-center"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 127.14 96.36"
+            fill="currentColor"
+          >
+            <path
+              d="M107.7 8.07A105.15 105.15 0 0081.47 0a72.06 72.06 0 00-3.36 6.83 97.68 97.68 0 00-29.11 0A72.37 72.37 0 0045.64 0a105.89 105.89 0 00-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0032.17 16.15 77.7 77.7 0 006.89-11.11 68.42 68.42 0 01-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0064.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 01-10.87 5.19 77 77 0 006.89 11.1 105.25 105.25 0 0032.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15zM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69z"
+            />
+          </svg>
+          Sign in with Discord
+        </button>
+        <p
+          id="loginStatus"
+          class="text-xs text-gray-600 mt-4 min-h-[1.25rem]"
+        ></p>
+      </div>
+    </div>
+
+    <!-- ── NAV ── -->
+    <nav
+      class="sticky top-0 z-50 border-b"
+      style="border-color: #1e2130; background: #080a10"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4"
+      >
+        <a href="/" class="flex items-center gap-2.5 group flex-shrink-0">
+          <img
+            src="/images/bdfd_logo.png"
+            alt="BDTools"
+            class="w-7 h-7 rounded-lg"
+            onerror="this.style.display = 'none'"
+          />
+          <span class="font-bold tracking-tight t1">BDTools</span>
+        </a>
+        <div id="userInfo" class="hidden items-center gap-2 min-w-0">
+          <img
+            id="userAvatar"
+            src=""
+            alt=""
+            class="w-7 h-7 rounded-full flex-shrink-0"
+          />
+          <span
+            id="userName"
+            class="font-semibold text-sm hidden sm:block truncate"
+          ></span>
+          <button
+            onclick="openLogoutModal()"
+            class="text-xs text-gray-500 hover:text-red-400 transition-colors ml-1 flex-shrink-0"
+          >
+            Logout
+          </button>
+          <span
+            id="themeLabel"
+            class="text-xs text-gray-500 hidden sm:block select-none"
+            >Dark Mode</span
+          >
+          <div id="themeToggle" class="tog-track on" onclick="toggleTheme()">
+            <div class="tog-thumb"></div>
+          </div>
+          <button
+            class="hamburger-btn"
+            id="hamburgerBtn"
+            onclick="toggleMobileDrawer()"
+            aria-label="Toggle menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ── LOGOUT MODAL ── -->
+    <div class="overlay hidden" id="logoutModal">
+      <div class="modal">
+        <button class="modal-close" onclick="closeLogoutModal()">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Confirm Logout</h3>
+        <p>
+          Are you sure you want to log out? This will clear your session and API
+          key.
+        </p>
+        <div class="modal-buttons">
+          <button class="btn-ghost" onclick="closeLogoutModal()">Cancel</button>
+          <button class="btn-danger" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MOBILE DRAWER ── -->
+    <div
+      class="mobile-drawer-backdrop"
+      id="mobileDrawerBackdrop"
+      onclick="closeMobileDrawer()"
+    ></div>
+
+    <div class="mobile-drawer" id="mobileDrawer">
+      <div class="mobile-drawer-header">
+        <span class="mobile-drawer-title">Node Status</span>
+        <button
+          class="mobile-drawer-close"
+          onclick="closeMobileDrawer()"
+          aria-label="Close menu"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <nav class="space-y-0.5">
+        <a class="sidebar-link active" onclick="showSection('overview')"
+          >Overview</a
+        >
+        <a class="sidebar-link" onclick="showSection('ep-node-status')"
+          >GET /node-status</a
+        >
+        <a class="sidebar-link" onclick="showSection('ep-summary')"
+          >GET /node-status/summary</a
+        >
+        <a class="sidebar-link" onclick="showSection('ep-nodes')"
+          >GET /node-status/nodes</a
+        >
+        <a class="sidebar-link" onclick="showSection('ep-node-id')"
+          >GET /node-status/node/:id</a
+        >
+        <a class="sidebar-link" onclick="showSection('ep-high-performance')"
+          >GET /node-status/high-performance</a
+        >
+        <a class="sidebar-link" onclick="showSection('ep-history')"
+          >GET /node-status/history</a
+        >
+      </nav>
+    </div>
+
+    <!-- ── PAGE HEADER ── -->
+    <div class="lowerNav border-b border-[#1e2130]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 fu">
+        <!-- Breadcrumb -->
+        <nav
+          class="flex items-center gap-2 text-xs text-gray-500 mb-4 font-mono"
+        >
+          <a href="index.html" class="hover:text-[#818cf8] transition-colors"
+            >Docs</a
+          >
+          <span class="text-gray-700">/</span>
+          <span class="text-gray-300">Node Status</span>
+        </nav>
+        <div class="flex items-center gap-3 mb-2">
+          <div
+            class="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0"
+          >
+            <svg
+              class="w-4.5 h-4.5 text-blue-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
+              />
+            </svg>
+          </div>
+          <h1
+            class="text-2xl sm:text-3xl font-black text-white dark-text tracking-tight"
+          >
+            Node Status
+          </h1>
+        </div>
+        <p class="text-gray-400 dark-text-2 text-sm max-w-xl leading-relaxed">
+          Monitor BDFD node availability, ping, and bot counts across all
+          standard and high-performance nodes. Data refreshes every 5 minutes.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── MAIN 2-COLUMN LAYOUT ── -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <div class="docs-layout">
+        <!-- ── LEFT SIDEBAR ── -->
+        <aside class="left-sidebar">
+          <p
+            class="text-[10px] font-mono text-gray-600 uppercase tracking-widest mb-2 px-3"
+          >
+            Node Status
+          </p>
+          <nav class="space-y-0.5" id="leftNav">
+            <a class="sidebar-link active" onclick="showSection('overview')"
+              >Overview</a
+            >
+            <a class="sidebar-link" onclick="showSection('ep-node-status')"
+              >GET /node-status</a
+            >
+            <a class="sidebar-link" onclick="showSection('ep-summary')"
+              >GET /node-status/summary</a
+            >
+            <a class="sidebar-link" onclick="showSection('ep-nodes')"
+              >GET /node-status/nodes</a
+            >
+            <a class="sidebar-link" onclick="showSection('ep-node-id')"
+              >GET /node-status/node/:id</a
+            >
+            <a class="sidebar-link" onclick="showSection('ep-high-performance')"
+              >GET /node-status/high-performance</a
+            >
+            <a class="sidebar-link" onclick="showSection('ep-history')"
+              >GET /node-status/history</a
+            >
+          </nav>
+        </aside>
+
+        <!-- ── CONTENT ── -->
+        <main class="min-w-0">
+          <!-- Overview -->
+          <section id="overview" class="endpoint-section dark-surface fu">
+            <h2 class="text-lg font-bold text-white dark-text mb-3">
+              Overview
+            </h2>
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-4">
+              The Node Status API provides real-time visibility into the health
+              of BDFD's infrastructure. It exposes per-node metrics (ping, bot
+              count, online/offline status) for both standard and
+              high-performance node pools, plus a rolling history of snapshots
+              for trend analysis.
+            </p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                No auth required
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Updated every 5 minutes
+              </span>
+            </div>
+            <div class="code-block">
+              <pre><span class="cmt">// Base URL for all node status endpoints</span>
+<span class="str">https://api-bdtools.netlify.app/node-status</span></pre>
+            </div>
+          </section>
+
+          <!-- GET /node-status -->
+          <section
+            id="ep-node-status"
+            class="endpoint-section dark-surface hidden"
+          >
+            <div class="flex items-center gap-3 mb-4 flex-wrap">
+              <span class="method-badge get">GET</span>
+              <code
+                class="font-mono text-sm text-gray-200 dark-text flex-1 min-w-0 break-all"
+                >/node-status</code
+              >
+              <button
+                onclick="copyUrl('/node-status')"
+                class="text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold flex-shrink-0 flex items-center gap-1.5"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Copy URL
+              </button>
+            </div>
+
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-4">
+              Returns a full status overview including summary counts and all
+              nodes grouped into standard, high-performance, and offline arrays.
+              This is the primary endpoint for a complete snapshot of the BDFD
+              infrastructure.
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                No auth required
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Updated every 5 minutes
+              </span>
+            </div>
+
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-3"
+            >
+              Responses
+            </h3>
+
+            <div class="response-block">
+              <span class="status-badge success">200 OK</span>
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span>
+  <span class="key">"totalBots"</span><span class="kw">:</span> <span class="num">812</span><span class="kw">,</span>
+  <span class="key">"onlineNodes"</span><span class="kw">:</span> <span class="num">12</span><span class="kw">,</span>
+  <span class="key">"offlineNodes"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+  <span class="key">"standardNodeCount"</span><span class="kw">:</span> <span class="num">13</span><span class="kw">,</span>
+  <span class="key">"hpNodeCount"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+  <span class="key">"updatedAt"</span><span class="kw">:</span> <span class="str">"2026-04-30T12:00:00.000Z"</span><span class="kw">,</span>
+  <span class="key">"nodes"</span><span class="kw">: {</span>
+    <span class="key">"standard"</span><span class="kw">: [</span>
+      <span class="kw">{</span>
+        <span class="key">"nodeId"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+        <span class="key">"bots"</span><span class="kw">:</span> <span class="num">14</span><span class="kw">,</span>
+        <span class="key">"pingMs"</span><span class="kw">:</span> <span class="num">2</span><span class="kw">,</span>
+        <span class="key">"status"</span><span class="kw">:</span> <span class="str">"online"</span>
+      <span class="kw">}</span>
+      <span class="cmt">// ... more nodes</span>
+    <span class="kw">],</span>
+    <span class="key">"highPerformance"</span><span class="kw">: [</span>
+      <span class="kw">{</span>
+        <span class="key">"nodeId"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+        <span class="key">"bots"</span><span class="kw">:</span> <span class="num">2</span><span class="kw">,</span>
+        <span class="key">"pingMs"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+        <span class="key">"status"</span><span class="kw">:</span> <span class="str">"online"</span>
+      <span class="kw">}</span>
+      <span class="cmt">// ... more nodes</span>
+    <span class="kw">],</span>
+    <span class="key">"offline"</span><span class="kw">: [</span>
+      <span class="kw">{</span>
+        <span class="key">"nodeId"</span><span class="kw">:</span> <span class="num">7</span><span class="kw">,</span>
+        <span class="key">"bots"</span><span class="kw">:</span> <span class="num">0</span><span class="kw">,</span>
+        <span class="key">"pingMs"</span><span class="kw">:</span> <span class="num">null</span><span class="kw">,</span>
+        <span class="key">"status"</span><span class="kw">:</span> <span class="str">"offline"</span>
+      <span class="kw">}</span>
+    <span class="kw">]</span>
+  <span class="kw">}</span>
+<span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-server"
+                >500 Internal Server Error</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Internal server error"</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- GET /node-status/summary -->
+          <section id="ep-summary" class="endpoint-section dark-surface hidden">
+            <div class="flex items-center gap-3 mb-4 flex-wrap">
+              <span class="method-badge get">GET</span>
+              <code
+                class="font-mono text-sm text-gray-200 dark-text flex-1 min-w-0 break-all"
+                >/node-status/summary</code
+              >
+              <button
+                onclick="copyUrl('/node-status/summary')"
+                class="text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold flex-shrink-0 flex items-center gap-1.5"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Copy URL
+              </button>
+            </div>
+
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-4">
+              Alias for
+              <code
+                class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                >GET /node-status</code
+              >. Returns the identical full response with summary counts and all
+              node arrays. Useful when you want a semantically explicit URL.
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                No auth required
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Updated every 5 minutes
+              </span>
+            </div>
+
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-3"
+            >
+              Responses
+            </h3>
+
+            <div class="response-block">
+              <span class="status-badge success">200 OK</span>
+              <div class="code-block mt-2">
+                <pre><span class="cmt">// Same shape as GET /node-status</span>
+<span class="kw">{</span>
+  <span class="key">"totalBots"</span><span class="kw">:</span> <span class="num">812</span><span class="kw">,</span>
+  <span class="key">"onlineNodes"</span><span class="kw">:</span> <span class="num">12</span><span class="kw">,</span>
+  <span class="key">"offlineNodes"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+  <span class="key">"standardNodeCount"</span><span class="kw">:</span> <span class="num">13</span><span class="kw">,</span>
+  <span class="key">"hpNodeCount"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+  <span class="key">"updatedAt"</span><span class="kw">:</span> <span class="str">"2026-04-30T12:00:00.000Z"</span><span class="kw">,</span>
+  <span class="key">"nodes"</span><span class="kw">: {</span>
+    <span class="key">"standard"</span><span class="kw">: [</span> <span class="cmt">/* node objects */</span> <span class="kw">],</span>
+    <span class="key">"highPerformance"</span><span class="kw">: [</span> <span class="cmt">/* node objects */</span> <span class="kw">],</span>
+    <span class="key">"offline"</span><span class="kw">: [</span> <span class="cmt">/* node objects */</span> <span class="kw">]</span>
+  <span class="kw">}</span>
+<span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-server"
+                >500 Internal Server Error</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Internal server error"</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- GET /node-status/nodes -->
+          <section id="ep-nodes" class="endpoint-section dark-surface hidden">
+            <div class="flex items-center gap-3 mb-4 flex-wrap">
+              <span class="method-badge get">GET</span>
+              <code
+                class="font-mono text-sm text-gray-200 dark-text flex-1 min-w-0 break-all"
+                >/node-status/nodes</code
+              >
+              <button
+                onclick="copyUrl('/node-status/nodes')"
+                class="text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold flex-shrink-0 flex items-center gap-1.5"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Copy URL
+              </button>
+            </div>
+
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-4">
+              Returns a flat array of all standard nodes sorted by node ID. Use
+              this when you only need the standard node pool without summary
+              metadata or high-performance nodes.
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                No auth required
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Updated every 5 minutes
+              </span>
+            </div>
+
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-3"
+            >
+              Responses
+            </h3>
+
+            <div class="response-block">
+              <span class="status-badge success">200 OK</span>
+              <div class="code-block mt-2">
+                <pre><span class="kw">[</span>
+  <span class="kw">{</span>
+    <span class="key">"nodeId"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+    <span class="key">"bots"</span><span class="kw">:</span> <span class="num">14</span><span class="kw">,</span>
+    <span class="key">"pingMs"</span><span class="kw">:</span> <span class="num">2</span><span class="kw">,</span>
+    <span class="key">"status"</span><span class="kw">:</span> <span class="str">"online"</span>
+  <span class="kw">},</span>
+  <span class="kw">{</span>
+    <span class="key">"nodeId"</span><span class="kw">:</span> <span class="num">2</span><span class="kw">,</span>
+    <span class="key">"bots"</span><span class="kw">:</span> <span class="num">13</span><span class="kw">,</span>
+    <span class="key">"pingMs"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+    <span class="key">"status"</span><span class="kw">:</span> <span class="str">"online"</span>
+  <span class="kw">}</span>
+  <span class="cmt">// ... sorted by nodeId ascending</span>
+<span class="kw">]</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-server"
+                >500 Internal Server Error</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Internal server error"</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- GET /node-status/node/:id -->
+          <section id="ep-node-id" class="endpoint-section dark-surface hidden">
+            <div class="flex items-center gap-3 mb-4 flex-wrap">
+              <span class="method-badge get">GET</span>
+              <code
+                class="font-mono text-sm text-gray-200 dark-text flex-1 min-w-0 break-all"
+                >/node-status/node/:id</code
+              >
+              <button
+                onclick="copyUrl('/node-status/node/:id')"
+                class="text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold flex-shrink-0 flex items-center gap-1.5"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Copy URL
+              </button>
+            </div>
+
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-4">
+              Returns the current status of a single standard node by its
+              numeric ID. Replace
+              <code
+                class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                >:id</code
+              >
+              with the node number, e.g.
+              <code
+                class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                >/node-status/node/5</code
+              >.
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                No auth required
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Updated every 5 minutes
+              </span>
+            </div>
+
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-2"
+            >
+              Path Parameters
+            </h3>
+            <div
+              class="dark-code bg-[#060810] border border-[#1e2130] rounded-xl overflow-hidden mb-5"
+            >
+              <table class="param-table">
+                <thead>
+                  <tr>
+                    <th>Parameter</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>id</td>
+                    <td>
+                      <span class="param-type">integer</span
+                      ><span class="param-required">required</span>
+                    </td>
+                    <td class="text-gray-400 dark-text-3">
+                      The numeric ID of the standard node to retrieve.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-3"
+            >
+              Responses
+            </h3>
+
+            <div class="response-block">
+              <span class="status-badge success">200 OK</span>
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span>
+  <span class="key">"nodeId"</span><span class="kw">:</span> <span class="num">5</span><span class="kw">,</span>
+  <span class="key">"bots"</span><span class="kw">:</span> <span class="num">12</span><span class="kw">,</span>
+  <span class="key">"pingMs"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+  <span class="key">"status"</span><span class="kw">:</span> <span class="str">"online"</span>
+<span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-client">404 Not Found</span>
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Node not found"</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-server"
+                >500 Internal Server Error</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Internal server error"</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- GET /node-status/high-performance -->
+          <section
+            id="ep-high-performance"
+            class="endpoint-section dark-surface hidden"
+          >
+            <div class="flex items-center gap-3 mb-4 flex-wrap">
+              <span class="method-badge get">GET</span>
+              <code
+                class="font-mono text-sm text-gray-200 dark-text flex-1 min-w-0 break-all"
+                >/node-status/high-performance</code
+              >
+              <button
+                onclick="copyUrl('/node-status/high-performance')"
+                class="text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold flex-shrink-0 flex items-center gap-1.5"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Copy URL
+              </button>
+            </div>
+
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-4">
+              Returns a flat array of all high-performance (HP) nodes sorted by
+              node ID. HP nodes typically serve premium bots and have lower ping
+              and higher capacity than standard nodes.
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                No auth required
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Updated every 5 minutes
+              </span>
+            </div>
+
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-3"
+            >
+              Responses
+            </h3>
+
+            <div class="response-block">
+              <span class="status-badge success">200 OK</span>
+              <div class="code-block mt-2">
+                <pre><span class="kw">[</span>
+  <span class="kw">{</span>
+    <span class="key">"nodeId"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+    <span class="key">"bots"</span><span class="kw">:</span> <span class="num">15</span><span class="kw">,</span>
+    <span class="key">"pingMs"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+    <span class="key">"status"</span><span class="kw">:</span> <span class="str">"online"</span>
+  <span class="kw">},</span>
+  <span class="kw">{</span>
+    <span class="key">"nodeId"</span><span class="kw">:</span> <span class="num">2</span><span class="kw">,</span>
+    <span class="key">"bots"</span><span class="kw">:</span> <span class="num">12</span><span class="kw">,</span>
+    <span class="key">"pingMs"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+    <span class="key">"status"</span><span class="kw">:</span> <span class="str">"online"</span>
+  <span class="kw">}</span>
+  <span class="cmt">// ... sorted by nodeId ascending</span>
+<span class="kw">]</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-server"
+                >500 Internal Server Error</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Internal server error"</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- GET /node-status/history -->
+          <section id="ep-history" class="endpoint-section dark-surface hidden">
+            <div class="flex items-center gap-3 mb-4 flex-wrap">
+              <span class="method-badge get">GET</span>
+              <code
+                class="font-mono text-sm text-gray-200 dark-text flex-1 min-w-0 break-all"
+                >/node-status/history</code
+              >
+              <button
+                onclick="copyUrl('/node-status/history')"
+                class="text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold flex-shrink-0 flex items-center gap-1.5"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Copy URL
+              </button>
+            </div>
+
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-4">
+              Returns an array of historical status snapshots in chronological
+              order (oldest first). Each snapshot is recorded every 5 minutes
+              and retained for 7 days. Use the
+              <code
+                class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                >limit</code
+              >
+              query parameter to control how many records are returned. Ideal
+              for building uptime graphs or trend charts.
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                No auth required
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Updated every 5 minutes
+              </span>
+            </div>
+
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-2"
+            >
+              Query Parameters
+            </h3>
+            <div
+              class="dark-code bg-[#060810] border border-[#1e2130] rounded-xl overflow-hidden mb-5"
+            >
+              <table class="param-table">
+                <thead>
+                  <tr>
+                    <th>Parameter</th>
+                    <th>Type</th>
+                    <th>Default</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>limit</td>
+                    <td><span class="param-type">integer</span></td>
+                    <td class="text-gray-400 dark-text-3 font-mono text-sm">
+                      2016
+                    </td>
+                    <td class="text-gray-400 dark-text-3">
+                      Number of snapshots to return. Maximum is
+                      <strong class="text-gray-300">2016</strong> (7 days at
+                      5-min intervals). Use
+                      <code class="font-mono text-[#818cf8]">288</code> for the
+                      last 24 hours.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-3"
+            >
+              Responses
+            </h3>
+
+            <div class="response-block">
+              <span class="status-badge success">200 OK</span>
+              <div class="code-block mt-2">
+                <pre><span class="kw">[</span>
+  <span class="kw">{</span>
+    <span class="key">"totalBots"</span><span class="kw">:</span> <span class="num">818</span><span class="kw">,</span>
+    <span class="key">"onlineNodes"</span><span class="kw">:</span> <span class="num">13</span><span class="kw">,</span>
+    <span class="key">"offlineNodes"</span><span class="kw">:</span> <span class="num">0</span><span class="kw">,</span>
+    <span class="key">"standardNodeCount"</span><span class="kw">:</span> <span class="num">13</span><span class="kw">,</span>
+    <span class="key">"hpNodeCount"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+    <span class="key">"createdAt"</span><span class="kw">:</span> <span class="str">"2026-04-30T11:55:00.000Z"</span>
+  <span class="kw">},</span>
+  <span class="kw">{</span>
+    <span class="key">"totalBots"</span><span class="kw">:</span> <span class="num">812</span><span class="kw">,</span>
+    <span class="key">"onlineNodes"</span><span class="kw">:</span> <span class="num">12</span><span class="kw">,</span>
+    <span class="key">"offlineNodes"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+    <span class="key">"standardNodeCount"</span><span class="kw">:</span> <span class="num">13</span><span class="kw">,</span>
+    <span class="key">"hpNodeCount"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+    <span class="key">"createdAt"</span><span class="kw">:</span> <span class="str">"2026-04-30T12:00:00.000Z"</span>
+  <span class="kw">}</span>
+  <span class="cmt">// ... sorted oldest → newest (chronological)</span>
+<span class="kw">]</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-server"
+                >500 Internal Server Error</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Internal server error"</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- Bottom navigation -->
+          <div
+            class="flex items-center justify-between pt-6 pb-6 border-t border-[#1e2130] mt-8"
+          >
+            <button
+              id="prevBtn"
+              onclick="navigateSection('prev')"
+              class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-[#818cf8] transition-colors font-semibold"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              <span id="prevText">Previous</span>
+            </button>
+            <button
+              id="nextBtn"
+              onclick="navigateSection('next')"
+              class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-[#818cf8] transition-colors font-semibold"
+            >
+              <span id="nextText">Next</span>
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- ── FOOTER ── -->
+    <footer class="border-t border-[#1e2130] bg-[#080a10] mt-auto">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3"
+      >
+        <span class="text-sm text-gray-600"
+          >© 2026 BDTools. All rights reserved.</span
+        >
+        <div class="flex items-center gap-4 text-xs text-gray-600">
+          <a href="/tos" class="hover:text-gray-400 transition-colors"
+            >Terms of Service</a
+          >
+          <a href="/privacy" class="hover:text-gray-400 transition-colors"
+            >Privacy Policy</a
+          >
+          <a href="/contact" class="hover:text-gray-400 transition-colors"
+            >Contact</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <!-- ── TOAST ── -->
+    <div
+      id="toast"
+      class="fixed bottom-6 right-6 z-50 bg-[#5865F2] text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2"
+    >
+      <svg
+        class="w-3.5 h-3.5 flex-shrink-0"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.5"
+          d="M5 13l4 4L19 7"
+        />
+      </svg>
+      <span id="toastMsg">Copied!</span>
+    </div>
+
+    <!-- ── SCRIPTS ── -->
+    <script>
+      window.DOCS_REDIRECT =
+        "https://bdtools.netlify.app/docs/node-status.html";
+    </script>
+    <script src="shared.js"></script>
+    <script>
+      // Page-specific configuration
+      window.PAGE_SECTIONS = [
+        { id: "overview", label: "Overview" },
+        { id: "ep-node-status", label: "GET /node-status" },
+        { id: "ep-summary", label: "GET /node-status/summary" },
+        { id: "ep-nodes", label: "GET /node-status/nodes" },
+        { id: "ep-node-id", label: "GET /node-status/node/:id" },
+        {
+          id: "ep-high-performance",
+          label: "GET /node-status/high-performance",
+        },
+        { id: "ep-history", label: "GET /node-status/history" },
+      ];
+      window.PREV_PAGE = { url: "index.html", label: "Back to Docs" };
+      window.NEXT_PAGE = { url: "guild-list.html", label: "Guild List" };
+    </script>
+    <script src="docs-template-script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Word Games — BDTools API Docs</title>
+    <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Geist", "sans-serif"],
+              mono: ["Geist Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="stylesheet" href="shared.css" />
+  </head>
+
+  <body class="bg-[#080a10] text-gray-100 min-h-screen flex flex-col">
+    <!-- ── LOGIN GATE ── -->
+    <div id="loginOverlay">
+      <div class="fu text-center px-6 w-full max-w-sm">
+        <img
+          src="/images/bdfd_logo.png"
+          alt="BDTools"
+          class="w-16 h-16 rounded-2xl mx-auto mb-6 shadow-2xl"
+          onerror="this.style.display = 'none'"
+        />
+        <h1
+          class="dark-text text-2xl font-black text-white mb-2 tracking-tight"
+        >
+          BDTools API Docs
+        </h1>
+        <p class="text-gray-400 text-sm mb-8">
+          Sign in with Discord to access the full API documentation, your
+          personal API key, and the interactive tester.
+        </p>
+        <button
+          id="loginBtn"
+          onclick="loginDiscord()"
+          class="inline-flex items-center gap-3 px-7 py-3 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold rounded-xl transition-all shadow-lg text-base w-full justify-center"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 127.14 96.36"
+            fill="currentColor"
+          >
+            <path
+              d="M107.7 8.07A105.15 105.15 0 0081.47 0a72.06 72.06 0 00-3.36 6.83 97.68 97.68 0 00-29.11 0A72.37 72.37 0 0045.64 0a105.89 105.89 0 00-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0032.17 16.15 77.7 77.7 0 006.89-11.11 68.42 68.42 0 01-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0064.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 01-10.87 5.19 77 77 0 006.89 11.1 105.25 105.25 0 0032.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15zM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69z"
+            />
+          </svg>
+          Sign in with Discord
+        </button>
+        <p
+          id="loginStatus"
+          class="text-xs text-gray-600 mt-4 min-h-[1.25rem]"
+        ></p>
+      </div>
+    </div>
+
+    <!-- ── NAV ── -->
+    <nav
+      class="sticky top-0 z-50 border-b"
+      style="border-color: #1e2130; background: #080a10"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4"
+      >
+        <a href="/" class="flex items-center gap-2.5 group flex-shrink-0">
+          <img
+            src="/images/bdfd_logo.png"
+            alt="BDTools"
+            class="w-7 h-7 rounded-lg"
+            onerror="this.style.display = 'none'"
+          />
+          <span class="font-bold tracking-tight t1">BDTools</span>
+        </a>
+        <div id="userInfo" class="hidden items-center gap-2 min-w-0">
+          <img
+            id="userAvatar"
+            src=""
+            alt=""
+            class="w-7 h-7 rounded-full flex-shrink-0"
+          />
+          <span
+            id="userName"
+            class="font-semibold text-sm hidden sm:block truncate"
+          ></span>
+          <button
+            onclick="openLogoutModal()"
+            class="text-xs text-gray-500 hover:text-red-400 transition-colors ml-1 flex-shrink-0"
+          >
+            Logout
+          </button>
+          <span
+            id="themeLabel"
+            class="text-xs text-gray-500 hidden sm:block select-none"
+            >Dark Mode</span
+          >
+          <div id="themeToggle" class="tog-track on" onclick="toggleTheme()">
+            <div class="tog-thumb"></div>
+          </div>
+          <button
+            class="hamburger-btn"
+            id="hamburgerBtn"
+            onclick="toggleMobileDrawer()"
+            aria-label="Toggle menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ── LOGOUT MODAL ── -->
+    <div class="overlay hidden" id="logoutModal">
+      <div class="modal">
+        <button class="modal-close" onclick="closeLogoutModal()">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Confirm Logout</h3>
+        <p>
+          Are you sure you want to log out? This will clear your session and API
+          key.
+        </p>
+        <div class="modal-buttons">
+          <button class="btn-ghost" onclick="closeLogoutModal()">Cancel</button>
+          <button class="btn-danger" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MOBILE DRAWER ── -->
+    <div
+      class="mobile-drawer-backdrop"
+      id="mobileDrawerBackdrop"
+      onclick="closeMobileDrawer()"
+    ></div>
+
+    <div class="mobile-drawer" id="mobileDrawer">
+      <div class="mobile-drawer-header">
+        <span class="mobile-drawer-title">Word Games</span>
+        <button
+          class="mobile-drawer-close"
+          onclick="closeMobileDrawer()"
+          aria-label="Close menu"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <nav class="space-y-0.5">
+        <a class="sidebar-link active" onclick="showSection('overview')"
+          >Overview</a
+        >
+        <a class="sidebar-link" onclick="showSection('ep-random-word')"
+          >GET /random-word</a
+        >
+        <a class="sidebar-link" onclick="showSection('ep-validate-word')"
+          >GET /validate-word</a
+        >
+      </nav>
+    </div>
+
+    <!-- ── PAGE HEADER ── -->
+    <div class="lowerNav border-b border-[#1e2130]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 fu">
+        <!-- Breadcrumb -->
+        <nav
+          class="flex items-center gap-2 text-xs text-gray-500 mb-4 font-mono"
+        >
+          <a href="index.html" class="hover:text-[#818cf8] transition-colors"
+            >Docs</a
+          >
+          <span class="text-gray-700">/</span>
+          <span class="text-gray-300">Word Games</span>
+        </nav>
+        <div class="flex items-center gap-3 mb-2">
+          <div
+            class="w-9 h-9 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center flex-shrink-0"
+          >
+            <svg
+              class="w-4.5 h-4.5 text-yellow-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <h1
+            class="text-2xl sm:text-3xl font-black text-white dark-text tracking-tight"
+          >
+            Word Games
+          </h1>
+        </div>
+        <p class="text-gray-400 dark-text-2 text-sm max-w-xl leading-relaxed">
+          Wordle word generation and validation for Discord bots. Generate
+          random 5-letter words and validate player guesses.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── MAIN 3-COLUMN LAYOUT ── -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <div class="docs-layout">
+        <!-- ── LEFT SIDEBAR ── -->
+        <aside class="left-sidebar">
+          <p
+            class="text-[10px] font-mono text-gray-600 uppercase tracking-widest mb-2 px-3"
+          >
+            Word Games
+          </p>
+          <nav class="space-y-0.5" id="leftNav">
+            <a class="sidebar-link active" onclick="showSection('overview')"
+              >Overview</a
+            >
+            <a class="sidebar-link" onclick="showSection('ep-random-word')"
+              >GET /random-word</a
+            >
+            <a class="sidebar-link" onclick="showSection('ep-validate-word')"
+              >GET /validate-word</a
+            >
+          </nav>
+        </aside>
+
+        <!-- ── CONTENT ── -->
+        <main class="min-w-0">
+          <!-- Overview -->
+          <section id="overview" class="endpoint-section dark-surface fu">
+            <h2 class="text-lg font-bold text-white dark-text mb-3">
+              Overview
+            </h2>
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-4">
+              The Word Games API provides endpoints for building Wordle-style
+              games in Discord bots. Generate random 5-letter words from a
+              curated wordlist and validate player guesses against both the
+              wordlist and an external dictionary. Both endpoints are public
+              and require no authentication.
+            </p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                No auth required
+              </span>
+            </div>
+            <div class="code-block">
+              <pre><span class="cmt">// Base URL for word game endpoints</span>
+<span class="str">https://api-bdtools.netlify.app</span></pre>
+            </div>
+          </section>
+
+          <!-- GET /random-word -->
+          <section
+            id="ep-random-word"
+            class="endpoint-section dark-surface hidden"
+          >
+            <div class="flex items-center gap-3 mb-4 flex-wrap">
+              <span class="method-badge get">GET</span>
+              <code
+                class="font-mono text-sm text-gray-200 dark-text flex-1 min-w-0 break-all"
+                >/random-word</code
+              >
+              <button
+                onclick="copyUrl('/random-word')"
+                class="text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold flex-shrink-0 flex items-center gap-1.5"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Copy URL
+              </button>
+            </div>
+
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-4">
+              Returns a random 5-letter word from a curated wordlist. Perfect
+              for starting a new Wordle game. The wordlist contains common
+              English words suitable for word-guessing games.
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                No auth required
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Rate limit: 30 requests per 10 seconds
+              </span>
+            </div>
+
+            <!-- Responses -->
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-3"
+            >
+              Responses
+            </h3>
+
+            <div class="response-block">
+              <span class="status-badge success">200 OK</span>
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"word"</span><span class="kw">:</span> <span class="str">"apple"</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-server"
+                >500 Internal Server Error — Empty Wordlist</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Word list is empty"</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-server"
+                >500 Internal Server Error — File Read</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span>
+  <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Failed to load word list"</span><span class="kw">,</span>
+  <span class="key">"details"</span><span class="kw">:</span> <span class="str">"ENOENT: no such file or directory"</span>
+<span class="kw">}</span></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- GET /validate-word -->
+          <section
+            id="ep-validate-word"
+            class="endpoint-section dark-surface hidden"
+          >
+            <div class="flex items-center gap-3 mb-4 flex-wrap">
+              <span class="method-badge get">GET</span>
+              <code
+                class="font-mono text-sm text-gray-200 dark-text flex-1 min-w-0 break-all"
+                >/validate-word</code
+              >
+              <button
+                onclick="copyUrl('/validate-word')"
+                class="text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold flex-shrink-0 flex items-center gap-1.5"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Copy URL
+              </button>
+            </div>
+
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-4">
+              Validates whether a 5-letter word is a valid English word. First
+              checks the curated wordlist, then falls back to an external
+              dictionary. Returns the validation result and the source of
+              validation (wordlist or dictionary).
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                No auth required
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Rate limit: 60 requests per 10 seconds
+              </span>
+            </div>
+
+            <!-- Query params -->
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-2"
+            >
+              Query Parameters
+            </h3>
+            <div
+              class="dark-code bg-[#060810] border border-[#1e2130] rounded-xl overflow-hidden mb-4"
+            >
+              <table class="param-table">
+                <thead>
+                  <tr>
+                    <th>Parameter</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>word</td>
+                    <td>
+                      <span class="param-type">string</span
+                      ><span class="param-required">required</span>
+                    </td>
+                    <td class="text-gray-400 dark-text-3">
+                      The 5-letter word to validate. Must contain only letters
+                      (a-z, A-Z).
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div
+              class="dark-surface bg-[#0a0c14] border border-[#2e3350] rounded-xl p-4 mb-5"
+            >
+              <div class="flex items-start gap-3">
+                <div
+                  class="w-5 h-5 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5"
+                >
+                  <svg
+                    class="w-3 h-3 text-blue-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <div class="text-xs text-gray-400 dark-text-3 leading-relaxed">
+                  <strong class="text-gray-300">Example:</strong>
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >/validate-word?word=apple</code
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Responses -->
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-3"
+            >
+              Responses
+            </h3>
+
+            <div class="response-block">
+              <span class="status-badge success"
+                >200 OK — Valid (Wordlist)</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span>
+  <span class="key">"valid"</span><span class="kw">:</span> <span class="kw">true</span><span class="kw">,</span>
+  <span class="key">"word"</span><span class="kw">:</span> <span class="str">"apple"</span><span class="kw">,</span>
+  <span class="key">"source"</span><span class="kw">:</span> <span class="str">"wordlist"</span>
+<span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge success"
+                >200 OK — Valid (Dictionary)</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span>
+  <span class="key">"valid"</span><span class="kw">:</span> <span class="kw">true</span><span class="kw">,</span>
+  <span class="key">"word"</span><span class="kw">:</span> <span class="str">"zebra"</span><span class="kw">,</span>
+  <span class="key">"source"</span><span class="kw">:</span> <span class="str">"dictionary"</span>
+<span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge success">200 OK — Invalid</span>
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span>
+  <span class="key">"valid"</span><span class="kw">:</span> <span class="kw">false</span><span class="kw">,</span>
+  <span class="key">"word"</span><span class="kw">:</span> <span class="str">"xyzqw"</span>
+<span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-client"
+                >400 Bad Request — Missing Parameter</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Missing ?word= parameter"</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-client"
+                >400 Bad Request — Wrong Length</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Word must be exactly 5 letters"</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-server"
+                >500 Internal Server Error</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span>
+  <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Failed to reach dictionary"</span><span class="kw">,</span>
+  <span class="key">"details"</span><span class="kw">:</span> <span class="str">"Network timeout"</span>
+<span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-server">502 Bad Gateway</span>
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span>
+  <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Dictionary error"</span><span class="kw">,</span>
+  <span class="key">"status"</span><span class="kw">:</span> <span class="num">503</span>
+<span class="kw">}</span></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- Bottom navigation -->
+          <div
+            class="flex items-center justify-between pt-6 pb-6 border-t border-[#1e2130] mt-8"
+          >
+            <button
+              id="prevBtn"
+              onclick="navigateSection('prev')"
+              class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-[#818cf8] transition-colors font-semibold"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              <span id="prevText">Previous</span>
+            </button>
+            <button
+              id="nextBtn"
+              onclick="navigateSection('next')"
+              class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-[#818cf8] transition-colors font-semibold"
+            >
+              <span id="nextText">Next</span>
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- ── FOOTER ── -->
+    <footer class="border-t border-[#1e2130] bg-[#080a10] mt-auto">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3"
+      >
+        <span class="text-sm text-gray-600"
+          >© 2026 BDTools. All rights reserved.</span
+        >
+        <div class="flex items-center gap-4 text-xs text-gray-600">
+          <a href="/tos" class="hover:text-gray-400 transition-colors"
+            >Terms of Service</a
+          >
+          <a href="/privacy" class="hover:text-gray-400 transition-colors"
+            >Privacy Policy</a
+          >
+          <a href="/contact" class="hover:text-gray-400 transition-colors"
+            >Contact</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <!-- ── TOAST ── -->
+    <div
+      id="toast"
+      class="fixed bottom-6 right-6 z-50 bg-[#5865F2] text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2"
+    >
+      <svg
+        class="w-3.5 h-3.5 flex-shrink-0"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.5"
+          d="M5 13l4 4L19 7"
+        />
+      </svg>
+      <span id="toastMsg">Copied!</span>
+    </div>
+
+    <!-- ── SCRIPTS ── -->
+    <script>
+      window.DOCS_REDIRECT = "https://bdtools.netlify.app/docs/games.html";
+    </script>
+    <script src="shared.js"></script>
+    <script>
+      // Page-specific configuration
+      window.PAGE_SECTIONS = [
+        { id: "overview", label: "Overview" },
+        { id: "ep-random-word", label: "GET /random-word" },
+        { id: "ep-validate-word", label: "GET /validate-word" },
+      ];
+      window.PREV_PAGE = { url: "bdfd.html", label: "BDFD Functions" };
+      window.NEXT_PAGE = { url: "index.html", label: "Back to Docs" };
+    </script>
+    <script src="docs-template-script.js"></script>
+  </body>
+</html>

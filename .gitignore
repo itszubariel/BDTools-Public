@@ -1,9 +1,12 @@
 /node_modules
-.env
 .vscode/
-API Docs/
+Test/
+images/
+archived/
+
+.env
 bdtools.txt
 TODO.md
 .DS_Store
-Test/
-images/
+
+Tools/Dropped/
