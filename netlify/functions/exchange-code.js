@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const CLIENT_ID = "1395739162635800789";
-const REDIRECT_URI = "https://bdtools.netlify.app/api";
+const REDIRECT_URI = "https://bdtools.netlify.app/docs";
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const JWT_SECRET = process.env.JWT_SECRET;
 
