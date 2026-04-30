@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Guild List — BDTools API Docs</title>
+    <title>Guild List | Docs</title>
     <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -1071,15 +1071,16 @@
 
       // Copy BDFD code function
       function copyBdfdCode() {
-        const codeElement = document.getElementById('bdfdCode');
+        const codeElement = document.getElementById("bdfdCode");
         if (!codeElement) {
-          showToast('Code not found', 'red');
+          showToast("Code not found", "red");
           return;
         }
         const codeText = codeElement.textContent;
-        navigator.clipboard.writeText(codeText)
-          .then(() => showToast('BDFD code copied!'))
-          .catch(() => showToast('Failed to copy', 'red'));
+        navigator.clipboard
+          .writeText(codeText)
+          .then(() => showToast("BDFD code copied!"))
+          .catch(() => showToast("Failed to copy", "red"));
       }
     </script>
     <script src="docs-template-script.js"></script>

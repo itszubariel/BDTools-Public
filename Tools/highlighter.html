@@ -1169,7 +1169,9 @@
 
       async function loadFunctions() {
         try {
-          const res = await fetch("/.netlify/functions/bdfd-functions");
+          const res = await fetch(
+            "https://api-bdtools.netlify.app/bdfd-functions",
+          );
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data = await res.json();
           allFns = data

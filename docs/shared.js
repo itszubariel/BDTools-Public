@@ -247,7 +247,6 @@ function initScrollSpy() {
   }
 })();
 
-
 /* ══════════════════════════════════════════════════════════════════════════════
    DOCS PAGE FUNCTIONALITY - Section Switching & Mobile Drawer
    ══════════════════════════════════════════════════════════════════════════════ */
@@ -255,62 +254,65 @@ function initScrollSpy() {
 /* ── Section Switching (One at a Time) ── */
 function showSection(sectionId) {
   // Hide all sections
-  document.querySelectorAll('.endpoint-section').forEach(section => {
-    section.classList.add('hidden');
+  document.querySelectorAll(".endpoint-section").forEach((section) => {
+    section.classList.add("hidden");
   });
-  
+
   // Show the selected section
   const targetSection = document.getElementById(sectionId);
   if (targetSection) {
-    targetSection.classList.remove('hidden');
+    targetSection.classList.remove("hidden");
   }
-  
+
   // Update active state in sidebar
   updateSidebarActive(sectionId);
-  
+
   // Close mobile drawer if open
   closeMobileDrawer();
-  
+
   // Scroll to top after DOM has reflowed (50ms delay)
   setTimeout(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, 50);
 }
 
 function updateSidebarActive(sectionId) {
   // Update left sidebar
-  document.querySelectorAll('.left-sidebar .sidebar-link, .mobile-drawer .sidebar-link').forEach(link => {
-    const onclick = link.getAttribute('onclick');
-    if (onclick && onclick.includes(`'${sectionId}'`)) {
-      link.classList.add('active');
-    } else {
-      link.classList.remove('active');
-    }
-  });
+  document
+    .querySelectorAll(
+      ".left-sidebar .sidebar-link, .mobile-drawer .sidebar-link",
+    )
+    .forEach((link) => {
+      const onclick = link.getAttribute("onclick");
+      if (onclick && onclick.includes(`'${sectionId}'`)) {
+        link.classList.add("active");
+      } else {
+        link.classList.remove("active");
+      }
+    });
 }
 
 /* ── Mobile Drawer ── */
 function toggleMobileDrawer() {
-  const backdrop = document.getElementById('mobileDrawerBackdrop');
-  const drawer = document.getElementById('mobileDrawer');
-  const btn = document.getElementById('hamburgerBtn');
-  
+  const backdrop = document.getElementById("mobileDrawerBackdrop");
+  const drawer = document.getElementById("mobileDrawer");
+  const btn = document.getElementById("hamburgerBtn");
+
   if (backdrop && drawer && btn) {
-    backdrop.classList.toggle('open');
-    drawer.classList.toggle('open');
-    btn.classList.toggle('open');
+    backdrop.classList.toggle("open");
+    drawer.classList.toggle("open");
+    btn.classList.toggle("open");
   }
 }
 
 function closeMobileDrawer() {
-  const backdrop = document.getElementById('mobileDrawerBackdrop');
-  const drawer = document.getElementById('mobileDrawer');
-  const btn = document.getElementById('hamburgerBtn');
-  
+  const backdrop = document.getElementById("mobileDrawerBackdrop");
+  const drawer = document.getElementById("mobileDrawer");
+  const btn = document.getElementById("hamburgerBtn");
+
   if (backdrop && drawer && btn) {
-    backdrop.classList.remove('open');
-    drawer.classList.remove('open');
-    btn.classList.remove('open');
+    backdrop.classList.remove("open");
+    drawer.classList.remove("open");
+    btn.classList.remove("open");
   }
 }
-
