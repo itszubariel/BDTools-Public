@@ -2,7 +2,7 @@
 
 > Browser-based utilities for the [Bot Designer for Discord](https://botdesignerdiscord.com) community: no installs, no accounts required for most tools.
 
-**[bdtools.netlify.app](https://bdtools.netlify.app)** · [Report a Bug](https://bdtools.netlify.app/contact) · [Request a Feature](https://bdtools.netlify.app/contact)
+**[bdtools.xyz](https://bdtools.xyz)** · [Report a Bug](https://bdtools.xyz/contact) · [Request a Feature](https://bdtools.xyz/contact)
 
 ---
 
@@ -10,15 +10,15 @@
 
 | Tool | Description |
 |------|-------------|
-| [Embed Builder](https://bdtools.netlify.app/embed-builder) | Visually build Discord embeds with buttons, select menus, and modals. Outputs ready-to-use embed code. |
-| [Send Embed Builder](https://bdtools.netlify.app/send-embed-builder) | Build `$sendEmbedMessage[]` blocks with a live preview. |
-| [CompV2 Builder](https://bdtools.netlify.app/container-builder) | Build Discord Component V2 layouts visually and generate your BDFD code. |
-| [Code Highlighter](https://bdtools.netlify.app/highlighter) | Custom syntax highlighting for BDFD scripts. Supports 300+ functions with per-function color and style controls. |
-| [Code Indenter](https://bdtools.netlify.app/indenter) | Auto-format and indent messy BDFD scripts for readability. |
-| [Character Escaper](https://bdtools.netlify.app/escaper) | Escape BDFD special characters: `$`, `;`, `\`, `]`. |
-| [Permission Calculator](https://bdtools.netlify.app/permission-calc) | Calculate Discord permission bitfields for bot invites. |
-| [Bot Guild List](https://bdtools.netlify.app/bot-guild-list) | API-authenticated dashboard to browse your bot's servers with member counts, icons, and invite links. |
-| [Bot Guild List](https://bdtools.netlify.app/bot-guild-list) | already there ✓ |
+| [Embed Builder](https://bdtools.xyz/embed-builder) | Visually build Discord embeds with buttons, select menus, and modals. Outputs ready-to-use embed code. |
+| [Send Embed Builder](https://bdtools.xyz/send-embed-builder) | Build `$sendEmbedMessage[]` blocks with a live preview. |
+| [CompV2 Builder](https://bdtools.xyz/container-builder) | Build Discord Component V2 layouts visually and generate your BDFD code. |
+| [Code Highlighter](https://bdtools.xyz/highlighter) | Custom syntax highlighting for BDFD scripts. Supports 300+ functions with per-function color and style controls. |
+| [Code Indenter](https://bdtools.xyz/indenter) | Auto-format and indent messy BDFD scripts for readability. |
+| [Character Escaper](https://bdtools.xyz/escaper) | Escape BDFD special characters: `$`, `;`, `\`, `]`. |
+| [Permission Calculator](https://bdtools.xyz/permission-calc) | Calculate Discord permission bitfields for bot invites. |
+| [Bot Guild List](https://bdtools.xyz/bot-guild-list) | API-authenticated dashboard to browse your bot's servers with member counts, icons, and invite links. |
+| [Bot Guild List](https://bdtools.xyz/bot-guild-list) | already there ✓ |
 
 ---
 
@@ -26,7 +26,7 @@
 
 BDTools exposes a serverless API for bot integrations and BDFD tooling.
 
-**Base URL:** `https://api-bdtools.netlify.app/`
+**Base URL:** `https://api.bdtools.xyz/`
 
 ### Guild List
 
@@ -55,14 +55,14 @@ BDTools exposes a serverless API for bot integrations and BDFD tooling.
 
 Authentication uses JWT-based API keys generated via Discord OAuth. Guild list endpoints require auth. Node status, BDFD, and game endpoints are public.
 
-Full API documentation at [bdtools.netlify.app/docs](https://bdtools.netlify.app/docs).
+Full API documentation at [bdtools.xyz/docs](https://bdtools.xyz/docs).
 
 ```bash
 # Example — fetch node status
-curl https://api-bdtools.netlify.app/node-status
+curl https://api.bdtools.xyz/node-status
 
 # Example — fetch BDFD function list  
-curl https://api-bdtools.netlify.app/bdfd-functions
+curl https://api.bdtools.xyz/bdfd-functions
 ```
 
 ---

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>Guild List | Docs</title>
-    <link rel="icon" href="https://bdtools.netlify.app/images/bdfd_logo.png" />
+    <link rel="icon" href="https://bdtools.xyz/images/bdfd_logo.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap"
@@ -356,7 +356,7 @@
                 <span
                   ><strong class="text-gray-200">GET /get-servers</strong> is
                   only accessible from
-                  <strong class="text-yellow-400">bdtools.netlify.app</strong>
+                  <strong class="text-yellow-400">bdtools.xyz</strong>
                   origin.</span
                 >
               </li>
@@ -374,7 +374,7 @@
 
             <div class="code-block mt-4">
               <pre><span class="cmt">// Base URL for all guild list endpoints</span>
-<span class="str">https://api-bdtools.netlify.app</span></pre>
+<span class="str">https://api.bdtools.xyz</span></pre>
             </div>
           </section>
 
@@ -523,7 +523,7 @@
                 <pre><span class="kw">{</span>
   <span class="key">"message"</span><span class="kw">:</span> <span class="str">"Processing started. This may take anywhere from 15 seconds to 5 minutes depending on the number of servers and Discord's response time."</span><span class="kw">,</span>
   <span class="key">"receivedServers"</span><span class="kw">:</span> <span class="num">42</span><span class="kw">,</span>
-  <span class="key">"info"</span><span class="kw">:</span> <span class="str">"Once processing is complete, you can view the updated guild list at https://bdtools.netlify.app/bot-guild-list"</span>
+  <span class="key">"info"</span><span class="kw">:</span> <span class="str">"Once processing is complete, you can view the updated guild list at https://bdtools.xyz/bot-guild-list"</span>
 <span class="kw">}</span></pre>
               </div>
             </div>
@@ -701,7 +701,7 @@
 <span class="fn">$c</span><span class="kw">[</span><span class="cmt">DO NOT CHANGE ANYTHING FROM THIS POINT ONWARDS</span><span class="kw">]</span>
 <span class="fn">$var</span><span class="kw">[</span><span class="str">i</span><span class="kw">;</span><span class="num">1</span><span class="kw">]</span>
 <span class="fn">$textSplit</span><span class="kw">[</span><span class="fn">$serverNames</span><span class="kw">[</span><span class="fn">$var</span><span class="kw">[</span><span class="str">count</span><span class="kw">];</span><span class="str">%%%</span><span class="kw">];</span><span class="str">%%%</span><span class="kw">]</span>
-<span class="fn">$httpPost</span><span class="kw">[</span><span class="str">https://api-bdtools.netlify.app/submit-server</span><span class="kw">;</span>
+<span class="fn">$httpPost</span><span class="kw">[</span><span class="str">https://api.bdtools.xyz/submit-server</span><span class="kw">;</span>
 <span class="str">Author ID: $authorID</span>
 <span class="fn">$eval</span><span class="kw">[</span><span class="fn">$replaceText</span><span class="kw">[</span><span class="fn">$cropText</span><span class="kw">[</span><span class="fn">$repeatMessage</span><span class="kw">[</span><span class="num">10</span><span class="kw">;</span><span class="fn">$repeatMessage</span><span class="kw">[</span><span class="num">10</span><span class="kw">;</span><span class="fn">$repeatMessage</span><span class="kw">[</span><span class="num">5</span><span class="kw">;</span><span class="str">a</span><span class="kw">]]];</span><span class="fn">$min</span><span class="kw">[</span><span class="fn">$getTextSplitLength</span><span class="kw">;</span><span class="num">250</span><span class="kw">]];</span><span class="str">a</span><span class="kw">;</span><span class="str">Server Name: %{DOL}%splitText[%{DOL}%var[i\]\]</span>
 <span class="str">Server ID: %{DOL}%guildID[%{DOL}%splitText[%{DOL}%var[i\]\]\]</span>
@@ -753,7 +753,7 @@
               restricted to requests originating from
               <code
                 class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
-                >bdtools.netlify.app</code
+                >bdtools.xyz</code
               >
               and returns cached data from Redis. The cache is automatically
               invalidated when you submit a new guild list.
@@ -785,10 +785,10 @@
                     This endpoint is only accessible from the Bot Guild List
                     website at
                     <a
-                      href="https://bdtools.netlify.app/bot-guild-list"
+                      href="https://bdtools.xyz/bot-guild-list"
                       class="text-yellow-200 hover:text-yellow-100 underline font-medium"
                       target="_blank"
-                      >https://bdtools.netlify.app/bot-guild-list</a
+                      >https://bdtools.xyz/bot-guild-list</a
                     >
                     — it cannot be called directly from bots or external apps.
                   </p>
@@ -1056,7 +1056,7 @@
 
     <!-- ── SCRIPTS ── -->
     <script>
-      window.DOCS_REDIRECT = "https://bdtools.netlify.app/docs";
+      window.DOCS_REDIRECT = "https://bdtools.xyz/docs";
     </script>
     <script src="shared.js"></script>
     <script>

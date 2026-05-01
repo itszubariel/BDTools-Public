@@ -1,6 +1,6 @@
 # BDTools API Documentation
 
-Base URL: `https://api-bdtools.netlify.app`
+Base URL: `https://api.bdtools.xyz`
 
 ---
 
@@ -261,7 +261,7 @@ Authorization: Bearer BDTools-YOUR_API_KEY_HERE
 
 ### Rate Limits & Restrictions
 - **POST /submit-server** is rate limited to **once per 5 hours** per API key.
-- **GET /get-servers** is only accessible from **bdtools.netlify.app** origin (specifically the Bot Guild List page at https://bdtools.netlify.app/bot-guild-list).
+- **GET /get-servers** is only accessible from **bdtools.xyz** origin (specifically the Bot Guild List page at https://bdtools.xyz/bot-guild-list).
 - Retrieved data is **cached in Redis** and invalidates on new submission.
 
 ---
@@ -296,7 +296,7 @@ Owner ID: 999888777666555444
 {
   "message": "Processing started. This may take anywhere from 15 seconds to 5 minutes depending on the number of servers and Discord's response time.",
   "receivedServers": 42,
-  "info": "Once processing is complete, you can view the updated guild list at https://bdtools.netlify.app/bot-guild-list"
+  "info": "Once processing is complete, you can view the updated guild list at https://bdtools.xyz/bot-guild-list"
 }
 ```
 
@@ -407,7 +407,7 @@ $httpAddHeader[Authorization;Bearer YOUR_API_KEY_HERE]
 $c[DO NOT CHANGE ANYTHING FROM THIS POINT ONWARDS]
 $var[i;1]
 $textSplit[$serverNames[$var[count];%%%];%%%]
-$httpPost[https://api-bdtools.netlify.app/submit-server;
+$httpPost[https://api.bdtools.xyz/submit-server;
 Author ID: $authorID
 $eval[$replaceText[$cropText[$repeatMessage[10;$repeatMessage[10;$repeatMessage[5;a]]];$min[$getTextSplitLength;250]];a;Server Name: %{DOL}%splitText[%{DOL}%var[i\]\]
 Server ID: %{DOL}%guildID[%{DOL}%splitText[%{DOL}%var[i\]\]\]
@@ -423,11 +423,11 @@ $httpResult
 
 ### GET /get-servers
 
-Retrieve the stored guild list for your bot. This endpoint is restricted to requests originating from `bdtools.netlify.app` (specifically the Bot Guild List page at https://bdtools.netlify.app/bot-guild-list) and returns cached data from Redis. The cache is automatically invalidated when you submit a new guild list.
+Retrieve the stored guild list for your bot. This endpoint is restricted to requests originating from `bdtools.xyz` (specifically the Bot Guild List page at https://bdtools.xyz/bot-guild-list) and returns cached data from Redis. The cache is automatically invalidated when you submit a new guild list.
 
 **Auth Required:** Yes  
 **Cached:** Redis (invalidated on new submission)  
-**Origin Restriction:** Only accessible from https://bdtools.netlify.app/bot-guild-list
+**Origin Restriction:** Only accessible from https://bdtools.xyz/bot-guild-list
 
 **Query Parameters:** None
 
@@ -692,5 +692,5 @@ Guild List endpoints require auth. Node Status, BDFD Functions, and Word Games e
 - Other endpoints: No caching
 
 ### Origin Restrictions
-- `/get-servers`: Only accessible from https://bdtools.netlify.app/bot-guild-list
+- `/get-servers`: Only accessible from https://bdtools.xyz/bot-guild-list
 - Other endpoints: No origin restrictions

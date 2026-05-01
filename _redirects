@@ -14,3 +14,5 @@
 /docs/games                   /docs/games.html                        200
 /docs                         /docs/index.html                        200
 /docs/*                       /docs/:splat                            200
+
+https://bdtools.netlify.app/* https://bdtools.xyz/:splat              301!

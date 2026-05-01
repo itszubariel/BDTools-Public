@@ -6,7 +6,7 @@ let NEXT_PAGE = null;
 
 /* ── Copy URL helper ── */
 function copyUrl(path) {
-  const base = "https://api-bdtools.netlify.app";
+  const base = "https://api.bdtools.xyz";
   navigator.clipboard
     .writeText(base + path)
     .then(() => showToast("URL copied!"));
