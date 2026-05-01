@@ -40,29 +40,42 @@ BDTools exposes a serverless API for bot integrations and BDFD tooling.
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/node-status` | `GET` | Full BDFD infrastructure snapshot, all nodes, bot counts, ping, status |
+| `/node-status/summary` | `GET` | Alias for `/node-status` with explicit naming |
 | `/node-status/nodes` | `GET` | All standard nodes only |
 | `/node-status/node/:id` | `GET` | Single standard node by ID |
 | `/node-status/high-performance` | `GET` | All high-performance nodes |
-| `/node-status/history` | `GET` | Time-series snapshots for the last 7 days (5-min intervals) |
+| `/node-status/offline` | `GET` | All currently offline nodes (standard + HP) |
+| `/node-status/history` | `GET` | Time-series snapshots for the last 7 days. Supports `?limit=24h` or `?graph=true` for PNG charts |
+| `/images/:id.png` | `GET` | Dynamically generated PNG charts for node status history |
 
-### BDFD & Games
+### BDFD & Other Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/bdfd-functions` | `GET` | Proxy for the BDFD public function list. Cached for 1 hour. |
 | `/random-word` | `GET` | Random 5-letter word for Wordle-style games. Rate limited: 30 req/10s. |
 | `/validate-word` | `GET` | Validate a 5-letter word against wordlist + dictionary. Rate limited: 60 req/10s. |
+| `/random-pokemon` | `GET` | Random Pokemon from all generations (1-9). Supports `?gen=`, `?name=`, and `?image=true`. Rate limited: 30 req/10s. |
 
-Authentication uses JWT-based API keys generated via Discord OAuth. Guild list endpoints require auth. Node status, BDFD, and game endpoints are public.
+Authentication uses JWT-based API keys generated via Discord OAuth. Guild list endpoints require auth. Node status, BDFD, and other utility endpoints are public.
 
 Full API documentation at [bdtools.xyz/docs](https://bdtools.xyz/docs).
 
 ```bash
 # Example — fetch node status
-curl https://api.bdtools.xyz/node-status
+$httpGet[https://api.bdtools.xyz/node-status]
+
+# Example — fetch offline nodes
+$httpGet[https://api.bdtools.xyz/node-status/offline]
+
+# Example — fetch 24h history with graph
+$httpGet[https://api.bdtools.xyz/node-status/history?limit=24h&graph=true]
 
 # Example — fetch BDFD function list  
-curl https://api.bdtools.xyz/bdfd-functions
+$httpGet[https://api.bdtools.xyz/bdfd-functions]
+
+# Example — fetch random Pokemon from Gen 1
+$httpGet[https://api.bdtools.xyz/random-pokemon?gen=1]
 ```
 
 ---
