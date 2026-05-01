@@ -492,6 +492,26 @@
       .foot-links a:hover {
         color: var(--text2);
       }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .scroll-fade {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      .scroll-fade.visible {
+        animation: fadeInUp 0.6s ease forwards;
+      }
     </style>
   </head>
 
@@ -618,7 +638,7 @@
     <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <!-- LEFT: permission groups -->
-        <div class="xl:col-span-2 space-y-4 fu">
+        <div class="xl:col-span-2 space-y-4 fu scroll-fade">
           <!-- Toolbar -->
           <div class="flex flex-wrap items-center gap-2">
             <button
@@ -1297,6 +1317,27 @@
 
       buildSections();
       recalc();
+
+      // Scroll fade-in observer
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: "0px 0px -50px 0px",
+        },
+      );
+
+      window.addEventListener("load", () => {
+        const fadeElements = document.querySelectorAll(".scroll-fade");
+        fadeElements.forEach((el) => observer.observe(el));
+      });
     </script>
   </body>
 </html>

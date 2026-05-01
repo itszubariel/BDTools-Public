@@ -628,6 +628,26 @@
         animation: fadeUp 0.26s ease both;
       }
 
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .scroll-fade {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      .scroll-fade.visible {
+        animation: fadeInUp 0.6s ease forwards;
+      }
+
       main {
         flex: 1;
         max-width: 1280px;
@@ -782,6 +802,7 @@
 
     <main>
       <div
+        class="scroll-fade"
         style="
           background: var(--bg2);
           border: 1px solid var(--border);
@@ -1111,13 +1132,10 @@
         show("loadingState", "flex");
 
         try {
-          const res = await fetch(
-            "https://api.bdtools.xyz/get-servers",
-            {
-              method: "GET",
-              headers: { Authorization: `Bearer ${key}` },
-            },
-          );
+          const res = await fetch("https://api.bdtools.xyz/get-servers", {
+            method: "GET",
+            headers: { Authorization: `Bearer ${key}` },
+          });
 
           if (res.status === 401 || res.status === 403) {
             toast("Invalid API key", "e");
@@ -1300,6 +1318,27 @@
       buildSkeletons();
       const savedKey = localStorage.getItem("bdtools_apikey");
       if (savedKey) document.getElementById("apiKeyInput").value = savedKey;
+
+      // Scroll fade-in observer
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: "0px 0px -50px 0px",
+        },
+      );
+
+      window.addEventListener("load", () => {
+        const fadeElements = document.querySelectorAll(".scroll-fade");
+        fadeElements.forEach((el) => observer.observe(el));
+      });
     </script>
   </body>
 </html>

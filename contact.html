@@ -152,6 +152,27 @@
         animation: fadeUp 0.3s ease both;
       }
 
+      /* Scroll fade-in animation */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .scroll-fade {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      .scroll-fade.visible {
+        animation: fadeInUp 0.6s ease forwards;
+      }
+
       /* toast */
       #toasts {
         position: fixed;
@@ -282,7 +303,7 @@
 
     <main class="flex-1 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
       <div
-        class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 sm:p-8 fu"
+        class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 sm:p-8 scroll-fade"
       >
         <div id="formWrap" class="space-y-5">
           <div>
@@ -539,6 +560,26 @@
         document.getElementById("formWrap").classList.remove("hidden");
         document.getElementById("successMsg").classList.add("hidden");
       }
+
+      /* ── Scroll fade-in observer ── */
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      window.addEventListener("load", () => {
+        const fadeElements = document.querySelectorAll(".scroll-fade");
+        fadeElements.forEach((el) => observer.observe(el));
+      });
     </script>
   </body>
 </html>

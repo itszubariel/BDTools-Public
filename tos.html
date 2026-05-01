@@ -3,12 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>BDTools | HQ</title>
+    <title>Terms & Privacy</title>
     <link rel="icon" href="https://bdtools.xyz/images/bdfd_logo.png" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <script>
@@ -20,146 +19,15 @@
               sans: ["Geist", "sans-serif"],
               mono: ["Geist Mono", "monospace"],
             },
-            colors: {
-              bd: {
-                bg: "#080a10",
-                card: "#0f1117",
-                border: "#1e2130",
-                accent: "#5865F2",
-                "accent-dim": "#5865f230",
-              },
-            },
           },
         },
       };
     </script>
     <style>
-      /* ── CSS variables ── */
-      html.dark {
-        --bg: #080a10;
-        --bg-alt: #0a0c14;
-        --surface: #0f1117;
-        --surface-2: #1e2130;
-        --border: #1e2130;
-        --border-2: #2e3350;
-        --text-1: #f3f4f6; /* headings / bold */
-        --text-2: #9ca3af; /* body */
-        --text-3: #6b7280; /* muted */
-        --text-4: #4b5563; /* very muted */
-        --nav-bg: rgba(8, 10, 16, 0.9);
-        --tag-bg: #1e2130;
-        --tag-text: #6b7280;
-      }
-
-      html.light {
-        --bg: #f4f5fa;
-        --bg-alt: #ecedf5;
-        --surface: #ffffff;
-        --surface-2: #f0f1f8;
-        --border: #e2e4ef;
-        --border-2: #d0d3e8;
-        --text-1: #0f1117;
-        --text-2: #374151;
-        --text-3: #6b7280;
-        --text-4: #9ca3af;
-        --nav-bg: rgba(244, 245, 250, 0.92);
-        --tag-bg: #ecedf5;
-        --tag-text: #6b7280;
-      }
-
       body {
         font-family: "Geist", sans-serif;
-        background: var(--bg);
-        color: var(--text-1);
-        min-height: 100vh;
-        transition:
-          background 0.25s,
-          color 0.25s;
       }
 
-      html {
-        scroll-behavior: smooth;
-      }
-
-      /* ── Loader ── */
-      #ldr {
-        position: fixed;
-        inset: 0;
-        background: var(--bg);
-        z-index: 999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        gap: 0.875rem;
-        transition: opacity 0.4s;
-      }
-      #ldr.out {
-        opacity: 0;
-        pointer-events: none;
-      }
-      #ldr img {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        animation: ldrb 0.75s ease-in-out infinite alternate;
-      }
-      #ldr p {
-        font-size: 0.8125rem;
-        font-weight: 600;
-        color: var(--text-3);
-      }
-      @keyframes ldrb {
-        to {
-          transform: translateY(-8px);
-        }
-      }
-
-      /* ── Grid bg ── */
-      .grid-bg {
-        background-image:
-          linear-gradient(rgba(88, 101, 242, 0.04) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(88, 101, 242, 0.07) 1px, transparent 1px);
-        background-size: 48px 48px;
-      }
-      html.light .grid-bg {
-        background-image:
-          linear-gradient(rgba(88, 101, 242, 0.06) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(88, 101, 242, 0.09) 1px, transparent 1px);
-      }
-
-      /* ── Nav ── */
-      nav {
-        background: var(--nav-bg) !important;
-        border-color: var(--border) !important;
-        backdrop-filter: blur(20px);
-      }
-
-      /* ── Card hover ── */
-      .tool-card {
-        background: var(--surface) !important;
-        border-color: var(--border) !important;
-        transition:
-          transform 0.2s,
-          box-shadow 0.2s,
-          border-color 0.2s;
-      }
-      .tool-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 40px rgba(88, 101, 242, 0.15);
-        border-color: #5865f2 !important;
-      }
-
-      /* ── Tag pill ── */
-      .tag {
-        font-family: "Geist Mono", monospace;
-        font-size: 0.68rem;
-        background: var(--tag-bg) !important;
-        color: var(--tag-text) !important;
-        border-color: var(--border-2) !important;
-      }
-
-      /* ── Toggle ── */
       .tog-track {
         width: 40px;
         height: 22px;
@@ -170,9 +38,11 @@
         transition: background 0.2s;
         flex-shrink: 0;
       }
+
       .tog-track.on {
         background: #5865f2;
       }
+
       .tog-thumb {
         width: 16px;
         height: 16px;
@@ -183,163 +53,133 @@
         left: 3px;
         transition: transform 0.2s;
       }
+
       .tog-track.on .tog-thumb {
         transform: translateX(18px);
       }
 
-      /* ── Section backgrounds ── */
-      .bg-alt {
-        background: var(--bg-alt) !important;
-      }
-      .bg-main {
-        background: var(--bg) !important;
-      }
-      .bg-surf {
-        background: var(--surface) !important;
+      html.light body {
+        background: #f4f5fa !important;
+        color: #0f1117 !important;
       }
 
-      /* ── Text helpers ── */
-      .t1 {
-        color: var(--text-1) !important;
-      }
-      .t2 {
-        color: var(--text-2) !important;
-      }
-      .t3 {
-        color: var(--text-3) !important;
-      }
-      .t4 {
-        color: var(--text-4) !important;
+      html.light nav {
+        background: rgba(244, 245, 250, 0.92) !important;
+        border-color: #e2e4ef !important;
       }
 
-      /* ── Border helpers ── */
-      .bd {
-        border-color: var(--border) !important;
-      }
-      .bd2 {
-        border-color: var(--border-2) !important;
+      html.light .dark-surface {
+        background: #fff !important;
+        border-color: #e2e4ef !important;
       }
 
-      /* ── Contributor cards ── */
-      .contrib-card {
-        background: var(--surface) !important;
-        border-color: var(--border) !important;
+      html.light .dark-surface-2 {
+        background: #f4f5fa !important;
       }
 
-      /* ── Stats bar ── */
-      .stats-bar {
-        background: var(--bg-alt) !important;
-        border-color: var(--border) !important;
+      html.light .dark-text {
+        color: #0f1117 !important;
       }
 
-      /* ── About section ── */
-      .about-section {
-        background: var(--bg-alt) !important;
-        border-color: var(--border) !important;
+      html.light .dark-text-2 {
+        color: #4b5563 !important;
       }
 
-      /* ── Footer ── */
-      footer {
-        background: var(--bg) !important;
-        border-color: var(--border) !important;
+      html.light .dark-text-3 {
+        color: #6b7280 !important;
       }
 
-      /* ── Hero gradient fade ── */
-      .hero-fade {
-        background: linear-gradient(
-          to bottom,
-          rgba(88, 101, 242, 0.05),
-          transparent,
-          var(--bg)
-        ) !important;
+      html.light .dark-border {
+        border-color: #e2e4ef !important;
       }
 
-      /* ── Animations ── */
+      html.light footer {
+        background: #f4f5fa !important;
+        border-color: #e2e4ef !important;
+      }
+
+      html.light #tabPrivacy.active {
+        background: #5865f2 !important;
+        color: #fff !important;
+        border-color: #5865f2 !important;
+      }
+
+      html.light #tabTos.active {
+        background: #5865f2 !important;
+        color: #fff !important;
+        border-color: #5865f2 !important;
+      }
+
+      html.light .section-card {
+        border-left: 3px solid #5865f2 !important;
+      }
+
+      html.light .lowerNav {
+        background: rgba(244, 245, 250, 0.92) !important;
+        border-color: #e2e4ef !important;
+      }
+
+      .tab-btn {
+        transition:
+          background 0.15s,
+          color 0.15s,
+          border-color 0.15s;
+      }
+
+      .tab-btn.active {
+        background: #5865f2 !important;
+        color: #fff !important;
+        border-color: #5865f2 !important;
+      }
+
+      .section-card {
+        border-left: 3px solid #5865f2 !important;
+      }
+
       @keyframes fadeUp {
         from {
           opacity: 0;
-          transform: translateY(14px);
+          transform: translateY(10px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fu {
+        animation: fadeUp 0.3s ease both;
+      }
+
+      /* Scroll fade-in animation */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
         }
         to {
           opacity: 1;
           transform: translateY(0);
         }
       }
-      .fu {
-        animation: fadeUp 0.35s ease both;
-      }
-      .fu-1 {
-        animation-delay: 0.05s;
-      }
-      .fu-2 {
-        animation-delay: 0.1s;
-      }
-      .fu-3 {
-        animation-delay: 0.15s;
-      }
-      .fu-4 {
-        animation-delay: 0.2s;
-      }
-      .fu-5 {
-        animation-delay: 0.25s;
-      }
-      .fu-6 {
-        animation-delay: 0.3s;
-      }
-      .fu-7 {
-        animation-delay: 0.35s;
-      }
-      .fu-8 {
-        animation-delay: 0.4s;
+
+      .scroll-fade {
+        opacity: 0;
+        transform: translateY(30px);
       }
 
-      @keyframes countUp {
-        from {
-          opacity: 0;
-          transform: scale(0.7);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-      .stat-num {
-        animation: countUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-      }
-
-      @keyframes pulse-accent {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.5;
-        }
-      }
-      .live-dot {
-        animation: pulse-accent 2s ease infinite;
-      }
-
-      /* ── Hero API Docs button ── */
-      .hero-btn-secondary {
-        background: var(--surface-2) !important;
-        color: var(--text-1) !important;
-        border-color: var(--border-2) !important;
-      }
-      .hero-btn-secondary:hover {
-        filter: brightness(1.1);
+      .scroll-fade.visible {
+        animation: fadeInUp 0.6s ease forwards;
       }
     </style>
   </head>
 
-  <body>
-    <div id="ldr">
-      <img src="https://bdtools.xyz/images/bdfd_logo.png" alt="" />
-      <p id="ldrtxt">Loading</p>
-    </div>
-
-    <!-- NAV -->
-    <nav class="sticky top-0 z-50 border-b" style="border-color: var(--border)">
+  <body class="bg-[#080a10] text-gray-100 min-h-screen flex flex-col">
+    <nav
+      class="sticky top-0 z-50 border-b"
+      style="border-color: #1e2130; background: #080a10/90; backdrop-blur: 10px"
+    >
       <div
         class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4"
       >
@@ -352,31 +192,10 @@
           />
           <span class="font-bold tracking-tight t1">BDTools</span>
         </a>
-        <div class="hidden md:flex items-center gap-1">
-          <a
-            href="/api"
-            class="px-3 py-1.5 text-sm t3 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-colors"
-            style="color: var(--text-3)"
-            >API Docs</a
-          >
-          <a
-            href="/contact"
-            class="px-3 py-1.5 text-sm rounded-lg transition-colors"
-            style="color: var(--text-3)"
-            >Contact</a
-          >
-          <a
-            href="https://github.com/itszubariel/BDTools"
-            class="px-3 py-1.5 text-sm rounded-lg transition-colors"
-            style="color: var(--text-3)"
-            >Github</a
-          >
-        </div>
-        <div class="flex items-center gap-3 ml-auto">
+        <div class="flex items-center gap-3">
           <span
             id="themeLabel"
-            class="text-xs hidden sm:block select-none"
-            style="color: var(--text-3)"
+            class="text-xs text-gray-500 hidden sm:block select-none"
             >Dark Mode</span
           >
           <div id="themeToggle" class="tog-track on" onclick="toggleTheme()">
@@ -386,789 +205,357 @@
       </div>
     </nav>
 
-    <!-- HERO -->
-    <section class="relative grid-bg overflow-hidden">
-      <div class="hero-fade absolute inset-0 pointer-events-none"></div>
-      <div
-        class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 text-center fu"
-      >
-        <div
-          class="inline-flex items-center gap-2 bg-[#5865F2]/10 border border-[#5865F2]/25 text-[#818cf8] text-xs font-mono px-3 py-1.5 rounded-full mb-6"
-        >
-          <span
-            class="live-dot w-1.5 h-1.5 rounded-full bg-[#5865F2] inline-block"
-          ></span>
-          Built for the BDFD Community
-        </div>
-        <h1
-          class="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight mb-6 leading-none"
-          style="color: var(--text-1)"
-        >
-          BDTools<span class="text-[#5865F2]">.</span>
-        </h1>
+    <div class="lowerNav border-b border-[#1e2130]">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
         <p
-          class="text-lg max-w-xl mx-auto mb-10 leading-relaxed"
-          style="color: var(--text-2)"
+          class="text-xs font-mono text-[#5865F2] uppercase tracking-widest mb-3"
         >
-          A collection of browser-based utilities for
-          <span class="font-medium" style="color: var(--text-1)"
-            >Bot Designer for Discord</span
-          >
-          — no installs, no bots, just tools.
+          // legal
         </p>
-        <div class="flex flex-wrap justify-center gap-3">
-          <a
-            onclick="
-              document
-                .getElementById('tools')
-                .scrollIntoView({ behavior: 'smooth', block: 'start' })
-            "
-            style="cursor: pointer"
-            class="px-6 py-2.5 bg-[#5865F2] hover:bg-[#4752c4] text-white text-sm font-semibold rounded-xl transition-colors"
+        <h1
+          class="text-3xl font-black text-white tracking-tight dark-text mb-4"
+        >
+          Terms &amp; Privacy
+        </h1>
+        <div class="flex gap-2">
+          <button
+            id="tabTos"
+            onclick="showTab('tos')"
+            class="tab-btn active px-4 py-1.5 text-sm font-semibold rounded-xl bg-[#1e2130] text-gray-300 border border-[#2e3350] dark-surface dark-border"
           >
-            Browse Tools
-          </a>
-          <a
-            href="/api"
-            class="hero-btn-secondary px-6 py-2.5 text-sm font-semibold rounded-xl border transition-colors"
+            Terms of Service
+          </button>
+          <button
+            id="tabPrivacy"
+            onclick="showTab('privacy')"
+            class="tab-btn px-4 py-1.5 text-sm font-semibold rounded-xl bg-[#1e2130] text-gray-300 border border-[#2e3350] dark-surface dark-border"
           >
-            API Docs
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- STATS BAR -->
-    <div class="stats-bar border-y" style="border-color: var(--border)">
-      <div
-        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center"
-      >
-        <div class="stat-num" style="animation-delay: 0.1s">
-          <div class="h-10 flex items-center justify-center">
-            <span class="text-3xl font-black text-[#5865F2]">7</span>
-          </div>
-          <div
-            class="text-xs mt-1 font-mono uppercase tracking-widest"
-            style="color: var(--text-3)"
-          >
-            Tools
-          </div>
-        </div>
-        <div class="stat-num" style="animation-delay: 0.2s">
-          <div class="h-10 flex items-center justify-center">
-            <svg
-              class="w-8 h-8 text-[#5865F2]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-              />
-            </svg>
-          </div>
-          <div
-            class="text-xs mt-1 font-mono uppercase tracking-widest"
-            style="color: var(--text-3)"
-          >
-            Free Forever
-          </div>
-        </div>
-        <div class="stat-num" style="animation-delay: 0.3s">
-          <div class="h-10 flex items-center justify-center">
-            <svg
-              class="w-8 h-8 text-[#5865F2]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-              />
-            </svg>
-          </div>
-          <div
-            class="text-xs mt-1 font-mono uppercase tracking-widest"
-            style="color: var(--text-3)"
-          >
-            Open Source
-          </div>
-        </div>
-        <div class="stat-num" style="animation-delay: 0.4s">
-          <div class="h-10 flex items-center justify-center">
-            <span class="text-3xl font-black text-[#5865F2]">0</span>
-          </div>
-          <div
-            class="text-xs mt-1 font-mono uppercase tracking-widest"
-            style="color: var(--text-3)"
-          >
-            Installs
-          </div>
+            Privacy Policy
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- TOOLS GRID -->
-    <section id="tools" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-      <div class="flex items-end justify-between mb-10">
-        <div>
-          <p
-            class="text-xs font-mono text-[#5865F2] uppercase tracking-widest mb-2"
-          >
-            // toolkit
-          </p>
-          <h2
-            class="text-3xl font-black tracking-tight"
-            style="color: var(--text-1)"
-          >
-            All Tools
+    <main class="flex-1 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+      <!-- TOS -->
+      <div id="paneTos" class="space-y-6 scroll-fade">
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Acceptance of Terms
           </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            By using BDTools, you agree to these Terms of Service. If you do not
+            agree with any part of these terms, you must stop using the platform
+            immediately.
+          </p>
+        </div>
+
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            User Responsibilities
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed mb-3">
+            You agree not to misuse the tools or attempt to exploit BDTools or
+            its services. This includes but is not limited to:
+          </p>
+          <ul class="space-y-1.5 text-sm text-gray-400 dark-text-3">
+            <li class="flex items-start gap-2">
+              <span class="text-[#5865F2] mt-0.5">▸</span> Attempting to bypass
+              rate limits or authentication
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#5865F2] mt-0.5">▸</span> Scraping or automated
+              abuse of any endpoint
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#5865F2] mt-0.5">▸</span> Using the platform
+              for illegal or harmful purposes
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#5865F2] mt-0.5">▸</span> Sharing your API key
+              or allowing unauthorized access
+            </li>
+          </ul>
+        </div>
+
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            API &amp; Security
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            API keys must be kept private. BDTools is not responsible for misuse
+            of keys that have been shared or exposed. Keys may expire or be
+            revoked at any time for security or abuse.
+          </p>
+        </div>
+
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Service Availability
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            BDTools is provided “as is” without warranties of any kind. We do
+            not guarantee that the service will be uninterrupted, error-free, or
+            always available.
+          </p>
+        </div>
+
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Limitation of Liability
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            BDTools and its creators are not responsible for any damages, data
+            loss, or issues arising from the use or inability to use the
+            platform.
+          </p>
+        </div>
+
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Termination
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            We reserve the right to suspend or terminate access to BDTools at
+            any time, without notice, if these terms are violated.
+          </p>
+        </div>
+
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Changes to Terms
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            We may update these terms at any time. Continued usage of BDTools
+            after changes are made implies acceptance of the updated terms. We
+            encourage you to review this page periodically.
+          </p>
+        </div>
+
+        <div
+          class="bg-[#5865F2]/5 border border-[#5865F2]/15 rounded-xl p-4 text-xs text-gray-500 dark-text-3 font-mono"
+        >
+          Note: This is a community-made tool and is not affiliated with BDFD
+          directly.
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <!-- Bot Guild List -->
-        <a
-          href="/bot-guild-list"
-          class="tool-card border rounded-2xl p-6 flex flex-col gap-4 fu fu-1"
+      <!-- PRIVACY -->
+      <div id="panePrivacy" class="space-y-6 scroll-fade hidden">
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
         >
-          <div
-            class="w-10 h-10 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
-          >
-            <svg
-              class="w-5 h-5 text-[#5865F2]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-                d="M4 6h16M4 10h16M4 14h16M4 18h16"
-              />
-            </svg>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-bold text-base" style="color: var(--text-1)">
-                Bot Guild List
-              </h3>
-              <span
-                class="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-1.5 py-0.5 rounded-md font-mono"
-                >App</span
-              >
-            </div>
-            <p class="text-sm leading-relaxed" style="color: var(--text-3)">
-              Manage and monitor your bot's guild list from a clean web
-              interface.
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-1.5">
-            <span class="tag border rounded-md px-2 py-0.5">JavaScript</span>
-            <span class="tag border rounded-md px-2 py-0.5">HTML</span>
-            <span class="tag border rounded-md px-2 py-0.5">Tailwind</span>
-          </div>
-        </a>
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Data Collection
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            BDTools collects minimal data required for functionality. This may
+            include API request metadata, tool usage analytics, and information
+            you voluntarily provide through forms or interactions with the
+            platform.
+          </p>
+        </div>
 
-        <!-- Character Escaper -->
-        <a
-          href="/escaper"
-          class="tool-card border rounded-2xl p-6 flex flex-col gap-4 fu fu-2"
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
         >
-          <div
-            class="w-10 h-10 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
-          >
-            <svg
-              class="w-5 h-5 text-[#5865F2]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-              />
-            </svg>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-bold text-base" style="color: var(--text-1)">
-                Character Escaper
-              </h3>
-              <span
-                class="text-[10px] bg-[#5865F2]/10 text-[#818cf8] border border-[#5865F2]/20 px-1.5 py-0.5 rounded-md font-mono"
-                >Tool</span
-              >
-            </div>
-            <p class="text-sm leading-relaxed" style="color: var(--text-3)">
-              Escape special characters like
-              <code class="font-mono text-[#818cf8]">$</code>
-              <code class="font-mono text-[#818cf8]">\</code>
-              <code class="font-mono text-[#818cf8]">;</code>
-              <code class="font-mono text-[#818cf8]">]</code> in BDFD scripts
-              easily.
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-1.5">
-            <span class="tag border rounded-md px-2 py-0.5">JavaScript</span>
-            <span class="tag border rounded-md px-2 py-0.5">HTML</span>
-            <span class="tag border rounded-md px-2 py-0.5">Tailwind</span>
-          </div>
-        </a>
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Cookies &amp; Local Storage
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            We use your browser’s
+            <code class="font-mono text-[#818cf8]">localStorage</code> to save
+            preferences such as theme settings and temporary session data. No
+            tracking cookies or third-party advertising cookies are used.
+          </p>
+        </div>
 
-        <!-- Code Indenter -->
-        <a
-          href="/indenter"
-          class="tool-card border rounded-2xl p-6 flex flex-col gap-4 fu fu-3"
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
         >
-          <div
-            class="w-10 h-10 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
-          >
-            <svg
-              class="w-5 h-5 text-[#5865F2]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-                d="M4 6h16M4 12h10M4 18h16"
-              />
-            </svg>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-bold text-base" style="color: var(--text-1)">
-                Code Indenter
-              </h3>
-              <span
-                class="text-[10px] bg-[#5865F2]/10 text-[#818cf8] border border-[#5865F2]/20 px-1.5 py-0.5 rounded-md font-mono"
-                >Tool</span
-              >
-            </div>
-            <p class="text-sm leading-relaxed" style="color: var(--text-3)">
-              Automatically indent and clean up your BDFD scripts for
-              readability.
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-1.5">
-            <span class="tag border rounded-md px-2 py-0.5">JavaScript</span>
-            <span class="tag border rounded-md px-2 py-0.5">HTML</span>
-            <span class="tag border rounded-md px-2 py-0.5">Tailwind</span>
-          </div>
-        </a>
+          <h2 class="text-lg font-bold text-white dark-text mb-2">API Keys</h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            API keys are stored locally in your browser and are never
+            intentionally shared. You are responsible for keeping your API keys
+            secure. If a key is exposed or misused, it may be revoked or
+            expired.
+          </p>
+        </div>
 
-        <!-- Code Highlighter -->
-        <a
-          href="/highlighter"
-          class="tool-card border rounded-2xl p-6 flex flex-col gap-4 fu fu-4"
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
         >
-          <div
-            class="w-10 h-10 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
-          >
-            <svg
-              class="w-5 h-5 text-[#5865F2]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-              />
-            </svg>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-bold text-base" style="color: var(--text-1)">
-                Code Highlighter
-              </h3>
-              <span
-                class="text-[10px] bg-[#5865F2]/10 text-[#818cf8] border border-[#5865F2]/20 px-1.5 py-0.5 rounded-md font-mono"
-                >Tool</span
-              >
-            </div>
-            <p class="text-sm leading-relaxed" style="color: var(--text-3)">
-              Create custom syntax highlight schemes for your BDFD code
-              snippets.
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-1.5">
-            <span class="tag border rounded-md px-2 py-0.5">JavaScript</span>
-            <span class="tag border rounded-md px-2 py-0.5">HTML</span>
-            <span class="tag border rounded-md px-2 py-0.5">Tailwind</span>
-          </div>
-        </a>
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Data Usage
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            Collected data is used to improve performance, reliability, and
+            features of BDTools. We do not sell, rent, or share your personal
+            data with third parties.
+          </p>
+        </div>
 
-        <!-- Embed Builder -->
-        <a
-          href="/embed-builder"
-          class="tool-card border rounded-2xl p-6 flex flex-col gap-4 fu fu-5"
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
         >
-          <div
-            class="w-10 h-10 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
-          >
-            <svg
-              class="w-5 h-5 text-[#5865F2]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-              />
-            </svg>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-bold text-base" style="color: var(--text-1)">
-                Embed Builder
-              </h3>
-              <span
-                class="text-[10px] bg-[#5865F2]/10 text-[#818cf8] border border-[#5865F2]/20 px-1.5 py-0.5 rounded-md font-mono"
-                >Tool</span
-              >
-            </div>
-            <p class="text-sm leading-relaxed" style="color: var(--text-3)">
-              Visually build Discord embeds and generate ready-to-use BDFD code.
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-1.5">
-            <span class="tag border rounded-md px-2 py-0.5">JavaScript</span>
-            <span class="tag border rounded-md px-2 py-0.5">HTML</span>
-            <span class="tag border rounded-md px-2 py-0.5">Tailwind</span>
-          </div>
-        </a>
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Third-Party Services
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            Some features may rely on third-party services (such as APIs or
+            Discord webhooks). Any data sent through these services is subject
+            to their respective privacy policies.
+          </p>
+        </div>
 
-        <!-- Send Embed Builder -->
-        <a
-          href="/send-embed-builder"
-          class="tool-card border rounded-2xl p-6 flex flex-col gap-4 fu fu-6"
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
         >
-          <div
-            class="w-10 h-10 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
-          >
-            <svg
-              class="w-5 h-5 text-[#5865F2]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-bold text-base" style="color: var(--text-1)">
-                Send Embed Builder
-              </h3>
-              <span
-                class="text-[10px] bg-[#5865F2]/10 text-[#818cf8] border border-[#5865F2]/20 px-1.5 py-0.5 rounded-md font-mono"
-                >Tool</span
-              >
-            </div>
-            <p class="text-sm leading-relaxed" style="color: var(--text-3)">
-              Build
-              <code class="font-mono text-[#818cf8]">$sendEmbedMessage</code>
-              embeds with a live visual preview.
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-1.5">
-            <span class="tag border rounded-md px-2 py-0.5">JavaScript</span>
-            <span class="tag border rounded-md px-2 py-0.5">HTML</span>
-            <span class="tag border rounded-md px-2 py-0.5">Tailwind</span>
-          </div>
-        </a>
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Data Security
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            We take reasonable measures to protect your data. However, no method
+            of transmission or storage is completely secure, and we cannot
+            guarantee absolute security.
+          </p>
+        </div>
 
-        <!-- Permission Calculator — NEW -->
-        <a
-          href="/permission-calculator"
-          class="tool-card border border-[#5865F2]/40 rounded-2xl p-6 flex flex-col gap-4 fu fu-7 relative overflow-hidden"
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
         >
-          <div
-            class="absolute top-3 right-3 text-[10px] font-mono bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full"
-          >
-            New
-          </div>
-          <div
-            class="w-10 h-10 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
-          >
-            <svg
-              class="w-5 h-5 text-[#5865F2]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-              />
-            </svg>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-bold text-base" style="color: var(--text-1)">
-                Permission Calculator
-              </h3>
-              <span
-                class="text-[10px] bg-[#5865F2]/10 text-[#818cf8] border border-[#5865F2]/20 px-1.5 py-0.5 rounded-md font-mono"
-                >Tool</span
-              >
-            </div>
-            <p class="text-sm leading-relaxed" style="color: var(--text-3)">
-              Calculate Discord permission bitfield values for bot invite links
-              and BDFD.
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-1.5">
-            <span class="tag border rounded-md px-2 py-0.5">JavaScript</span>
-            <span class="tag border rounded-md px-2 py-0.5">HTML</span>
-            <span class="tag border rounded-md px-2 py-0.5">Tailwind</span>
-          </div>
-        </a>
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            User Responsibility
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            You are responsible for how you use BDTools and for any data you
+            choose to submit. Do not share sensitive or confidential information
+            through the platform.
+          </p>
+        </div>
+
+        <div
+          class="dark-surface bg-[#0f1117] border border-[#1e2130] rounded-2xl p-6 section-card"
+        >
+          <h2 class="text-lg font-bold text-white dark-text mb-2">
+            Policy Updates
+          </h2>
+          <p class="text-gray-400 dark-text-3 text-sm leading-relaxed">
+            This Privacy Policy may be updated at any time. Continued use of
+            BDTools after changes means you accept the updated policy. We
+            recommend reviewing this page periodically.
+          </p>
+        </div>
+
+        <div
+          class="bg-[#5865F2]/5 border border-[#5865F2]/15 rounded-xl p-4 text-xs text-gray-500 dark-text-3 font-mono"
+        >
+          Note: This is a community-made tool and is not affiliated with BDFD
+          directly.
+        </div>
       </div>
-    </section>
+    </main>
 
-    <!-- ABOUT SPLIT -->
-    <section class="about-section border-t" style="border-color: var(--border)">
+    <footer class="border-t border-[#1e2130] bg-[#080a10]">
       <div
-        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid lg:grid-cols-2 gap-12"
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3"
       >
-        <!-- About BDTools -->
-        <div class="fu fu-1">
-          <p
-            class="text-xs font-mono text-[#5865F2] uppercase tracking-widest mb-3"
-          >
-            // about
-          </p>
-          <h2
-            class="text-2xl font-black mb-4 tracking-tight"
-            style="color: var(--text-1)"
-          >
-            About BDTools
-          </h2>
-          <p class="text-sm leading-relaxed mb-4" style="color: var(--text-2)">
-            Welcome to the
-            <span class="font-medium" style="color: var(--text-1)"
-              >BDTools Suite</span
-            >
-            — a collection of browser-based utilities crafted for the Bot
-            Designer for Discord community. No installs, no bots — just fast and
-            efficient tools.
-          </p>
-          <p class="text-sm leading-relaxed mb-6" style="color: var(--text-2)">
-            New features like Embed Builders, Performance Profilers, and more
-            are added frequently to save you time and effort.
-          </p>
-          <a
-            href="/contact"
-            class="inline-flex items-center gap-2 text-sm text-[#818cf8] hover:text-[#a5b4fc] transition-colors font-medium"
-          >
-            Have feedback or ideas? Contact us
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
-          </a>
-        </div>
-        <!-- About API -->
-        <div class="fu fu-2">
-          <p
-            class="text-xs font-mono text-[#5865F2] uppercase tracking-widest mb-3"
-          >
-            // api
-          </p>
-          <h2
-            class="text-2xl font-black mb-4 tracking-tight"
-            style="color: var(--text-1)"
-          >
-            About The API
-          </h2>
-          <p class="text-sm leading-relaxed mb-4" style="color: var(--text-2)">
-            The BDTools API is a secure and developer-friendly interface
-            designed to connect your projects with our services. Authentication
-            is done through unique API keys generated in your dashboard.
-          </p>
-          <div class="flex flex-wrap gap-1.5 mb-6">
-            <span class="tag border rounded-md px-2 py-0.5">Node.js</span>
-            <span class="tag border rounded-md px-2 py-0.5"
-              >Netlify Functions</span
-            >
-            <span class="tag border rounded-md px-2 py-0.5">MongoDB</span>
-            <span class="tag border rounded-md px-2 py-0.5">JWT</span>
-            <span class="tag border rounded-md px-2 py-0.5">Discord API</span>
-          </div>
-          <a
-            href="/api"
-            class="inline-flex items-center gap-2 text-sm text-[#818cf8] hover:text-[#a5b4fc] transition-colors font-medium"
-          >
-            View API Documentation
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTRIBUTORS -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <p
-        class="text-xs font-mono text-[#5865F2] uppercase tracking-widest mb-3"
-      >
-        // people
-      </p>
-      <h2
-        class="text-2xl font-black mb-8 tracking-tight"
-        style="color: var(--text-1)"
-      >
-        Contributors &amp; Credits
-      </h2>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Zubariel -->
-        <div
-          class="contrib-card border rounded-2xl p-5 flex items-start gap-4"
-          style="border-color: var(--border)"
+        <span class="text-sm text-gray-600"
+          >© 2026 BDTools. All rights reserved.</span
         >
-          <div
-            class="w-10 h-10 rounded-full bg-[#5865F2]/20 flex items-center justify-center text-[#5865F2] font-bold text-sm flex-shrink-0"
-          >
-            Z
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <a
-                href="https://zubariel.is-a.dev/"
-                target="_blank"
-                class="font-semibold hover:text-[#818cf8] transition-colors"
-                style="color: var(--text-1)"
-                >Zubariel</a
-              >
-              <span
-                class="flex items-center gap-1 text-[10px] font-medium text-[#818cf8] bg-[#5865F2]/15 px-2 py-[2px] rounded-md"
-              >
-                <svg
-                  class="w-3 h-3 opacity-80"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M10 2l2.39 4.84L18 8.27l-4 3.89.94 5.49L10 15.77 5.06 17.65 6 12.16 2 8.27l5.61-1.43L10 2z"
-                  />
-                </svg>
-                contributor
-              </span>
-            </div>
-            <p class="text-xs mt-0.5" style="color: var(--text-3)">
-              Lead developer &amp; maintainer
-            </p>
-            <span
-              class="text-[10px] font-mono bg-[#5865F2]/10 text-[#818cf8] px-1.5 py-0.5 rounded mt-1.5 inline-block"
-              >15+ contributions</span
-            >
-          </div>
-        </div>
-
-        <!-- Catearo -->
-        <div
-          class="contrib-card border rounded-2xl p-5 flex items-start gap-4"
-          style="border-color: var(--border)"
-        >
-          <div
-            class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-400 font-bold text-sm flex-shrink-0"
-          >
-            C
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <p class="font-semibold" style="color: var(--text-1)">Catearo</p>
-              <span
-                class="flex items-center gap-1 text-[10px] font-medium text-green-400 bg-green-500/15 px-2 py-[2px] rounded-md"
-              >
-                <svg
-                  class="w-3 h-3 opacity-80"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M10 2l2.39 4.84L18 8.27l-4 3.89.94 5.49L10 15.77 5.06 17.65 6 12.16 2 8.27l5.61-1.43L10 2z"
-                  />
-                </svg>
-                credit
-              </span>
-            </div>
-            <p class="text-xs mt-0.5" style="color: var(--text-3)">
-              Provided BDFD example code for
-              <code class="font-mono text-[#818cf8]">/submit-server</code>
-            </p>
-          </div>
-        </div>
-
-        <!-- Luka -->
-        <div
-          class="contrib-card border rounded-2xl p-5 flex items-start gap-4"
-          style="border-color: var(--border)"
-        >
-          <div
-            class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400 font-bold text-sm flex-shrink-0"
-          >
-            L
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <a
-                href="https://discordapp.com/users/385878366600822788"
-                target="_blank"
-                class="font-semibold hover:text-[#818cf8] transition-colors"
-                style="color: var(--text-1)"
-                >Luka</a
-              >
-              <span
-                class="flex items-center gap-1 text-[10px] font-medium text-green-400 bg-green-500/15 px-2 py-[2px] rounded-md"
-              >
-                <svg
-                  class="w-3 h-3 opacity-80"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M10 2l2.39 4.84L18 8.27l-4 3.89.94 5.49L10 15.77 5.06 17.65 6 12.16 2 8.27l5.61-1.43L10 2z"
-                  />
-                </svg>
-                credit
-              </span>
-            </div>
-            <p class="text-xs mt-0.5" style="color: var(--text-3)">
-              Testing, bug reports, and improvement suggestions
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="border-t" style="border-color: var(--border)">
-      <div
-        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4"
-      >
-        <div class="flex items-center gap-2.5">
-          <img
-            src="/images/bdfd_logo.png"
-            alt="BDTools"
-            class="w-6 h-6 rounded opacity-60"
-            onerror="this.style.display = 'none'"
-          />
-          <span class="text-sm" style="color: var(--text-3)"
-            >© 2026 BDTools. All rights reserved.</span
-          >
-        </div>
-        <div
-          class="flex items-center gap-4 text-xs"
-          style="color: var(--text-4)"
-        >
-          <a href="/tos" class="hover:text-[#818cf8] transition-colors"
+        <div class="flex items-center gap-4 text-xs text-gray-600">
+          <a href="/tos" class="hover:text-gray-400 transition-colors"
             >Terms of Service</a
           >
-          <a href="/privacy" class="hover:text-[#818cf8] transition-colors"
+          <a href="/privacy" class="hover:text-gray-400 transition-colors"
             >Privacy Policy</a
           >
-          <a href="/contact" class="hover:text-[#818cf8] transition-colors"
+          <a href="/contact" class="hover:text-gray-400 transition-colors"
             >Contact</a
           >
         </div>
       </div>
-      <div class="text-center pb-4 text-[10px]" style="color: var(--text-4)">
-        Not affiliated with BDFD directly.
-      </div>
     </footer>
+
+    <script>
+      function showTab(tab) {
+        document
+          .getElementById("paneTos")
+          .classList.toggle("hidden", tab !== "tos");
+        document
+          .getElementById("panePrivacy")
+          .classList.toggle("hidden", tab !== "privacy");
+        document
+          .getElementById("tabTos")
+          .classList.toggle("active", tab === "tos");
+        document
+          .getElementById("tabPrivacy")
+          .classList.toggle("active", tab === "privacy");
+      }
+      // check if URL is /privacy to auto-open that tab
+      if (location.pathname.includes("privacy")) showTab("privacy");
+
+      function toggleTheme() {
+        const html = document.documentElement;
+        const toggle = document.getElementById("themeToggle");
+        const label = document.getElementById("themeLabel");
+        const isLight = html.classList.contains("light");
+
+        if (isLight) {
+          html.classList.replace("light", "dark");
+          toggle.classList.add("on");
+          label.textContent = "Dark Mode";
+        } else {
+          html.classList.replace("dark", "light");
+          toggle.classList.remove("on");
+          label.textContent = "Light Mode";
+        }
+        localStorage.setItem("theme", isLight ? "dark" : "light");
+      }
+
+      /* ── Apply saved preference on load ── */
+      (function () {
+        const saved = localStorage.getItem("theme");
+        if (saved === "light") {
+          document.documentElement.classList.replace("dark", "light");
+          document.getElementById("themeToggle").classList.remove("on");
+          document.getElementById("themeLabel").textContent = "Light Mode";
+        }
+      })();
+
+      /* ── Scroll fade-in observer ── */
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      window.addEventListener("load", () => {
+        const fadeElements = document.querySelectorAll(".scroll-fade");
+        fadeElements.forEach((el) => observer.observe(el));
+      });
+    </script>
   </body>
-
-  <script>
-    /* ── Loader ── */
-    const ldrtxt = document.getElementById("ldrtxt");
-    let dc = 0;
-    const di = setInterval(() => {
-      dc = (dc + 1) % 4;
-      ldrtxt.textContent = "Loading" + ".".repeat(dc);
-    }, 350);
-    window.addEventListener("load", () => {
-      setTimeout(() => {
-        const l = document.getElementById("ldr");
-        l.classList.add("out");
-        setTimeout(() => l.remove(), 400);
-        clearInterval(di);
-      }, 900);
-    });
-
-    /* ── Theme toggle ── */
-    function toggleTheme() {
-      const html = document.documentElement;
-      const toggle = document.getElementById("themeToggle");
-      const label = document.getElementById("themeLabel");
-      const isLight = html.classList.contains("light");
-
-      if (isLight) {
-        html.classList.replace("light", "dark");
-        toggle.classList.add("on");
-        label.textContent = "Dark Mode";
-      } else {
-        html.classList.replace("dark", "light");
-        toggle.classList.remove("on");
-        label.textContent = "Light Mode";
-      }
-      localStorage.setItem("theme", isLight ? "dark" : "light");
-    }
-
-    /* ── Apply saved preference on load ── */
-    (function () {
-      const saved = localStorage.getItem("theme");
-      if (saved === "light") {
-        document.documentElement.classList.replace("dark", "light");
-        document.getElementById("themeToggle").classList.remove("on");
-        document.getElementById("themeLabel").textContent = "Light Mode";
-      }
-    })();
-  </script>
 </html>

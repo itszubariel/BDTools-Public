@@ -311,3 +311,23 @@ function closeMobileDrawer() {
     btn.classList.remove("open");
   }
 }
+
+/* ── Scroll fade-in observer ── */
+const scrollObserverOptions = {
+  threshold: 0.1,
+  rootMargin: "0px 0px -50px 0px",
+};
+
+const scrollObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("visible");
+      scrollObserver.unobserve(entry.target);
+    }
+  });
+}, scrollObserverOptions);
+
+window.addEventListener("load", () => {
+  const fadeElements = document.querySelectorAll(".scroll-fade");
+  fadeElements.forEach((el) => scrollObserver.observe(el));
+});
