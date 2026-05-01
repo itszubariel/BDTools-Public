@@ -6,14 +6,14 @@ Base URL: `https://api.bdtools.xyz`
 
 ## Node Status Endpoints
 
-All node status endpoints are **public** (no authentication required) and updated **every 5 minutes** via scheduled scraper.
+All node status endpoints are **public** (no authentication required) and updated **every 2 minutes** via scheduled scraper.
 
 ### GET /node-status
 
 Returns a full status overview including summary counts and all nodes grouped into standard, high-performance, and offline arrays. This is the primary endpoint for a complete snapshot of the BDFD infrastructure.
 
 **Auth Required:** No  
-**Updated:** Every 5 minutes
+**Updated:** Every 2 minutes
 
 **Query Parameters:** None
 
@@ -69,7 +69,7 @@ Returns a full status overview including summary counts and all nodes grouped in
 Alias for `/node-status`. Returns the identical full response with summary counts and all node arrays. Useful when you want a semantically explicit URL.
 
 **Auth Required:** No  
-**Updated:** Every 5 minutes
+**Updated:** Every 2 minutes
 
 **Query Parameters:** None
 
@@ -106,7 +106,7 @@ Alias for `/node-status`. Returns the identical full response with summary count
 Returns a flat array of all standard nodes sorted by node ID. Use this when you only need the standard node pool without summary metadata or high-performance nodes.
 
 **Auth Required:** No  
-**Updated:** Every 5 minutes
+**Updated:** Every 2 minutes
 
 **Query Parameters:** None
 
@@ -142,7 +142,7 @@ Returns a flat array of all standard nodes sorted by node ID. Use this when you 
 Returns the current status of a single standard node by its numeric ID. Replace `:id` with the node number, e.g. `/node-status/node/5`.
 
 **Auth Required:** No  
-**Updated:** Every 5 minutes
+**Updated:** Every 2 minutes
 
 **Path Parameters:**
 - `id` (integer, required) - The numeric ID of the standard node to retrieve
@@ -178,7 +178,7 @@ Returns the current status of a single standard node by its numeric ID. Replace 
 Returns a flat array of all high-performance (HP) nodes sorted by node ID. HP nodes typically serve premium bots and have lower ping and higher capacity than standard nodes.
 
 **Auth Required:** No  
-**Updated:** Every 5 minutes
+**Updated:** Every 2 minutes
 
 **Query Parameters:** None
 
@@ -211,10 +211,10 @@ Returns a flat array of all high-performance (HP) nodes sorted by node ID. HP no
 
 ### GET /node-status/history
 
-Returns an array of historical status snapshots in chronological order (oldest first). Each snapshot is recorded every 5 minutes and retained for 7 days. Use the `limit` query parameter to control how many records are returned. Ideal for building uptime graphs or trend charts.
+Returns an array of historical status snapshots in chronological order (oldest first). Each snapshot is recorded every 2 minutes and retained for 7 days. Use the `limit` query parameter to control how many records are returned. Ideal for building uptime graphs or trend charts.
 
 **Auth Required:** No  
-**Updated:** Every 5 minutes
+**Updated:** Every 2 minutes
 
 **Query Parameters:**
 - `limit` (integer, optional) - Number of snapshots to return. Default: 2016, Maximum: 2016 (7 days at 5-min intervals). Use 288 for the last 24 hours.
@@ -668,7 +668,7 @@ Validates whether a 5-letter word is a valid English word. First checks the cura
 ## Notes
 
 ### Data Freshness
-- Node status updates every **5 minutes** via scheduled scraper
+- Node status updates every **2 minutes** via scheduled scraper
 - Guild list data cached until new submission
 
 ### Authentication
@@ -688,7 +688,7 @@ Guild List endpoints require auth. Node Status, BDFD Functions, and Word Games e
 ### Caching
 - `/bdfd-functions`: Cached for 1 hour
 - `/get-servers`: Cached in Redis per user, invalidated on new submission
-- Node status endpoints: Updated every 5 minutes
+- Node status endpoints: Updated every 2 minutes
 - Other endpoints: No caching
 
 ### Origin Restrictions
