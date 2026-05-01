@@ -7,11 +7,10 @@
 /bot-guild-list               /Tools/bot-guild-list.html              200
 /permission-calculator        /Tools/permission-calc.html             200
 
-
 /docs/node-status             /docs/node-status.html                  200
 /docs/guild-list              /docs/guild-list.html                   200
 /docs/bdfd                    /docs/bdfd.html                         200
-/docs/games                   /docs/games.html                        200
+/docs/others                  /docs/others.html                       200
 /docs                         /docs/index.html                        200
 /docs/*                       /docs/:splat                            200
 

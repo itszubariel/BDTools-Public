@@ -315,9 +315,9 @@ Optionally, you can request a PNG graph visualization by adding `?graph=true` to
 - Title automatically adjusts based on time range (e.g., "Total Bots Online - Past 24 Hours" or "Total Bots Online - Past 7 Days")
 - Shows total bots online over the requested time period
 - Image is cached for 5 minutes
-- Can be embedded directly in HTML:
-  ```html
-  <img src="https://api.bdtools.xyz/images/limit-720-hash-a1b2c3d4.png" alt="Bots Online History" />
+- Can be embedded directly in BDFD:
+  ```shell
+  $image[https://api.bdtools.xyz/images/limit-720-hash-a1b2c3d4.png]
   ```
 
 **Example Requests:**
@@ -360,8 +360,8 @@ Serves dynamically generated PNG chart images for node status history. This endp
 - Returns a PNG image
 
 **Example Usage:**
-```html
-<img src="https://api.bdtools.xyz/images/limit-720-hash-a1b2c3d4.png" alt="Bots Online History" />
+```shell
+$image[https://api.bdtools.xyz/images/limit-720-hash-a1b2c3d4.png]
 ```
 
 **Error Response (400) - Invalid ID:**
@@ -535,7 +535,7 @@ You can use this BDFD command to automatically submit your bot's guild list. Ful
 
 **Note:** You must change `NUMBER_OF_SERVERS` and `YOUR_API_KEY_HERE` placeholders.
 
-```
+```shell
 $nomention
 $c[You have to change these two placeholder values]
 $var[count;NUMBER_OF_SERVERS]
@@ -695,9 +695,9 @@ Returns the complete list of BDFD functions from the official Bot Designer for D
 
 ---
 
-## Word Game Endpoints
+## Other Endpoints
 
-Both word game endpoints are **public** (no authentication required).
+These endpoints are **public** (no authentication required) and provide various utility functions including word games and Pokemon data.
 
 ### GET /random-word
 
@@ -802,6 +802,101 @@ Validates whether a 5-letter word is a valid English word. First checks the cura
 
 ---
 
+### GET /random-pokemon
+
+Returns a random Pokemon name from all generations (1-9, over 1000 Pokemon). Can optionally return the Pokemon sprite image by adding `?image=true`. Images are sourced from PokeAPI's official artwork collection. You can also request a specific Pokemon by name using the `?name=` parameter, or filter by generation using `?gen=`.
+
+**Auth Required:** No  
+**Rate Limit:** 30 requests per 10 seconds
+
+**Query Parameters:**
+- `gen` (integer, optional) - Filter by generation (1-9). Examples: `?gen=1` for Kanto, `?gen=2` for Johto, etc.
+- `image` (string, optional) - Set to `true` to return the Pokemon sprite image instead of JSON
+- `name` (string, optional) - Specify a Pokemon name to get that specific Pokemon (e.g., `?name=pikachu`)
+
+**Success Response (200) - Name Only:**
+```json
+{
+  "pokemon": "pikachu"
+}
+```
+
+**Success Response (200) - With Image (`?image=true`):**
+- Content-Type: `image/png`
+- Returns the Pokemon sprite image (official artwork from PokeAPI)
+- Cached for 24 hours
+
+**Example Usage:**
+```shell
+<!-- Random Pokemon from all generations -->
+$httpGet[https://api.bdtools.xyz/random-pokemon]
+
+<!-- Random Pokemon from Gen 1 (Kanto) -->
+$httpGet[https://api.bdtools.xyz/random-pokemon?gen=1]
+
+<!-- Random Pokemon from Gen 2 (Johto) -->
+$httpGet[https://api.bdtools.xyz/random-pokemon?gen=2]
+
+<!-- Random Gen 1 Pokemon image -->
+$image[https://api.bdtools.xyz/random-pokemon?gen=1&image=true]
+
+<!-- Specific Pokemon name -->
+$httpGet[https://api.bdtools.xyz/random-pokemon?name=charizard]
+
+<!-- Specific Pokemon image -->
+$image[https://api.bdtools.xyz/random-pokemon?name=pikachu&image=true]
+```
+
+**Generations:**
+- Gen 1: Kanto (1-151)
+- Gen 2: Johto (152-251)
+- Gen 3: Hoenn (252-386)
+- Gen 4: Sinnoh (387-493)
+- Gen 5: Unova (494-649)
+- Gen 6: Kalos (650-721)
+- Gen 7: Alola (722-809)
+- Gen 8: Galar (810-905)
+- Gen 9: Paldea (906-1025)
+
+**Error Response (400) - Invalid Generation:**
+```json
+{
+  "error": "Invalid generation. Must be between 1 and 9."
+}
+```
+
+**Error Response (404) - Pokemon Not Found:**
+```json
+{
+  "error": "Pokemon not found"
+}
+```
+
+**Error Response (404) - Image Not Found:**
+```json
+{
+  "error": "Pokemon image not found",
+  "pokemon": "pikachu"
+}
+```
+
+**Error Response (500) - Empty List:**
+```json
+{
+  "error": "Pokemon list is empty"
+}
+```
+
+**Error Response (502) - Image Fetch Failed:**
+```json
+{
+  "error": "Failed to fetch Pokemon image",
+  "details": "Network timeout"
+}
+```
+
+---
+
 ## Notes
 
 ### Data Freshness
@@ -814,17 +909,19 @@ JWT tokens for guild list endpoints should be prefixed with `BDTools-` in the Au
 Authorization: Bearer BDTools-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-Guild List endpoints require auth. Node Status, BDFD Functions, and Word Games endpoints are public and do not require authentication.
+Guild List endpoints require auth. Node Status, BDFD Functions, and Other endpoints (word games, Pokemon) are public and do not require authentication.
 
 ### Rate Limits
 - `/submit-server`: Once every 5 hours per API key
 - `/random-word`: 30 requests per 10 seconds
 - `/validate-word`: 60 requests per 10 seconds
+- `/random-pokemon`: 30 requests per 10 seconds
 - Other endpoints: No rate limits
 
 ### Caching
 - `/bdfd-functions`: Cached for 1 hour
 - `/get-servers`: Cached in Redis per user, invalidated on new submission
+- `/random-pokemon?image=true`: Cached for 24 hours
 - Node status endpoints: Updated every 2 minutes
 - Other endpoints: No caching
 
