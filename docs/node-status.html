@@ -200,6 +200,9 @@
         <a class="sidebar-link" onclick="showSection('ep-high-performance')"
           >GET /node-status/high-performance</a
         >
+        <a class="sidebar-link" onclick="showSection('ep-offline')"
+          >GET /node-status/offline</a
+        >
         <a class="sidebar-link" onclick="showSection('ep-history')"
           >GET /node-status/history</a
         >
@@ -280,6 +283,9 @@
             >
             <a class="sidebar-link" onclick="showSection('ep-high-performance')"
               >GET /node-status/high-performance</a
+            >
+            <a class="sidebar-link" onclick="showSection('ep-offline')"
+              >GET /node-status/offline</a
             >
             <a class="sidebar-link" onclick="showSection('ep-history')"
               >GET /node-status/history</a
@@ -931,6 +937,111 @@
             </div>
           </section>
 
+          <!-- GET /node-status/offline -->
+          <section id="ep-offline" class="endpoint-section dark-surface hidden">
+            <div class="flex items-center gap-3 mb-4 flex-wrap">
+              <span class="method-badge get">GET</span>
+              <code
+                class="font-mono text-sm text-gray-200 dark-text flex-1 min-w-0 break-all"
+                >/node-status/offline</code
+              >
+              <button
+                onclick="copyUrl('/node-status/offline')"
+                class="text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold flex-shrink-0 flex items-center gap-1.5"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Copy URL
+              </button>
+            </div>
+
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-4">
+              Returns all currently offline nodes (standard and
+              high-performance) sorted by node ID. Returns an empty array when
+              all nodes are online.
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                No auth required
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Updated every 2 minutes
+              </span>
+            </div>
+
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-3"
+            >
+              Responses
+            </h3>
+
+            <div class="response-block">
+              <span class="status-badge success">200 OK</span>
+              <div class="code-block mt-2">
+                <pre><span class="kw">[</span>
+  <span class="kw">{</span>
+    <span class="key">"nodeId"</span><span class="kw">:</span> <span class="num">7</span><span class="kw">,</span>
+    <span class="key">"bots"</span><span class="kw">:</span> <span class="num">0</span><span class="kw">,</span>
+    <span class="key">"pingMs"</span><span class="kw">:</span> <span class="kw">null</span><span class="kw">,</span>
+    <span class="key">"status"</span><span class="kw">:</span> <span class="str">"offline"</span>
+  <span class="kw">},</span>
+  <span class="kw">{</span>
+    <span class="key">"nodeId"</span><span class="kw">:</span> <span class="num">12</span><span class="kw">,</span>
+    <span class="key">"bots"</span><span class="kw">:</span> <span class="num">0</span><span class="kw">,</span>
+    <span class="key">"pingMs"</span><span class="kw">:</span> <span class="kw">null</span><span class="kw">,</span>
+    <span class="key">"status"</span><span class="kw">:</span> <span class="str">"offline"</span>
+  <span class="kw">}</span>
+  <span class="cmt">// Note: pingMs is null for offline nodes</span>
+<span class="kw">]</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-server"
+                >500 Internal Server Error</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Internal server error"</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+          </section>
+
           <!-- GET /node-status/history -->
           <section id="ep-history" class="endpoint-section dark-surface hidden">
             <div class="flex items-center gap-3 mb-4 flex-wrap">
@@ -1057,7 +1168,7 @@
     <span class="key">"offlineNodes"</span><span class="kw">:</span> <span class="num">0</span><span class="kw">,</span>
     <span class="key">"standardNodeCount"</span><span class="kw">:</span> <span class="num">13</span><span class="kw">,</span>
     <span class="key">"hpNodeCount"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
-    <span class="key">"createdAt"</span><span class="kw">:</span> <span class="str">"2026-04-30T11:55:00.000Z"</span>
+    <span class="key">"createdAt"</span><span class="kw">:</span> <span class="str">"2026-04-30T11:58:00.000Z"</span>
   <span class="kw">},</span>
   <span class="kw">{</span>
     <span class="key">"totalBots"</span><span class="kw">:</span> <span class="num">812</span><span class="kw">,</span>
@@ -1176,8 +1287,7 @@
 
     <!-- ── SCRIPTS ── -->
     <script>
-      window.DOCS_REDIRECT =
-        "https://bdtools.xyz/docs";
+      window.DOCS_REDIRECT = "https://bdtools.xyz/docs";
     </script>
     <script src="shared.js"></script>
     <script>
@@ -1192,6 +1302,7 @@
           id: "ep-high-performance",
           label: "GET /node-status/high-performance",
         },
+        { id: "ep-offline", label: "GET /node-status/offline" },
         { id: "ep-history", label: "GET /node-status/history" },
       ];
       window.PREV_PAGE = { url: "index.html", label: "Back to Docs" };

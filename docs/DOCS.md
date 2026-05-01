@@ -209,6 +209,42 @@ Returns a flat array of all high-performance (HP) nodes sorted by node ID. HP no
 
 ---
 
+### GET /node-status/offline
+
+Returns a flat array of all currently offline nodes (both standard and high-performance) sorted by node ID. Use this endpoint to quickly identify which nodes are experiencing downtime.
+
+**Auth Required:** No  
+**Updated:** Every 2 minutes
+
+**Query Parameters:** None
+
+**Success Response (200):**
+```json
+[
+  {
+    "nodeId": 7,
+    "bots": 0,
+    "pingMs": null,
+    "status": "offline"
+  },
+  {
+    "nodeId": 12,
+    "bots": 0,
+    "pingMs": null,
+    "status": "offline"
+  }
+]
+```
+
+**Error Response (500):**
+```json
+{
+  "error": "Internal server error"
+}
+```
+
+---
+
 ### GET /node-status/history
 
 Returns an array of historical status snapshots in chronological order (oldest first). Each snapshot is recorded every 2 minutes and retained for 7 days. Use the `limit` query parameter to control how many records are returned. Ideal for building uptime graphs or trend charts.
@@ -217,7 +253,7 @@ Returns an array of historical status snapshots in chronological order (oldest f
 **Updated:** Every 2 minutes
 
 **Query Parameters:**
-- `limit` (integer, optional) - Number of snapshots to return. Default: 2016, Maximum: 2016 (7 days at 5-min intervals). Use 288 for the last 24 hours.
+- `limit` (integer, optional) - Number of snapshots to return. Default: 5040, Maximum: 5040 (7 days at 2-min intervals). Use 720 for the last 24 hours.
 
 **Success Response (200):**
 ```json
