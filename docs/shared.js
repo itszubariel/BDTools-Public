@@ -1,4 +1,4 @@
-// window.BYPASS_AUTH = true;
+ window.BYPASS_AUTH = true;
 
 /* ── Theme Toggle ── */
 function toggleTheme() {

@@ -247,15 +247,23 @@ Returns a flat array of all currently offline nodes (both standard and high-perf
 
 ### GET /node-status/history
 
-Returns an array of historical status snapshots in chronological order (oldest first). Each snapshot is recorded every 2 minutes and retained for 7 days. Use the `limit` query parameter to control how many records are returned. Ideal for building uptime graphs or trend charts.
+Returns an array of historical status snapshots in chronological order (oldest first). Each snapshot is recorded every 2 minutes and retained for 7 days. Use the `limit` query parameter to control how many records are returned - supports both numeric values and human-readable time formats like `24h` or `7d`. Ideal for building uptime graphs or trend charts.
+
+Optionally, you can request a PNG graph visualization by adding `?graph=true` to the URL, which returns a dark-themed chart showing total bots online over the requested time period.
 
 **Auth Required:** No  
 **Updated:** Every 2 minutes
 
 **Query Parameters:**
-- `limit` (integer, optional) - Number of snapshots to return. Default: 5040, Maximum: 5040 (7 days at 2-min intervals). Use 720 for the last 24 hours.
+- `limit` (integer or string, optional) - Number of snapshots to return, or time range in human-readable format:
+  - **Numeric**: `720` (exact number of snapshots)
+  - **Days**: `1d`, `7d` (days, e.g., `7d` = 7 days)
+  - **Hours**: `12h`, `24h`, `48h` (hours, e.g., `24h` = 24 hours)
+  - Default: `5040` (7 days), Maximum: `5040` (7 days at 2-min intervals)
+  - Examples: `limit=1d` (1 day), `limit=24h` (24 hours), `limit=720` (720 snapshots)
+- `graph` (string, optional) - Set to `true` or `yes` to receive a PNG graph URL alongside the data.
 
-**Success Response (200):**
+**Success Response (200) - Without Graph:**
 ```json
 [
   {
@@ -277,10 +285,103 @@ Returns an array of historical status snapshots in chronological order (oldest f
 ]
 ```
 
+**Success Response (200) - With Graph (`?graph=true`):**
+```json
+{
+  "data": [
+    {
+      "totalBots": 818,
+      "onlineNodes": 13,
+      "offlineNodes": 0,
+      "standardNodeCount": 13,
+      "hpNodeCount": 1,
+      "createdAt": "2026-04-30T11:55:00.000Z"
+    },
+    {
+      "totalBots": 812,
+      "onlineNodes": 12,
+      "offlineNodes": 1,
+      "standardNodeCount": 13,
+      "hpNodeCount": 1,
+      "createdAt": "2026-04-30T12:00:00.000Z"
+    }
+  ],
+  "png": "https://api.bdtools.xyz/images/limit-720-hash-a1b2c3d4.png"
+}
+```
+
+**Graph Image Features:**
+- Dark-themed chart with purple line graph
+- Title automatically adjusts based on time range (e.g., "Total Bots Online - Past 24 Hours" or "Total Bots Online - Past 7 Days")
+- Shows total bots online over the requested time period
+- Image is cached for 5 minutes
+- Can be embedded directly in HTML:
+  ```html
+  <img src="https://api.bdtools.xyz/images/limit-720-hash-a1b2c3d4.png" alt="Bots Online History" />
+  ```
+
+**Example Requests:**
+- `/node-status/history?limit=24h&graph=true` - Get 24 hours of data with graph
+- `/node-status/history?limit=1d&graph=true` - Get 1 day of data with graph (same as 24h)
+- `/node-status/history?limit=3d&graph=true` - Get 3 days of data with graph
+- `/node-status/history?limit=7d&graph=true` - Get 7 days of data with graph
+- `/node-status/history?limit=12h&graph=true` - Get 12 hours of data with graph
+- `/node-status/history?limit=720` - Get exactly 720 snapshots (numeric format still works)
 **Error Response (500):**
 ```json
 {
   "error": "Internal server error"
+}
+```
+
+---
+
+### GET /images/:id.png
+
+Serves dynamically generated PNG chart images for node status history. This endpoint is typically accessed via URLs returned by the `/node-status/history?graph=true` endpoint. The image ID encodes the query parameters used to generate the chart.
+
+**Auth Required:** No  
+**Cached:** 5 minutes
+
+**Path Parameters:**
+- `id` (string, required) - Encoded image identifier containing chart parameters (e.g., `limit-720-hash-a1b2c3d4`)
+
+**Chart Features:**
+- Dark-themed background (#1f2937)
+- Purple line graph showing total bots online
+- Smooth curve with gradient fill
+- Dynamic title based on time range
+- Y-axis shows bot count
+- X-axis labels hidden for cleaner appearance
+- 1000x400px resolution
+
+**Success Response (200):**
+- Content-Type: `image/png`
+- Returns a PNG image
+
+**Example Usage:**
+```html
+<img src="https://api.bdtools.xyz/images/limit-720-hash-a1b2c3d4.png" alt="Bots Online History" />
+```
+
+**Error Response (400) - Invalid ID:**
+```json
+{
+  "error": "Invalid image ID format"
+}
+```
+
+**Error Response (404) - No Data:**
+```json
+{
+  "error": "No history data available"
+}
+```
+
+**Error Response (502) - Chart Generation Failed:**
+```json
+{
+  "error": "Failed to generate chart"
 }
 ```
 
