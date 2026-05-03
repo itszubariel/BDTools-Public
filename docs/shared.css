@@ -352,6 +352,34 @@ html.light .dark-text-3 {
   color: #6b7280 !important;
 }
 
+/* Specific override for validation check labels, headings, and breadcrumb text in light mode */
+/* ONLY target these specific grey text elements that should be darker/blackish */
+
+/* 1. Validation check labels: <strong class="text-gray-200"> */
+html.light li strong.text-gray-200 {
+  color: #111827 !important;
+}
+
+/* 2. Info box headings like "How it works:": <strong class="text-gray-300"> */
+html.light strong.text-gray-300 {
+  color: #111827 !important;
+}
+
+/* 3. Breadcrumb current page text: <span class="text-gray-300"> inside nav */
+html.light nav span.text-gray-300 {
+  color: #111827 !important;
+}
+
+/* 4. Section headings like "VALIDATION CHECKS": <h3 class="text-xs font-mono font-bold text-gray-500"> */
+html.light h3.text-xs.font-mono.font-bold.text-gray-500 {
+  color: #111827 !important;
+}
+
+/* 5. Context validation subsection headings: <p class="text-xs font-semibold text-gray-300"> */
+html.light p.text-xs.font-semibold.text-gray-300 {
+  color: #111827 !important;
+}
+
 html.light .dark-border {
   border-color: #e2e4ef !important;
 }

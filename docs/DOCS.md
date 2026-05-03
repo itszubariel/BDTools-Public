@@ -6,7 +6,7 @@ Base URL: `https://api.bdtools.xyz`
 
 ## Node Status Endpoints
 
-All node status endpoints are **public** (no authentication required) and updated **every 2 minutes** via scheduled scraper.
+Monitor Bot Designer for Discord's infrastructure in real-time. All endpoints are **public** (no authentication required) and updated **every 2 minutes** via scheduled scraper.
 
 ### GET /node-status
 
@@ -387,9 +387,9 @@ $image[https://api.bdtools.xyz/images/limit-720-hash-a1b2c3d4.png]
 
 ---
 
-## Guild List Endpoints
+## Bot Guild List Endpoints
 
-All guild list endpoints **require authentication** via JWT Bearer token with the `BDTools-` prefix.
+Submit and retrieve bot server lists. All guild list endpoints **require authentication** via JWT Bearer token with the `BDTools-` prefix.
 
 **Authentication Format:**
 ```
@@ -647,54 +647,430 @@ Retrieve the stored guild list for your bot. This endpoint is restricted to requ
 
 ---
 
-## BDFD Function Endpoints
+## BDScript Checker
 
-### GET /bdfd-functions
+Comprehensive BDScript/BDFD code validator that catches syntax errors and common mistakes before you run your code. Made specially for the `!run` command by BDSuper in the BDFD Support Server.
 
-Returns the complete list of BDFD functions from the official Bot Designer for Discord API. The response is cached for 1 hour to reduce load on the upstream API. Each function object includes the function name, a description of what it does, and usage examples.
+### POST /bdscript-checker
 
-**Auth Required:** No  
-**Cached:** 1 hour
+Validates BDFD code for syntax errors, argument issues, and BDFD requirements. Returns detailed error messages with line numbers to help you fix issues quickly. Function definitions are loaded from a local JSON file for fast validation.
 
-**Query Parameters:** None
+**Auth Required:** Yes  
+**Rate Limit:** None
 
-**Success Response (200):**
-```json
-[
-  {
-    "name": "$username",
-    "description": "Returns the username of a user",
-    "usage": "$username or $username[userID]"
-  },
-  {
-    "name": "$serverName",
-    "description": "Returns the name of the server",
-    "usage": "$serverName or $serverName[guildID]"
-  },
-  {
-    "name": "$randomText",
-    "description": "Returns a random text from the given options",
-    "usage": "$randomText[option1;option2;option3;...]"
-  }
-]
-```
-
-**Error Response (500):**
+**Request Body:**
 ```json
 {
-  "error": "Failed to fetch BDFD function list"
+  "code": "$setUserVar[test;1;2;3;4]"
 }
 ```
 
-**Error Response (502):**
+**Success Response (200) - With Errors:**
 ```json
 {
-  "error": "BDFD API error: 503"
+  "errors": [
+    {
+      "function": "$setUserVar",
+      "line": 1,
+      "message": "$setUserVar - Too many arguments, expected up to 4, got 5"
+    }
+  ],
+  "hasErrors": true
+}
+```
+
+**Success Response (200) - No Errors:**
+```json
+{
+  "errors": [],
+  "hasErrors": false
 }
 ```
 
 ---
 
+### Validation Features
+
+The validator performs comprehensive checks to catch errors before your code runs:
+
+#### 1. Unknown Functions
+Warns if a function doesn't exist in the BDFD function list.
+
+**Example Error:**
+```json
+{
+  "function": "$unknownFunc",
+  "line": 1,
+  "message": "$unknownFunc - Unknown function",
+  "type": "warning"
+}
+```
+
+#### 2. Argument Count Validation
+Validates minimum and maximum argument counts. Handles functions with multiple signatures (different argument patterns).
+
+**Example Errors:**
+```json
+{
+  "function": "$setUserVar",
+  "line": 1,
+  "message": "$setUserVar - Expected at least 2 argument(s), got 1"
+}
+```
+```json
+{
+  "function": "$setUserVar",
+  "line": 1,
+  "message": "$setUserVar - Too many arguments, expected up to 4, got 5"
+}
+```
+
+**Argument Counting Rules:**
+- No brackets: `$function` = 0 arguments
+- Empty brackets: `$function[]` = 1 empty argument
+- Semicolons separate arguments: `$function[A;B]` = 2 arguments
+- Trailing semicolon counts: `$function[A;]` = 2 arguments (second is empty)
+
+#### 3. Empty Argument Validation
+Checks if empty arguments are allowed based on function definition.
+
+**Example Error:**
+```json
+{
+  "function": "$addTextDisplay",
+  "line": 1,
+  "message": "$addTextDisplay - Argument 2 (Container/Section ID) cannot be empty"
+}
+```
+
+#### 4. Enum Validation
+Validates that enum arguments use valid values from the allowed list.
+
+**Example Error:**
+```json
+{
+  "function": "$addButtonCV2",
+  "line": 1,
+  "message": "$addButtonCV2 - Expected valid enum value in position 3, got 'invalid'. Valid values: danger, link, primary, secondary, success"
+}
+```
+
+**Special Case:** `$modifyChannel` accepts `!unchanged` to keep current state.
+
+#### 5. Type Validation
+Validates argument types including Number, Boolean, Integer, and Snowflake (Discord IDs).
+
+**Example Errors:**
+```json
+{
+  "function": "$sum",
+  "line": 1,
+  "message": "$sum - Argument 1 (Number) must be a number, got 'abc'"
+}
+```
+```json
+{
+  "function": "$deleteMessage",
+  "line": 1,
+  "message": "$deleteMessage - Argument 1 (Message ID) must be a valid Discord ID (snowflake), got '123'"
+}
+```
+
+**Type Rules:**
+- **Number/Integer:** Must be numeric (e.g., `123`, `-45`, `3.14`)
+- **Boolean:** Must be `true`, `false`, `yes`, `no`, `1`, or `0`
+- **Snowflake:** Must be 17-19 digit Discord ID
+
+#### 6. JSON Syntax Validation
+Validates JSON syntax in `$jsonParse` to catch malformed JSON.
+
+**Example Error:**
+```json
+{
+  "function": "$jsonParse",
+  "line": 1,
+  "message": "$jsonParse - Invalid JSON syntax"
+}
+```
+
+#### 7. Bracket Matching
+Ensures all brackets are properly opened and closed.
+
+**Example Errors:**
+```json
+{
+  "function": "syntax",
+  "line": 1,
+  "message": "Missing closing bracket ']' - 2 unclosed bracket(s)"
+}
+```
+```json
+{
+  "function": "syntax",
+  "line": 1,
+  "message": "Extra closing bracket ']' found without matching opening bracket '['"
+}
+```
+
+#### 8. Unclosed Blocks
+Detects unclosed control flow blocks like `$if`, `$try`, and `$async`.
+
+**Example Error:**
+```json
+{
+  "function": "$if",
+  "line": 1,
+  "message": "$if opened but never closed with $endif"
+}
+```
+
+**Block Pairs:**
+- `$if` ... `$endif`
+- `$try` ... `$endtry` (note: `$catch` is optional)
+- `$async` ... `$endasync`
+
+#### 9. Multiple $else and $catch Detection
+Detects multiple `$else` statements in the same `$if` block, or multiple `$catch` statements in the same `$try` block (only one of each is allowed).
+
+**Example Errors:**
+```json
+{
+  "function": "$else",
+  "line": 5,
+  "message": "Multiple $else statements in the same $if block (started on line 1). Only one $else is allowed per $if block."
+}
+```
+```json
+{
+  "function": "$catch",
+  "line": 4,
+  "message": "Multiple $catch statements in the same $try block (started on line 1). Only one $catch is allowed per $try block."
+}
+```
+
+#### 10. Context Validation (Parent-Child Relationships)
+Ensures context-dependent functions have their required parent functions defined **before** use.
+
+**Modal Components:**
+- `$addTextInput` requires `$newModal`
+
+**Select Menus:**
+- `$addSelectMenuOption` requires `$newSelectMenu` or `$editSelectMenu`
+
+**Components v2:**
+- `$addThumbnail` requires `$addSection`
+- `$addMediaGalleryItem` requires `$addMediaGallery`
+- `$addButtonCV2` requires `$addActionRow` or `$addSection`
+- `$addUserSelect`, `$addRoleSelect`, `$addMentionableSelect`, `$addChannelSelect`, `$addStringSelect` require `$addActionRow`
+- `$addStringSelectOption` requires `$addStringSelect`
+
+**Text Splitting:**
+- `$splitText`, `$getTextSplitLength`, `$joinSplitText`, etc. require `$textSplit`
+
+**JSON Functions:**
+- `$json`, `$jsonUnset`, `$jsonArray`, etc. require `$jsonParse` or `$jsonSet`
+
+**Note:** `$addTextDisplay` and `$addSeparator` can exist without a parent (optional).
+
+**Example Errors:**
+```json
+{
+  "function": "$addTextInput",
+  "line": 1,
+  "message": "$addTextInput requires $newModal to be called first"
+}
+```
+```json
+{
+  "function": "$addButtonCV2",
+  "line": 5,
+  "message": "$addButtonCV2 references action row 'row1' before it is defined — $addActionRow[row1] is on line 10"
+}
+```
+
+#### 11. Components v2 Validation Rules
+Validates BDFD's requirements for Components v2 to catch errors before running code.
+
+**Sections:**
+- Must have at least 1 Text Display component
+- Must have at least 1 accessory (thumbnail or button)
+- Duplicate section IDs trigger warnings
+
+**Containers:**
+- Must have at least 1 child component
+
+**Media Galleries:**
+- Must have at least 1 media item
+
+**Action Rows:**
+- Cannot mix buttons and select menus
+- Maximum 5 buttons per action row
+- Maximum 1 select menu per action row
+
+**Parent-Child Order:**
+- Parents must be defined before children reference them
+- Empty required parent IDs trigger errors
+
+**Example Errors:**
+```json
+{
+  "function": "$addSection",
+  "line": 1,
+  "message": "Section 'main' needs at least 1 Text Display component — use $addTextDisplay to add content"
+}
+```
+```json
+{
+  "function": "$addSection",
+  "line": 1,
+  "message": "Section 'main' needs an accessory (thumbnail or button) — use $addThumbnail or $addButtonCV2"
+}
+```
+```json
+{
+  "function": "$addActionRow",
+  "line": 1,
+  "message": "Action Row 'row1' cannot mix buttons and select menus — use separate action rows"
+}
+```
+```json
+{
+  "function": "$addActionRow",
+  "line": 1,
+  "message": "Action Row 'row1' has 6 buttons — maximum of 5 buttons per action row"
+}
+```
+```json
+{
+  "function": "$addButtonCV2",
+  "line": 5,
+  "message": "$addButtonCV2 requires an action row or section ID in argument 6 — define $addActionRow or $addSection first and provide its ID"
+}
+```
+
+---
+
+### Variable Bypass System
+
+When arguments contain **variables** or **nested functions**, the validator automatically skips validation for those arguments because their values are dynamic and unknown at validation time.
+
+**Variables that trigger bypass:**
+- `$var[]`
+- `$getUserVar[]`
+- `$getServerVar[]`
+- `$getChannelVar[]`
+- `$getVar[]`
+- Any nested function (contains `$`)
+
+**What gets skipped:**
+- Enum validation
+- Type validation (Number, Boolean, Snowflake)
+- JSON syntax validation
+- Parent-child ID validation
+
+**Example:**
+```bdscript
+$addButtonCV2[btn;Click;$getUserVar[style];...;...;$var[rowId]]
+```
+This will **not** error even if `$getUserVar[style]` returns an invalid enum, because the validator can't know the value at validation time.
+
+---
+
+### Escape Sequences
+
+The validator properly handles BDFD escape sequences:
+
+| Escape | Result | Description |
+|--------|--------|-------------|
+| `$c[]` | `$` | Escaped dollar sign (displays `$` as text) |
+| `\;` | `;` | Escaped semicolon (includes `;` in argument) |
+| `\]` | `]` | Escaped closing bracket (includes `]` in argument) |
+| `\\` | `\` | Escaped backslash (displays `\` as text) |
+| `%{DOL}%` | `$` | Alternative dollar escape |
+| `%{-SEMICOL-}%` | `;` | Alternative semicolon escape |
+| `%ESCAPED%` | `]` | Alternative bracket escape |
+
+---
+
+### Multi-line Code Support
+
+The API automatically handles multi-line code with line breaks. Users can type their code naturally with proper formatting, and the API will parse it correctly.
+
+**Example:**
+```bdscript
+$if[$authorID==$botOwnerID]
+  $sendMessage[Hello owner!]
+$else
+  $sendMessage[Hello user!]
+$endif
+```
+
+---
+
+### Error Sorting
+
+Errors are automatically sorted by line number for easier debugging. This helps you fix issues from top to bottom.
+
+---
+
+### Example BDFD Usage
+
+To validate user-provided code, capture it with `$message` and store it in a variable to prevent BDFD from executing it:
+
+```shell
+$nomention
+$var[code;$message]
+$httpAddHeader[Authorization;Bearer BDTools-YOUR_API_KEY_HERE]
+$httpPost[https://api.bdtools.xyz/bdscript-checker;
+{
+  "code": "$var[code]"
+}
+]
+$httpResult
+```
+
+**How it works:**
+1. User types: `!run $sendMessage[Hello World!]`
+2. `$message` captures the raw code after the command
+3. Store it in `$var[code]` to prevent execution
+4. Send to API for validation
+5. Display the result with `$httpResult`
+
+**Important:** Always store the code in a `$var` before using it in JSON. If you use `$message` directly in the JSON, BDFD will execute the code instead of sending it as text.
+
+---
+
+### Error Responses
+
+**Error Response (401) - Unauthorized:**
+```json
+{
+  "error": "Invalid or missing API key."
+}
+```
+
+**Error Response (400) - Invalid Request:**
+```json
+{
+  "error": "Missing or invalid 'code' field"
+}
+```
+
+**Error Response (405) - Method Not Allowed:**
+```json
+{
+  "error": "Method not allowed. Use POST."
+}
+```
+
+**Error Response (500) - Internal Server Error:**
+```json
+{
+  "error": "Internal server error"
+}
+```
+
+---
 ## Other Endpoints
 
 These endpoints are **public** (no authentication required) and provide various utility functions including word games and Pokemon data.
@@ -909,7 +1285,11 @@ JWT tokens for guild list endpoints should be prefixed with `BDTools-` in the Au
 Authorization: Bearer BDTools-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-Guild List endpoints require auth. Node Status, BDFD Functions, and Other endpoints (word games, Pokemon) are public and do not require authentication.
+**Authentication by endpoint:**
+- **Node Status**: No auth required (public)
+- **Bot Guild List**: Auth required
+- **BDScript Checker**: Auth required
+- **Other Endpoints**: No auth required (public)
 
 ### Rate Limits
 - `/submit-server`: Once every 5 hours per API key
