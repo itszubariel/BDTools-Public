@@ -910,7 +910,8 @@
                 <li>
                   • <strong class="text-gray-300">Sections:</strong> Must have
                   at least 1 Text Display and 1 accessory (thumbnail or button);
-                  Duplicate section IDs trigger warnings
+                  Duplicate section IDs are not allowed (each section needs a
+                  unique ID)
                 </li>
                 <li>
                   • <strong class="text-gray-300">Containers:</strong> Must have
@@ -1391,8 +1392,8 @@
         { id: "overview", label: "Overview" },
         { id: "ep-bdscript-checker", label: "POST /bdscript-checker" },
       ];
-      window.PREV_PAGE = { url: "guild-list.html", label: "Guild List" };
-      window.NEXT_PAGE = { url: "others.html", label: "Other Endpoints" };
+      window.PREV_PAGE = { url: "/docs/guild-list", label: "Guild List" };
+      window.NEXT_PAGE = { url: "/docs/others", label: "Other Endpoints" };
     </script>
     <script src="docs-template-script.js"></script>
   </body>

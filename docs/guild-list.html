@@ -1069,8 +1069,11 @@
         { id: "ep-submit-server", label: "POST /submit-server" },
         { id: "ep-get-servers", label: "GET /get-servers" },
       ];
-      window.PREV_PAGE = { url: "node-status.html", label: "Node Status" };
-      window.NEXT_PAGE = { url: "checker.html", label: "BDScript Checker" };
+      window.PREV_PAGE = { url: "/docs/node-status", label: "Node Status" };
+      window.NEXT_PAGE = {
+        url: "/docs/bdscript-checker",
+        label: "BDScript Checker",
+      };
 
       // Copy BDFD code function
       function copyBdfdCode() {

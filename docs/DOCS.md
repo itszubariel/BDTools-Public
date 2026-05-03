@@ -825,7 +825,7 @@ Detects unclosed control flow blocks like `$if`, `$try`, and `$async`.
 ```
 
 **Block Pairs:**
-- `$if` ... `$endif`
+- `$if` ... `$endif` (note: `$else` is optional)
 - `$try` ... `$endtry` (note: `$catch` is optional)
 - `$async` ... `$endasync`
 
@@ -894,7 +894,7 @@ Validates BDFD's requirements for Components v2 to catch errors before running c
 **Sections:**
 - Must have at least 1 Text Display component
 - Must have at least 1 accessory (thumbnail or button)
-- Duplicate section IDs trigger warnings
+- Duplicate section IDs are not allowed (each section needs a unique ID)
 
 **Containers:**
 - Must have at least 1 child component
