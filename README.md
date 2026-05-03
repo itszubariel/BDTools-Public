@@ -48,16 +48,21 @@ BDTools exposes a serverless API for bot integrations and BDFD tooling.
 | `/node-status/history` | `GET` | Time-series snapshots for the last 7 days. Supports `?limit=24h` or `?graph=true` for PNG charts |
 | `/images/:id.png` | `GET` | Dynamically generated PNG charts for node status history |
 
-### BDFD & Other Endpoints
+### BDScript Checker
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/bdfd-functions` | `GET` | Proxy for the BDFD public function list. Cached for 1 hour. |
+| `/bdscript-checker` | `POST` | Comprehensive BDScript/BDFD code validator. Catches syntax errors, validates arguments, checks parent-child relationships, and enforces Components v2 rules. Returns detailed error messages with line numbers. |
+
+### Other Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
 | `/random-word` | `GET` | Random 5-letter word for Wordle-style games. Rate limited: 30 req/10s. |
 | `/validate-word` | `GET` | Validate a 5-letter word against wordlist + dictionary. Rate limited: 60 req/10s. |
 | `/random-pokemon` | `GET` | Random Pokemon from all generations (1-9). Supports `?gen=`, `?name=`, and `?image=true`. Rate limited: 30 req/10s. |
 
-Authentication uses JWT-based API keys generated via Discord OAuth. Guild list endpoints require auth. Node status, BDFD, and other utility endpoints are public.
+Authentication uses JWT-based API keys generated via Discord OAuth. Guild list and BDScript Checker endpoints require auth. Node status and other utility endpoints are public.
 
 Full API documentation at [bdtools.xyz/docs](https://bdtools.xyz/docs).
 
@@ -71,8 +76,16 @@ $httpGet[https://api.bdtools.xyz/node-status/offline]
 # Example — fetch 24h history with graph
 $httpGet[https://api.bdtools.xyz/node-status/history?limit=24h&graph=true]
 
-# Example — fetch BDFD function list  
-$httpGet[https://api.bdtools.xyz/bdfd-functions]
+# Example — validate BDScript code
+$nomention
+$var[code;$message]
+$httpAddHeader[Authorization;Bearer BDTools-YOUR_API_KEY_HERE]
+$httpPost[https://api.bdtools.xyz/bdscript-checker;
+{
+  "code": "$var[code]"
+}
+]
+$httpResult
 
 # Example — fetch random Pokemon from Gen 1
 $httpGet[https://api.bdtools.xyz/random-pokemon?gen=1]
@@ -86,7 +99,7 @@ $httpGet[https://api.bdtools.xyz/random-pokemon?gen=1]
 - **Backend** — Netlify Functions (Node.js), MongoDB
 - **Auth** — Discord OAuth2, JWT
 - **Deployment** — Netlify (continuous deployment from GitHub)
-- **Cron** — cron-job.org (triggers node status scraper every 5 minutes)
+- **Cron** — cron-job.org (triggers node status scraper every 2 minutes)
 - **Cache** — Upstash Redis (rate limiting + guild list caching)
 
 ---
