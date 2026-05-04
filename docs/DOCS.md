@@ -675,7 +675,12 @@ Validates BDFD code for syntax errors, argument issues, and BDFD requirements. R
       "message": "$setUserVar - Too many arguments, expected up to 4, got 5"
     }
   ],
-  "hasErrors": true
+  "hasErrors": true,
+  "statistics": {
+    "functions": 1,
+    "arguments": 5,
+    "variables": ["points"]
+  }
 }
 ```
 
@@ -683,9 +688,23 @@ Validates BDFD code for syntax errors, argument issues, and BDFD requirements. R
 ```json
 {
   "errors": [],
-  "hasErrors": false
+  "hasErrors": false,
+  "statistics": {
+    "functions": 3,
+    "arguments": 5,
+    "variables": ["level", "points"]
+  }
 }
 ```
+
+**Statistics Object:**
+- `functions` - Total number of function calls in the code
+- `arguments` - Total number of arguments across all functions
+- `variables` - Array of unique variable names used (sorted alphabetically)
+  - Includes: `$var[]`, `$getUserVar[]`, `$getServerVar[]`, `$getChannelVar[]`, `$getVar[]`, `$setUserVar[]`, `$setServerVar[]`, `$setChannelVar[]`, `$setVar[]`
+  - Extracts only the first argument (variable name)
+  - Deduplicates: if same variable is both set and get, appears only once
+  - Only includes variables with static names (excludes dynamic variable names like `$getUserVar[$var[x]]`)
 
 ---
 
@@ -755,8 +774,6 @@ Validates that enum arguments use valid values from the allowed list.
 }
 ```
 
-**Special Case:** `$modifyChannel` accepts `!unchanged` to keep current state.
-
 #### 5. Type Validation
 Validates argument types including Number, Boolean, Integer, and Snowflake (Discord IDs).
 
@@ -780,6 +797,8 @@ Validates argument types including Number, Boolean, Integer, and Snowflake (Disc
 - **Number/Integer:** Must be numeric (e.g., `123`, `-45`, `3.14`)
 - **Boolean:** Must be `true`, `false`, `yes`, `no`, `1`, or `0`
 - **Snowflake:** Must be 17-19 digit Discord ID
+
+**Special Value:** The BDFD special value `!unchanged` is recognized in `$modifyChannel`, `$modifyRole`, and `$editThread` only and skips type validation. This value indicates "keep the current value unchanged".
 
 #### 6. JSON Syntax Validation
 Validates JSON syntax in `$jsonParse` to catch malformed JSON.
@@ -948,31 +967,125 @@ Validates BDFD's requirements for Components v2 to catch errors before running c
 }
 ```
 
+**Select Menus:**
+- `$newSelectMenu` and `$editSelectMenu` must have at least 1 option
+- `$addStringSelect` must have at least 1 option
+- String select menus must have at least as many options as the max value
+
+**Example Errors:**
+```json
+{
+  "function": "$newSelectMenu",
+  "line": 1,
+  "message": "Select Menu 'menu1' must have at least 1 option — use $addSelectMenuOption to add options"
+}
+```
+```json
+{
+  "function": "$addStringSelect",
+  "line": 1,
+  "message": "String Select Menu 'menu1' has max value of 25 but only 1 option(s) — need at least 25 options"
+}
+```
+
+#### 12. Negative Number Validation
+Validates that functions which don't accept negative numbers receive valid values.
+
+**Functions checked:**
+- `$random` - Both min and max must be >= 0
+- `$cropText` - Cannot accept negative values
+- `$sqrt` - Cannot accept negative values
+
+**Example Errors:**
+```json
+{
+  "function": "$random",
+  "line": 1,
+  "message": "$random - Argument 1 cannot be negative, got '-5'"
+}
+```
+```json
+{
+  "function": "$cropText",
+  "line": 1,
+  "message": "$cropText - Argument 2 cannot be negative, got '-10'"
+}
+```
+
+#### 13. Min/Max Value Validation
+Validates min and max value constraints for select menus.
+
+**$newSelectMenu / $editSelectMenu:**
+- Min must be >= 0
+- Max must be <= 25
+- Min must be < Max (strict inequality)
+
+**CompV2 Select Menus ($addUserSelect, $addRoleSelect, $addChannelSelect, $addMentionableSelect, $addStringSelect):**
+- Min must be >= 0
+- Max must be <= 25
+- Min must be <= Max (can be equal)
+
+**Example Errors:**
+```json
+{
+  "function": "$newSelectMenu",
+  "line": 1,
+  "message": "$newSelectMenu - Min value cannot be negative, got -1"
+}
+```
+```json
+{
+  "function": "$addUserSelect",
+  "line": 1,
+  "message": "$addUserSelect - Max value cannot be greater than 25, got 30"
+}
+```
+```json
+{
+  "function": "$random",
+  "line": 1,
+  "message": "$random - Min value (10) must be less than Max value (5)"
+}
+```
+```json
+{
+  "function": "$addChannelSelect",
+  "line": 1,
+  "message": "$addChannelSelect - Min value (10) cannot be greater than Max value (5)"
+}
+```
+
 ---
 
 ### Variable Bypass System
 
-When arguments contain **variables** or **nested functions**, the validator automatically skips validation for those arguments because their values are dynamic and unknown at validation time.
+When arguments contain **variables**, **nested functions**, or the **special value `!unchanged`** (in `$modifyChannel` only), the validator automatically skips certain validations because their values are dynamic, unknown at validation time, or have special meaning.
 
-**Variables that trigger bypass:**
+**Values that trigger bypass:**
 - `$var[]`
 - `$getUserVar[]`
 - `$getServerVar[]`
 - `$getChannelVar[]`
 - `$getVar[]`
 - Any nested function (contains `$`)
+- `!unchanged` (BDFD special value in `$modifyChannel`, `$modifyRole`, and `$editThread` only)
 
 **What gets skipped:**
-- Enum validation
-- Type validation (Number, Boolean, Snowflake)
-- JSON syntax validation
-- Parent-child ID validation
+- Enum validation (for variables and nested functions)
+- Type validation (for variables, nested functions, and `!unchanged` in `$modifyChannel`)
+- JSON syntax validation (for variables and nested functions)
+- Parent-child ID validation (for variables and nested functions)
 
-**Example:**
+**Examples:**
 ```bdscript
 $addButtonCV2[btn;Click;$getUserVar[style];...;...;$var[rowId]]
 ```
 This will **not** error even if `$getUserVar[style]` returns an invalid enum, because the validator can't know the value at validation time.
+
+```bdscript
+$modifyChannel[1234567890123456789;New Name;;;!unchanged;!unchanged]
+```
+The `!unchanged` values will **not** error for type validation in `$modifyChannel`, `$modifyRole`, or `$editThread` because it's a special BDFD value meaning "keep the current value unchanged".
 
 ---
 

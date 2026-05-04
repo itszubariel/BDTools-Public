@@ -1,0 +1,1566 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>BDScript Checker | Docs</title>
+    <link rel="icon" href="https://bdtools.xyz/images/bdfd_logo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Geist", "sans-serif"],
+              mono: ["Geist Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="stylesheet" href="shared.css" />
+  </head>
+
+  <body class="bg-[#080a10] text-gray-100 min-h-screen flex flex-col">
+    <!-- ── LOGIN GATE ── -->
+    <div id="loginOverlay">
+      <div class="fu text-center px-6 w-full max-w-sm">
+        <img
+          src="/images/bdfd_logo.png"
+          alt="BDTools"
+          class="w-16 h-16 rounded-2xl mx-auto mb-6 shadow-2xl"
+          onerror="this.style.display = 'none'"
+        />
+        <h1
+          class="dark-text text-2xl font-black text-white mb-2 tracking-tight"
+        >
+          BDTools API Docs
+        </h1>
+        <p class="text-gray-400 text-sm mb-8">
+          Sign in with Discord to access the full API documentation, your
+          personal API key, and the interactive tester.
+        </p>
+        <button
+          id="loginBtn"
+          onclick="loginDiscord()"
+          class="inline-flex items-center gap-3 px-7 py-3 bg-[#5865F2] hover:bg-[#4752c4] text-white font-bold rounded-xl transition-all shadow-lg text-base w-full justify-center"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 127.14 96.36"
+            fill="currentColor"
+          >
+            <path
+              d="M107.7 8.07A105.15 105.15 0 0081.47 0a72.06 72.06 0 00-3.36 6.83 97.68 97.68 0 00-29.11 0A72.37 72.37 0 0045.64 0a105.89 105.89 0 00-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0032.17 16.15 77.7 77.7 0 006.89-11.11 68.42 68.42 0 01-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0064.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 01-10.87 5.19 77 77 0 006.89 11.1 105.25 105.25 0 0032.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15zM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69z"
+            />
+          </svg>
+          Sign in with Discord
+        </button>
+        <p
+          id="loginStatus"
+          class="text-xs text-gray-600 mt-4 min-h-[1.25rem]"
+        ></p>
+      </div>
+    </div>
+
+    <!-- ── NAV ── -->
+    <nav
+      class="sticky top-0 z-50 border-b"
+      style="border-color: #1e2130; background: #080a10"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4"
+      >
+        <a href="/" class="flex items-center gap-2.5 group flex-shrink-0">
+          <img
+            src="/images/bdfd_logo.png"
+            alt="BDTools"
+            class="w-7 h-7 rounded-lg"
+            onerror="this.style.display = 'none'"
+          />
+          <span class="font-bold tracking-tight t1">BDTools</span>
+        </a>
+        <div id="userInfo" class="hidden items-center gap-2 min-w-0">
+          <img
+            id="userAvatar"
+            src=""
+            alt=""
+            class="w-7 h-7 rounded-full flex-shrink-0"
+          />
+          <span
+            id="userName"
+            class="font-semibold text-sm hidden sm:block truncate"
+          ></span>
+          <button
+            onclick="openLogoutModal()"
+            class="text-xs text-gray-500 hover:text-red-400 transition-colors ml-1 flex-shrink-0"
+          >
+            Logout
+          </button>
+          <span
+            id="themeLabel"
+            class="text-xs text-gray-500 hidden sm:block select-none"
+            >Dark Mode</span
+          >
+          <div id="themeToggle" class="tog-track on" onclick="toggleTheme()">
+            <div class="tog-thumb"></div>
+          </div>
+          <button
+            class="hamburger-btn"
+            id="hamburgerBtn"
+            onclick="toggleMobileDrawer()"
+            aria-label="Toggle menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ── LOGOUT MODAL ── -->
+    <div class="overlay hidden" id="logoutModal">
+      <div class="modal">
+        <button class="modal-close" onclick="closeLogoutModal()">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Confirm Logout</h3>
+        <p>
+          Are you sure you want to log out? This will clear your session and API
+          key.
+        </p>
+        <div class="modal-buttons">
+          <button class="btn-ghost" onclick="closeLogoutModal()">Cancel</button>
+          <button class="btn-danger" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MOBILE DRAWER ── -->
+    <div
+      class="mobile-drawer-backdrop"
+      id="mobileDrawerBackdrop"
+      onclick="closeMobileDrawer()"
+    ></div>
+
+    <div class="mobile-drawer" id="mobileDrawer">
+      <div class="mobile-drawer-header">
+        <span class="mobile-drawer-title">BDScript Checker</span>
+        <button
+          class="mobile-drawer-close"
+          onclick="closeMobileDrawer()"
+          aria-label="Close menu"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <nav class="space-y-0.5">
+        <a class="sidebar-link active" onclick="showSection('overview')"
+          >Overview</a
+        >
+        <a class="sidebar-link" onclick="showSection('ep-bdscript-checker')"
+          >POST /bdscript-checker</a
+        >
+      </nav>
+    </div>
+
+    <!-- ── PAGE HEADER ── -->
+    <div class="lowerNav border-b border-[#1e2130]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 fu">
+        <!-- Breadcrumb -->
+        <nav
+          class="flex items-center gap-2 text-xs text-gray-500 mb-4 font-mono"
+        >
+          <a href="index.html" class="hover:text-[#818cf8] transition-colors"
+            >Docs</a
+          >
+          <span class="text-gray-700">/</span>
+          <span class="text-gray-300">BDScript Checker</span>
+        </nav>
+        <div class="flex items-center gap-3 mb-2">
+          <div
+            class="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0"
+          >
+            <svg
+              class="w-4.5 h-4.5 text-purple-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+              />
+            </svg>
+          </div>
+          <h1
+            class="text-2xl sm:text-3xl font-black text-white dark-text tracking-tight"
+          >
+            BDScript Checker
+          </h1>
+        </div>
+        <p class="text-gray-400 dark-text-2 text-sm max-w-xl leading-relaxed">
+          Comprehensive BDScript/BDFD code validator that catches syntax errors
+          and common mistakes before you run your code.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── MAIN 3-COLUMN LAYOUT ── -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <div class="docs-layout">
+        <!-- ── LEFT SIDEBAR ── -->
+        <aside class="left-sidebar">
+          <p
+            class="text-[10px] font-mono text-gray-600 uppercase tracking-widest mb-2 px-3"
+          >
+            BDScript Checker
+          </p>
+          <nav class="space-y-0.5" id="leftNav">
+            <a class="sidebar-link active" onclick="showSection('overview')"
+              >Overview</a
+            >
+            <a class="sidebar-link" onclick="showSection('ep-bdscript-checker')"
+              >POST /bdscript-checker</a
+            >
+          </nav>
+        </aside>
+
+        <!-- ── CONTENT ── -->
+        <main class="min-w-0">
+          <!-- Overview -->
+          <section
+            id="overview"
+            class="endpoint-section dark-surface fu scroll-fade"
+          >
+            <h2 class="text-lg font-bold text-white dark-text mb-3">
+              Overview
+            </h2>
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-4">
+              Comprehensive BDScript/BDFD code validator that catches syntax
+              errors and common mistakes before you run your code. Made
+              specially for the !run command by BDSuper in the BDFD Support
+              Server.
+            </p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Auth required
+              </span>
+            </div>
+            <div class="code-block">
+              <pre><span class="cmt">// Base URL</span>
+<span class="str">https://api.bdtools.xyz/bdscript-checker</span></pre>
+            </div>
+          </section>
+
+          <!-- POST /bdscript-checker -->
+          <section
+            id="ep-bdscript-checker"
+            class="endpoint-section dark-surface hidden scroll-fade"
+          >
+            <div class="flex items-center gap-3 mb-4 flex-wrap">
+              <span class="method-badge post">POST</span>
+              <code
+                class="font-mono text-sm text-gray-200 dark-text flex-1 min-w-0 break-all"
+                >/bdscript-checker</code
+              >
+              <button
+                onclick="copyUrl('/bdscript-checker')"
+                class="text-xs bg-[#1e2130] hover:bg-[#252840] text-gray-400 border border-[#2e3350] px-3 py-1.5 rounded-lg transition-colors font-semibold flex-shrink-0 flex items-center gap-1.5"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Copy URL
+              </button>
+            </div>
+
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-4">
+              Validates BDFD code for syntax errors, argument issues, and BDFD
+              requirements. Returns detailed error messages with line numbers to
+              help you fix issues quickly. Function definitions are loaded from
+              a local JSON file for fast validation.
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-5">
+              <span
+                class="inline-flex items-center gap-1.5 text-xs bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1 rounded-full font-semibold"
+              >
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Auth required
+              </span>
+            </div>
+
+            <!-- Request Body -->
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-2"
+            >
+              Request Body
+            </h3>
+            <div class="code-block mb-5">
+              <pre><span class="kw">{</span>
+  <span class="key">"code"</span><span class="kw">:</span> <span class="str">"$setUserVar[test;1;2;3;4]"</span>
+<span class="kw">}</span></pre>
+            </div>
+
+            <!-- Success Responses -->
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-3"
+            >
+              Success Responses
+            </h3>
+
+            <div class="response-block mb-4">
+              <span class="status-badge success">200 OK — With Errors</span>
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span>
+  <span class="key">"errors"</span><span class="kw">: [</span>
+    <span class="kw">{</span>
+      <span class="key">"function"</span><span class="kw">:</span> <span class="str">"$setUserVar"</span><span class="kw">,</span>
+      <span class="key">"line"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+      <span class="key">"message"</span><span class="kw">:</span> <span class="str">"$setUserVar - Too many arguments, expected up to 4, got 5"</span>
+    <span class="kw">}</span>
+  <span class="kw">],</span>
+  <span class="key">"hasErrors"</span><span class="kw">:</span> <span class="kw">true</span><span class="kw">,</span>
+  <span class="key">"statistics"</span><span class="kw">: {</span>
+    <span class="key">"functions"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+    <span class="key">"arguments"</span><span class="kw">:</span> <span class="num">5</span><span class="kw">,</span>
+    <span class="key">"variables"</span><span class="kw">: [</span><span class="str">"points"</span><span class="kw">]</span>
+  <span class="kw">}</span>
+<span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block mb-5">
+              <span class="status-badge success">200 OK — No Errors</span>
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span>
+  <span class="key">"errors"</span><span class="kw">: [],</span>
+  <span class="key">"hasErrors"</span><span class="kw">:</span> <span class="kw">false</span><span class="kw">,</span>
+  <span class="key">"statistics"</span><span class="kw">: {</span>
+    <span class="key">"functions"</span><span class="kw">:</span> <span class="num">3</span><span class="kw">,</span>
+    <span class="key">"arguments"</span><span class="kw">:</span> <span class="num">5</span><span class="kw">,</span>
+    <span class="key">"variables"</span><span class="kw">: [</span><span class="str">"level"</span><span class="kw">,</span> <span class="str">"points"</span><span class="kw">]</span>
+  <span class="kw">}</span>
+<span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <!-- Statistics Object -->
+            <div
+              class="dark-surface bg-[#0a0c14] border border-[#2e3350] rounded-xl p-4 mb-5"
+            >
+              <div class="flex items-start gap-3">
+                <div
+                  class="w-5 h-5 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5"
+                >
+                  <svg
+                    class="w-3 h-3 text-blue-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <div class="text-xs text-gray-400 dark-text-3 leading-relaxed">
+                  <strong class="text-gray-300">Statistics Object:</strong>
+                  <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li>
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >functions</code
+                      >
+                      - Total number of function calls in the code
+                    </li>
+                    <li>
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >arguments</code
+                      >
+                      - Total number of arguments across all functions
+                    </li>
+                    <li>
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >variables</code
+                      >
+                      - Array of unique variable names used (sorted
+                      alphabetically). Includes variable get/set functions,
+                      extracts only the first argument (variable name),
+                      deduplicates, and only includes static names.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Validation Features -->
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-3 mt-6"
+            >
+              Validation Features
+            </h3>
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-4">
+              The validator performs comprehensive checks to catch errors before
+              your code runs:
+            </p>
+
+            <!-- Feature 1: Unknown Functions -->
+            <div class="mb-5">
+              <h4 class="text-sm font-bold text-gray-200 mb-2">
+                1. Unknown Functions
+              </h4>
+              <p class="text-sm text-gray-400 dark-text-3 mb-2">
+                Warns if a function doesn't exist in the BDFD function list.
+              </p>
+            </div>
+
+            <!-- Feature 2: Argument Count Validation -->
+            <div class="mb-5">
+              <h4 class="text-sm font-bold text-gray-200 mb-2">
+                2. Argument Count Validation
+              </h4>
+              <p class="text-sm text-gray-400 dark-text-3 mb-2">
+                Validates minimum and maximum argument counts. Handles functions
+                with multiple signatures (different argument patterns).
+              </p>
+              <p class="text-xs font-semibold text-gray-300 mb-1">
+                Argument Counting Rules:
+              </p>
+              <ul class="text-xs text-gray-400 dark-text-3 space-y-1 ml-4">
+                <li>
+                  • No brackets:
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$function</code
+                  >
+                  = 0 arguments
+                </li>
+                <li>
+                  • Empty brackets:
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$function[]</code
+                  >
+                  = 1 empty argument
+                </li>
+                <li>
+                  • Semicolons separate arguments:
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$function[A;B]</code
+                  >
+                  = 2 arguments
+                </li>
+                <li>
+                  • Trailing semicolon counts:
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$function[A;]</code
+                  >
+                  = 2 arguments (second is empty)
+                </li>
+              </ul>
+            </div>
+
+            <!-- Feature 3: Empty Argument Validation -->
+            <div class="mb-5">
+              <h4 class="text-sm font-bold text-gray-200 mb-2">
+                3. Empty Argument Validation
+              </h4>
+              <p class="text-sm text-gray-400 dark-text-3">
+                Checks if empty arguments are allowed based on function
+                definition.
+              </p>
+            </div>
+
+            <!-- Feature 4: Enum Validation -->
+            <div class="mb-5">
+              <h4 class="text-sm font-bold text-gray-200 mb-2">
+                4. Enum Validation
+              </h4>
+              <p class="text-sm text-gray-400 dark-text-3">
+                Validates that enum arguments use valid values from the allowed
+                list.
+              </p>
+            </div>
+
+            <!-- Feature 5: Type Validation -->
+            <div class="mb-5">
+              <h4 class="text-sm font-bold text-gray-200 mb-2">
+                5. Type Validation
+              </h4>
+              <p class="text-sm text-gray-400 dark-text-3 mb-2">
+                Validates argument types including Number, Boolean, Integer, and
+                Snowflake (Discord IDs).
+              </p>
+              <p class="text-xs font-semibold text-gray-300 mb-1">
+                Type Rules:
+              </p>
+              <ul class="text-xs text-gray-400 dark-text-3 space-y-1 ml-4">
+                <li>
+                  • <strong class="text-gray-300">Number/Integer:</strong> Must
+                  be numeric (e.g.,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >123</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >-45</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >3.14</code
+                  >)
+                </li>
+                <li>
+                  • <strong class="text-gray-300">Boolean:</strong> Must be
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >true</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >false</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >yes</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >no</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >1</code
+                  >, or
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >0</code
+                  >
+                </li>
+                <li>
+                  • <strong class="text-gray-300">Snowflake:</strong> Must be
+                  17-19 digit Discord ID
+                </li>
+              </ul>
+              <p class="text-xs text-gray-400 dark-text-3 mt-2">
+                <strong class="text-gray-300">Special Value:</strong> The BDFD
+                special value
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >!unchanged</code
+                >
+                is recognized in
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$modifyChannel</code
+                >,
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$modifyRole</code
+                >, and
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$editThread</code
+                >
+                only and skips type validation. This value indicates "keep the
+                current value unchanged".
+              </p>
+            </div>
+
+            <!-- Feature 6: JSON Syntax Validation -->
+            <div class="mb-5">
+              <h4 class="text-sm font-bold text-gray-200 mb-2">
+                6. JSON Syntax Validation
+              </h4>
+              <p class="text-sm text-gray-400 dark-text-3">
+                Validates JSON syntax in
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$jsonParse</code
+                >
+                to catch malformed JSON.
+              </p>
+            </div>
+
+            <!-- Feature 7: Bracket Matching -->
+            <div class="mb-5">
+              <h4 class="text-sm font-bold text-gray-200 mb-2">
+                7. Bracket Matching
+              </h4>
+              <p class="text-sm text-gray-400 dark-text-3">
+                Ensures all brackets are properly opened and closed.
+              </p>
+            </div>
+
+            <!-- Feature 8: Unclosed Blocks -->
+            <div class="mb-5">
+              <h4 class="text-sm font-bold text-gray-200 mb-2">
+                8. Unclosed Blocks
+              </h4>
+              <p class="text-sm text-gray-400 dark-text-3 mb-2">
+                Detects unclosed control flow blocks like
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$if</code
+                >,
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$try</code
+                >, and
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$async</code
+                >.
+              </p>
+              <p class="text-xs font-semibold text-gray-300 mb-1">
+                Block Pairs:
+              </p>
+              <ul class="text-xs text-gray-400 dark-text-3 space-y-1 ml-4">
+                <li>
+                  •
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$if</code
+                  >
+                  ...
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$endif</code
+                  >
+                  (note:
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$else</code
+                  >
+                  is optional)
+                </li>
+                <li>
+                  •
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$try</code
+                  >
+                  ...
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$endtry</code
+                  >
+                  (note:
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$catch</code
+                  >
+                  is optional)
+                </li>
+                <li>
+                  •
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$async</code
+                  >
+                  ...
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$endasync</code
+                  >
+                </li>
+              </ul>
+            </div>
+
+            <!-- Feature 9: Multiple $else and $catch Detection -->
+            <div class="mb-5">
+              <h4 class="text-sm font-bold text-gray-200 mb-2">
+                9. Multiple $else and $catch Detection
+              </h4>
+              <p class="text-sm text-gray-400 dark-text-3">
+                Detects multiple
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$else</code
+                >
+                statements in the same
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$if</code
+                >
+                block, or multiple
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$catch</code
+                >
+                statements in the same
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$try</code
+                >
+                block (only one of each is allowed).
+              </p>
+            </div>
+
+            <!-- Feature 10: Context Validation -->
+            <div class="mb-5">
+              <h4 class="text-sm font-bold text-gray-200 mb-2">
+                10. Context Validation (Parent-Child Relationships)
+              </h4>
+              <p class="text-sm text-gray-400 dark-text-3 mb-3">
+                Ensures context-dependent functions have their required parent
+                functions defined
+                <strong class="text-gray-300">before</strong> use.
+              </p>
+
+              <div class="ml-4 space-y-3">
+                <div>
+                  <p class="text-xs font-semibold text-gray-300 mb-1">
+                    Modal Components:
+                  </p>
+                  <p class="text-xs text-gray-400 dark-text-3">
+                    •
+                    <code
+                      class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                      >$addTextInput</code
+                    >
+                    requires
+                    <code
+                      class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                      >$newModal</code
+                    >
+                  </p>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold text-gray-300 mb-1">
+                    Select Menus:
+                  </p>
+                  <p class="text-xs text-gray-400 dark-text-3">
+                    •
+                    <code
+                      class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                      >$addSelectMenuOption</code
+                    >
+                    requires
+                    <code
+                      class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                      >$newSelectMenu</code
+                    >
+                    or
+                    <code
+                      class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                      >$editSelectMenu</code
+                    >
+                  </p>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold text-gray-300 mb-1">
+                    Components v2:
+                  </p>
+                  <ul class="text-xs text-gray-400 dark-text-3 space-y-1">
+                    <li>
+                      •
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addThumbnail</code
+                      >
+                      requires
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addSection</code
+                      >
+                    </li>
+                    <li>
+                      •
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addMediaGalleryItem</code
+                      >
+                      requires
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addMediaGallery</code
+                      >
+                    </li>
+                    <li>
+                      •
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addButtonCV2</code
+                      >
+                      requires
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addActionRow</code
+                      >
+                      or
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addSection</code
+                      >
+                    </li>
+                    <li>
+                      •
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addUserSelect</code
+                      >,
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addRoleSelect</code
+                      >,
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addMentionableSelect</code
+                      >,
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addChannelSelect</code
+                      >,
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addStringSelect</code
+                      >
+                      require
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addActionRow</code
+                      >
+                    </li>
+                    <li>
+                      •
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addStringSelectOption</code
+                      >
+                      requires
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$addStringSelect</code
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold text-gray-300 mb-1">
+                    Text Splitting:
+                  </p>
+                  <p class="text-xs text-gray-400 dark-text-3">
+                    •
+                    <code
+                      class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                      >$splitText</code
+                    >,
+                    <code
+                      class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                      >$getTextSplitLength</code
+                    >,
+                    <code
+                      class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                      >$joinSplitText</code
+                    >, etc. require
+                    <code
+                      class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                      >$textSplit</code
+                    >
+                  </p>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold text-gray-300 mb-1">
+                    JSON Functions:
+                  </p>
+                  <p class="text-xs text-gray-400 dark-text-3">
+                    •
+                    <code
+                      class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                      >$json</code
+                    >,
+                    <code
+                      class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                      >$jsonUnset</code
+                    >,
+                    <code
+                      class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                      >$jsonArray</code
+                    >, etc. require
+                    <code
+                      class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                      >$jsonParse</code
+                    >
+                    or
+                    <code
+                      class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                      >$jsonSet</code
+                    >
+                  </p>
+                </div>
+              </div>
+              <p class="text-xs text-gray-500 mt-2 italic">
+                <strong class="text-gray-300">Note:</strong>
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$addTextDisplay</code
+                >
+                and
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$addSeparator</code
+                >
+                can exist without a parent (optional).
+              </p>
+            </div>
+
+            <!-- Feature 11: Components v2 Validation Rules -->
+            <div class="mb-5">
+              <h4 class="text-sm font-bold text-gray-200 mb-2">
+                11. Components v2 Validation Rules
+              </h4>
+              <p class="text-sm text-gray-400 dark-text-3 mb-2">
+                Validates BDFD's requirements for Components v2 to catch errors
+                before running code.
+              </p>
+              <ul class="text-xs text-gray-400 dark-text-3 space-y-1 ml-4">
+                <li>
+                  • <strong class="text-gray-300">Sections:</strong> Must have
+                  at least 1 Text Display and 1 accessory (thumbnail or button);
+                  Duplicate section IDs are not allowed (each section needs a
+                  unique ID)
+                </li>
+                <li>
+                  • <strong class="text-gray-300">Containers:</strong> Must have
+                  at least 1 child component
+                </li>
+                <li>
+                  • <strong class="text-gray-300">Media Galleries:</strong> Must
+                  have at least 1 media item
+                </li>
+                <li>
+                  • <strong class="text-gray-300">Action Rows:</strong> Cannot
+                  mix buttons and select menus
+                </li>
+                <li>
+                  • <strong class="text-gray-300">Limits:</strong> Maximum 5
+                  buttons or 1 select menu per action row
+                </li>
+                <li>
+                  •
+                  <strong class="text-gray-300">Parent-Child Order:</strong>
+                  Parents must be defined before children reference them; Empty
+                  required parent IDs trigger errors
+                </li>
+                <li>
+                  • <strong class="text-gray-300">Select Menus:</strong>
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$newSelectMenu</code
+                  >
+                  and
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$editSelectMenu</code
+                  >
+                  must have at least 1 option;
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$addStringSelect</code
+                  >
+                  must have at least 1 option; String select menus must have at
+                  least as many options as the max value
+                </li>
+              </ul>
+            </div>
+
+            <!-- Feature 12: Negative Number Validation -->
+            <div class="mb-5">
+              <h4 class="text-sm font-bold text-gray-200 mb-2">
+                12. Negative Number Validation
+              </h4>
+              <p class="text-sm text-gray-400 dark-text-3 mb-2">
+                Validates that functions which don't accept negative numbers
+                receive valid values.
+              </p>
+              <p class="text-xs font-semibold text-gray-300 mb-1">
+                Functions checked:
+              </p>
+              <ul class="text-xs text-gray-400 dark-text-3 space-y-1 ml-4">
+                <li>
+                  •
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$random</code
+                  >
+                  - Both min and max must be >= 0
+                </li>
+                <li>
+                  •
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$cropText</code
+                  >
+                  - Cannot accept negative values
+                </li>
+                <li>
+                  •
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$sqrt</code
+                  >
+                  - Cannot accept negative values
+                </li>
+              </ul>
+            </div>
+
+            <!-- Feature 13: Min/Max Value Validation -->
+            <div class="mb-5">
+              <h4 class="text-sm font-bold text-gray-200 mb-2">
+                13. Min/Max Value Validation
+              </h4>
+              <p class="text-sm text-gray-400 dark-text-3 mb-2">
+                Validates min and max value constraints for select menus.
+              </p>
+              <div class="ml-4 space-y-3">
+                <div>
+                  <p class="text-xs font-semibold text-gray-300 mb-1">
+                    $newSelectMenu / $editSelectMenu:
+                  </p>
+                  <ul class="text-xs text-gray-400 dark-text-3 space-y-1">
+                    <li>• Min must be >= 0</li>
+                    <li>• Max must be <= 25</li>
+                    <li>• Min must be < Max (strict inequality)</li>
+                  </ul>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold text-gray-300 mb-1">
+                    CompV2 Select Menus ($addUserSelect, $addRoleSelect,
+                    $addChannelSelect, $addMentionableSelect, $addStringSelect):
+                  </p>
+                  <ul class="text-xs text-gray-400 dark-text-3 space-y-1">
+                    <li>• Min must be >= 0</li>
+                    <li>• Max must be <= 25</li>
+                    <li>• Min must be <= Max (can be equal)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Variable Bypass System -->
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-2 mt-6"
+            >
+              Variable Bypass System
+            </h3>
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-3">
+              When arguments contain
+              <strong class="text-gray-300">variables</strong> or
+              <strong class="text-gray-300">nested functions</strong>, the
+              validator automatically skips validation for those arguments
+              because their values are dynamic and unknown at validation time.
+            </p>
+            <div class="ml-4 mb-5">
+              <p class="text-xs font-semibold text-gray-300 mb-2">
+                Variables that trigger bypass:
+              </p>
+              <p class="text-xs text-gray-400 dark-text-3 mb-3">
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$var[]</code
+                >,
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$getUserVar[]</code
+                >,
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$getServerVar[]</code
+                >,
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$getChannelVar[]</code
+                >,
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$getVar[]</code
+                >, or any nested function
+              </p>
+              <p class="text-xs font-semibold text-gray-300 mb-2">
+                What gets skipped:
+              </p>
+              <p class="text-xs text-gray-400 dark-text-3">
+                Enum validation, Type validation, JSON syntax validation,
+                Parent-child ID validation
+              </p>
+            </div>
+
+            <!-- Escape Sequences -->
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-2 mt-5"
+            >
+              Escape Sequences
+            </h3>
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-3">
+              The validator properly handles BDFD escape sequences:
+            </p>
+            <ul class="space-y-2 mb-5">
+              <li
+                class="flex items-start gap-2.5 text-sm text-gray-400 dark-text-3"
+              >
+                <span class="text-blue-400 mt-0.5 flex-shrink-0">•</span>
+                <span
+                  ><code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$c[]</code
+                  >
+                  - Escaped dollar sign (displays
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$</code
+                  >
+                  as text)</span
+                >
+              </li>
+              <li
+                class="flex items-start gap-2.5 text-sm text-gray-400 dark-text-3"
+              >
+                <span class="text-blue-400 mt-0.5 flex-shrink-0">•</span>
+                <span
+                  ><code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >\;</code
+                  >
+                  - Escaped semicolon (includes
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >;</code
+                  >
+                  in argument)</span
+                >
+              </li>
+              <li
+                class="flex items-start gap-2.5 text-sm text-gray-400 dark-text-3"
+              >
+                <span class="text-blue-400 mt-0.5 flex-shrink-0">•</span>
+                <span
+                  ><code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >\]</code
+                  >
+                  - Escaped closing bracket (includes
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >]</code
+                  >
+                  in argument)</span
+                >
+              </li>
+              <li
+                class="flex items-start gap-2.5 text-sm text-gray-400 dark-text-3"
+              >
+                <span class="text-blue-400 mt-0.5 flex-shrink-0">•</span>
+                <span
+                  ><code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >\\</code
+                  >
+                  - Escaped backslash (displays
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >\</code
+                  >
+                  as text)</span
+                >
+              </li>
+              <li
+                class="flex items-start gap-2.5 text-sm text-gray-400 dark-text-3"
+              >
+                <span class="text-blue-400 mt-0.5 flex-shrink-0">•</span>
+                <span
+                  ><code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >%{DOL}%</code
+                  >
+                  - Alternative dollar escape</span
+                >
+              </li>
+              <li
+                class="flex items-start gap-2.5 text-sm text-gray-400 dark-text-3"
+              >
+                <span class="text-blue-400 mt-0.5 flex-shrink-0">•</span>
+                <span
+                  ><code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >%{-SEMICOL-}%</code
+                  >
+                  - Alternative semicolon escape</span
+                >
+              </li>
+              <li
+                class="flex items-start gap-2.5 text-sm text-gray-400 dark-text-3"
+              >
+                <span class="text-blue-400 mt-0.5 flex-shrink-0">•</span>
+                <span
+                  ><code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >%ESCAPED%</code
+                  >
+                  - Alternative bracket escape</span
+                >
+              </li>
+            </ul>
+
+            <!-- Multi-line Code Support -->
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-2"
+            >
+              Multi-line Code Support
+            </h3>
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-5">
+              The API automatically handles multi-line code with line breaks.
+              Users can type their code naturally with proper formatting, and
+              the API will parse it correctly.
+            </p>
+
+            <!-- Error Sorting -->
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-2"
+            >
+              Error Sorting
+            </h3>
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-5">
+              Errors are automatically sorted by line number for easier
+              debugging. This helps you fix issues from top to bottom.
+            </p>
+
+            <!-- Example BDFD Usage -->
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-2 mt-6"
+            >
+              Example BDFD Usage
+            </h3>
+            <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-3">
+              To validate user-provided code, capture it with
+              <code
+                class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                >$message</code
+              >
+              and store it in a variable to prevent BDFD from executing it:
+            </p>
+            <div class="code-block mb-4">
+              <pre><span class="fn">$nomention</span>
+<span class="fn">$var</span><span class="kw">[</span><span class="str">code</span><span class="kw">;</span><span class="fn">$message</span><span class="kw">]</span>
+<span class="fn">$httpAddHeader</span><span class="kw">[</span><span class="str">Authorization</span><span class="kw">;</span><span class="str">Bearer BDTools-YOUR_API_KEY_HERE</span><span class="kw">]</span>
+<span class="fn">$httpPost</span><span class="kw">[</span><span class="str">https://api.bdtools.xyz/bdscript-checker</span><span class="kw">;</span>
+<span class="kw">{</span>
+  <span class="str">"code"</span><span class="kw">:</span> <span class="str">"$var[code]"</span>
+<span class="kw">}</span>
+<span class="kw">]</span>
+<span class="fn">$httpResult</span></pre>
+            </div>
+
+            <div
+              class="dark-surface bg-[#0a0c14] border border-[#2e3350] rounded-xl p-4 mb-4"
+            >
+              <div class="flex items-start gap-3">
+                <div
+                  class="w-5 h-5 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5"
+                >
+                  <svg
+                    class="w-3 h-3 text-blue-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <div class="text-xs text-gray-400 dark-text-3 leading-relaxed">
+                  <strong class="text-gray-300">How it works:</strong>
+                  <ol class="list-decimal list-inside mt-2 space-y-1">
+                    <li>
+                      User types:
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >!run $sendMessage[Hello World!]</code
+                      >
+                    </li>
+                    <li>
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$message</code
+                      >
+                      captures the raw code after the command
+                    </li>
+                    <li>
+                      Store it in
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$var[code]</code
+                      >
+                      to prevent execution
+                    </li>
+                    <li>Send to API for validation</li>
+                    <li>
+                      Display the result with
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >$httpResult</code
+                      >
+                    </li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="dark-surface bg-[#0a0c14] border border-[#2e3350] rounded-xl p-4 mb-5"
+            >
+              <div class="flex items-start gap-3">
+                <div
+                  class="w-5 h-5 rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center flex-shrink-0 mt-0.5"
+                >
+                  <svg
+                    class="w-3 h-3 text-yellow-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                </div>
+                <div class="text-xs text-gray-400 dark-text-3 leading-relaxed">
+                  <strong class="text-yellow-400">Important:</strong> Always
+                  store the code in a
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$var</code
+                  >
+                  before using it in JSON. If you use
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$message</code
+                  >
+                  directly in the JSON, BDFD will execute the code instead of
+                  sending it as text.
+                </div>
+              </div>
+            </div>
+
+            <!-- Error Responses -->
+            <h3
+              class="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest mb-3 mt-6"
+            >
+              Error Responses
+            </h3>
+
+            <div class="response-block">
+              <span class="status-badge error-client">401 Unauthorized</span>
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Invalid or missing API key."</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-client">400 Bad Request</span>
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Missing or invalid 'code' field"</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-client"
+                >405 Method Not Allowed</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Method not allowed. Use POST."</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+
+            <div class="response-block">
+              <span class="status-badge error-server"
+                >500 Internal Server Error</span
+              >
+              <div class="code-block mt-2">
+                <pre><span class="kw">{</span> <span class="key">"error"</span><span class="kw">:</span> <span class="str">"Internal server error"</span> <span class="kw">}</span></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- Bottom navigation -->
+          <div
+            class="flex items-center justify-between pt-6 pb-6 border-t border-[#1e2130] mt-8"
+          >
+            <button
+              id="prevBtn"
+              onclick="navigateSection('prev')"
+              class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-[#818cf8] transition-colors font-semibold"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              <span id="prevText">Previous</span>
+            </button>
+            <button
+              id="nextBtn"
+              onclick="navigateSection('next')"
+              class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-[#818cf8] transition-colors font-semibold"
+            >
+              <span id="nextText">Next</span>
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- ── FOOTER ── -->
+    <footer class="border-t border-[#1e2130] bg-[#080a10] mt-auto">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3"
+      >
+        <span class="text-sm text-gray-600"
+          >© 2026 BDTools. All rights reserved.</span
+        >
+        <div class="flex items-center gap-4 text-xs text-gray-600">
+          <a href="/tos" class="hover:text-gray-400 transition-colors"
+            >Terms of Service</a
+          >
+          <a href="/privacy" class="hover:text-gray-400 transition-colors"
+            >Privacy Policy</a
+          >
+          <a href="/contact" class="hover:text-gray-400 transition-colors"
+            >Contact</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <!-- ── TOAST ── -->
+    <div
+      id="toast"
+      class="fixed bottom-6 right-6 z-50 bg-[#5865F2] text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2"
+    >
+      <svg
+        class="w-3.5 h-3.5 flex-shrink-0"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.5"
+          d="M5 13l4 4L19 7"
+        />
+      </svg>
+      <span id="toastMsg">Copied!</span>
+    </div>
+
+    <!-- ── SCRIPTS ── -->
+    <script>
+      window.DOCS_REDIRECT = "https://bdtools.xyz/docs";
+    </script>
+    <script src="shared.js"></script>
+    <script>
+      // Page-specific configuration
+      window.PAGE_SECTIONS = [
+        { id: "overview", label: "Overview" },
+        { id: "ep-bdscript-checker", label: "POST /bdscript-checker" },
+      ];
+      window.PREV_PAGE = { url: "/docs/guild-list", label: "Guild List" };
+      window.NEXT_PAGE = { url: "/docs/others", label: "Other Endpoints" };
+    </script>
+    <script src="docs-template-script.js"></script>
+  </body>
+</html>
