@@ -678,6 +678,7 @@ Validates BDFD code for syntax errors, argument issues, and BDFD requirements. R
   "hasErrors": true,
   "statistics": {
     "functions": 1,
+    "fakeFunctions": 0,
     "arguments": 5,
     "variables": ["points"]
   }
@@ -691,6 +692,7 @@ Validates BDFD code for syntax errors, argument issues, and BDFD requirements. R
   "hasErrors": false,
   "statistics": {
     "functions": 3,
+    "fakeFunctions": 0,
     "arguments": 5,
     "variables": ["level", "points"]
   }
@@ -698,7 +700,8 @@ Validates BDFD code for syntax errors, argument issues, and BDFD requirements. R
 ```
 
 **Statistics Object:**
-- `functions` - Total number of function calls in the code
+- `functions` - Total number of **real** (known) function calls in the code
+- `fakeFunctions` - Total number of **fake** (unknown) function calls that don't exist in BDFD
 - `arguments` - Total number of arguments across all functions
 - `variables` - Array of unique variable names used (sorted alphabetically)
   - Includes: `$var[]`, `$getUserVar[]`, `$getServerVar[]`, `$getChannelVar[]`, `$getVar[]`, `$setUserVar[]`, `$setServerVar[]`, `$setChannelVar[]`, `$setVar[]`
@@ -713,7 +716,7 @@ Validates BDFD code for syntax errors, argument issues, and BDFD requirements. R
 The validator performs comprehensive checks to catch errors before your code runs:
 
 #### 1. Unknown Functions
-Warns if a function doesn't exist in the BDFD function list.
+Warns if a function doesn't exist in the BDFD function list. Unknown functions inside arguments are treated as strings and don't show warnings.
 
 **Example Error:**
 ```json
@@ -724,6 +727,8 @@ Warns if a function doesn't exist in the BDFD function list.
   "type": "warning"
 }
 ```
+
+**Note:** Only top-level unknown functions show warnings. Unknown functions inside arguments (like `$description[$unknownFunc]`) are treated as literal text and don't trigger warnings.
 
 #### 2. Argument Count Validation
 Validates minimum and maximum argument counts. Handles functions with multiple signatures (different argument patterns).
@@ -792,11 +797,23 @@ Validates argument types including Number, Boolean, Integer, and Snowflake (Disc
   "message": "$deleteMessage - Argument 1 (Message ID) must be a valid Discord ID (snowflake), got '123'"
 }
 ```
+```json
+{
+  "function": "$roleGrant",
+  "line": 1,
+  "message": "$roleGrant - Argument 2 (+/-Role ID) requires '+' or '-' operator before the role ID, got '123456789012345678'"
+}
+```
 
 **Type Rules:**
 - **Number/Integer:** Must be numeric (e.g., `123`, `-45`, `3.14`)
 - **Boolean:** Must be `true`, `false`, `yes`, `no`, `1`, or `0`
 - **Snowflake:** Must be 17-19 digit Discord ID
+  - **Special case - `$roleGrant`:** Requires `+` or `-` operator before role ID
+    - `+123456789012345678` adds the role
+    - `-123456789012345678` removes the role
+    - `123456789012345678` without operator will error
+    - Works with find functions: `+$findRole[Staff]`
 
 **Special Value:** The BDFD special value `!unchanged` is recognized in `$modifyChannel`, `$modifyRole`, and `$editThread` only and skips type validation. This value indicates "keep the current value unchanged".
 
@@ -970,7 +987,7 @@ Validates BDFD's requirements for Components v2 to catch errors before running c
 **Select Menus:**
 - `$newSelectMenu` and `$editSelectMenu` must have at least 1 option
 - `$addStringSelect` must have at least 1 option
-- String select menus must have at least as many options as the max value
+- Max value cannot exceed the number of options (you can't select 25 items if you only have 1 option)
 
 **Example Errors:**
 ```json
@@ -984,7 +1001,7 @@ Validates BDFD's requirements for Components v2 to catch errors before running c
 {
   "function": "$addStringSelect",
   "line": 1,
-  "message": "String Select Menu 'menu1' has max value of 25 but only 1 option(s) — need at least 25 options"
+  "message": "String Select Menu 'menu1' has max value of 25 but only 1 option(s) — max value cannot exceed the number of options available"
 }
 ```
 
@@ -1059,22 +1076,45 @@ Validates min and max value constraints for select menus.
 
 ### Variable Bypass System
 
-When arguments contain **variables**, **nested functions**, or the **special value `!unchanged`** (in `$modifyChannel` only), the validator automatically skips certain validations because their values are dynamic, unknown at validation time, or have special meaning.
+When arguments contain **variables**, **ID-returning functions**, **number-returning functions**, **boolean-returning functions**, or the **special value `!unchanged`** (in specific functions), the validator automatically skips certain validations because their values are dynamic, unknown at validation time, or have special meaning.
 
-**Values that trigger bypass:**
+**Variable functions that trigger bypass:**
 - `$var[]`
 - `$getUserVar[]`
 - `$getServerVar[]`
 - `$getChannelVar[]`
 - `$getVar[]`
-- Any nested function (contains `$`)
-- `!unchanged` (BDFD special value in `$modifyChannel`, `$modifyRole`, and `$editThread` only)
+
+**ID-returning functions that skip snowflake validation:**
+- `$afkChannelID`, `$authorID`, `$botID`, `$botOwnerID`, `$categoryID`, `$channelID`, `$dmChannelID`
+- `$getChannelSelectChannelID`, `$getMentionableSelectUserID`, `$getRoleSelectRoleID`, `$getUserSelectUserID`
+- `$guildID`, `$lastMessageID`, `$messageID`, `$parentID`
+- `$randomCategoryID`, `$randomChannelID`, `$randomGuildID`, `$randomRoleID`, `$randomUserID`
+- `$repliedMessageID`, `$roleID`, `$rulesChannelID`, `$shardID`, `$systemChannelID`, `$userID`
+- `$findChannel`, `$findRole`, `$findUser`
+- **Note:** `$customID` and `$slashID` are NOT included (they return custom strings, not Discord snowflakes)
+
+**Number-returning functions that skip number validation:**
+- **Count/Amount functions**: `$allMembersCount`, `$boostCount`, `$categoryCount`, `$channelCount`, `$commandsCount`, `$emoteCount`, `$getChannelSelectChannelCount`, `$getMentionableSelectUserCount`, `$getRoleSelectRoleCount`, `$getStringSelectCount`, `$getUserSelectUserCount`, `$linesCount`, `$membersCount`, `$roleCount`, `$slashCommandsCount`, `$threadMessageCount`, `$threadUserCount`
+- **Math functions**: `$ceil`, `$divide`, `$floor`, `$max`, `$min`, `$multi`, `$random`, `$sqrt`, `$sub`, `$sum`
+- **Position/Index functions**: `$botNode`, `$channelPosition`, `$getTextSplitIndex`, `$getTextSplitLength`, `$rolePosition`
+- **Other numeric functions**: `$aiQuota`, `$executionTime`, `$getTimestamp`, `$getCooldown`, `$getSlowmode`
+
+**Boolean-returning functions that skip boolean validation:**
+- **Check functions**: `$checkCondition`, `$checkContains`, `$checkUserPerms`
+- **Exists functions**: `$channelExists`, `$emojiExists`, `$guildExists`, `$varExists`
+- **Has functions**: `$hasRole`
+- **Is functions**: `$isAdmin`, `$isBanned`, `$isBoolean`, `$isBooster`, `$isBot`, `$isEmojiAnimated`, `$isHoisted`, `$isInteger`, `$isMentionable`, `$isMentioned`, `$isMessageEdited`, `$isNSFW`, `$isNumber`, `$isSlash`, `$isTicket`, `$isTimedOut`, `$isUserDMEnabled`, `$isValidHex`
+
+**Special values:**
+- `!unchanged` - Works in `$modifyChannel`, `$modifyRole`, and `$editThread` only
 
 **What gets skipped:**
-- Enum validation (for variables and nested functions)
-- Type validation (for variables, nested functions, and `!unchanged` in `$modifyChannel`)
-- JSON syntax validation (for variables and nested functions)
-- Parent-child ID validation (for variables and nested functions)
+- **Variable functions**: Enum validation, type validation, JSON syntax validation, parent-child ID validation
+- **ID functions**: Snowflake type validation only (these functions return Discord IDs)
+- **Number functions**: Number type validation only (these functions return numbers)
+- **Boolean functions**: Boolean type validation only (these functions return booleans)
+- **!unchanged**: Type validation in `$modifyChannel`, `$modifyRole`, and `$editThread`
 
 **Examples:**
 ```bdscript
@@ -1083,9 +1123,47 @@ $addButtonCV2[btn;Click;$getUserVar[style];...;...;$var[rowId]]
 This will **not** error even if `$getUserVar[style]` returns an invalid enum, because the validator can't know the value at validation time.
 
 ```bdscript
+$sendMessage[hello;$authorID]
+```
+This will **not** error because `$authorID` returns a Discord ID (snowflake), so snowflake validation is skipped.
+
+```bdscript
+$deleteMessage[$channelID;$messageID]
+```
+Both `$channelID` and `$messageID` return Discord IDs, so snowflake validation is skipped for both arguments.
+
+```bdscript
+$sum[$aiQuota;$executionTime]
+```
+This will **not** error because both `$aiQuota` and `$executionTime` return numbers, so number validation is skipped.
+
+```bdscript
+$random[$membersCount;$boostCount]
+```
+This will **not** error because both `$membersCount` and `$boostCount` return numbers, so number validation is skipped for the min/max arguments.
+
+```bdscript
+$if[$isBot[$authorID]==true]
+  $sendMessage[You are a bot!]
+$endif
+```
+This will **not** error because `$isBot` returns a boolean (true/false), so boolean validation is skipped.
+
+```bdscript
+$onlyIf[$checkUserPerms[$authorID;administrator]==yes;You need admin!]
+```
+This will **not** error because `$checkUserPerms` returns a boolean, so boolean validation is skipped.
+
+```bdscript
+$roleGrant[$authorID;+$findRole[Staff];-$findRole[Moderator]]
+```
+This will **not** error because `$findRole` returns a role ID (snowflake), so snowflake validation is skipped. The `+` and `-` operators are still required for `$roleGrant`.
+
+```bdscript
 $modifyChannel[1234567890123456789;New Name;;;!unchanged;!unchanged]
 ```
 The `!unchanged` values will **not** error for type validation in `$modifyChannel`, `$modifyRole`, or `$editThread` because it's a special BDFD value meaning "keep the current value unchanged".
+
 
 ---
 

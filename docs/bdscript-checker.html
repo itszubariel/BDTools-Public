@@ -380,6 +380,7 @@
   <span class="key">"hasErrors"</span><span class="kw">:</span> <span class="kw">true</span><span class="kw">,</span>
   <span class="key">"statistics"</span><span class="kw">: {</span>
     <span class="key">"functions"</span><span class="kw">:</span> <span class="num">1</span><span class="kw">,</span>
+    <span class="key">"fakeFunctions"</span><span class="kw">:</span> <span class="num">0</span><span class="kw">,</span>
     <span class="key">"arguments"</span><span class="kw">:</span> <span class="num">5</span><span class="kw">,</span>
     <span class="key">"variables"</span><span class="kw">: [</span><span class="str">"points"</span><span class="kw">]</span>
   <span class="kw">}</span>
@@ -395,6 +396,7 @@
   <span class="key">"hasErrors"</span><span class="kw">:</span> <span class="kw">false</span><span class="kw">,</span>
   <span class="key">"statistics"</span><span class="kw">: {</span>
     <span class="key">"functions"</span><span class="kw">:</span> <span class="num">3</span><span class="kw">,</span>
+    <span class="key">"fakeFunctions"</span><span class="kw">:</span> <span class="num">0</span><span class="kw">,</span>
     <span class="key">"arguments"</span><span class="kw">:</span> <span class="num">5</span><span class="kw">,</span>
     <span class="key">"variables"</span><span class="kw">: [</span><span class="str">"level"</span><span class="kw">,</span> <span class="str">"points"</span><span class="kw">]</span>
   <span class="kw">}</span>
@@ -432,7 +434,16 @@
                         class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
                         >functions</code
                       >
-                      - Total number of function calls in the code
+                      - Total number of <strong>real</strong> (known) function
+                      calls in the code
+                    </li>
+                    <li>
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >fakeFunctions</code
+                      >
+                      - Total number of <strong>fake</strong> (unknown) function
+                      calls that don't exist in BDFD
                     </li>
                     <li>
                       <code
@@ -474,6 +485,17 @@
               </h4>
               <p class="text-sm text-gray-400 dark-text-3 mb-2">
                 Warns if a function doesn't exist in the BDFD function list.
+                Unknown functions inside arguments are treated as strings and
+                don't show warnings.
+              </p>
+              <p class="text-xs text-gray-500 italic mt-2">
+                <strong class="text-gray-300">Note:</strong> Only top-level
+                unknown functions show warnings. Unknown functions inside
+                arguments (like
+                <code
+                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                  >$description[$unknownFunc]</code
+                >) are treated as literal text and don't trigger warnings.
               </p>
             </div>
 
@@ -606,6 +628,55 @@
                 <li>
                   • <strong class="text-gray-300">Snowflake:</strong> Must be
                   17-19 digit Discord ID
+                  <ul class="ml-4 mt-1 space-y-1">
+                    <li>
+                      <strong class="text-gray-300"
+                        >Special case - $roleGrant:</strong
+                      >
+                      Requires
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >+</code
+                      >
+                      or
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >-</code
+                      >
+                      operator before role ID
+                    </li>
+                    <li>
+                      •
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >+123456789012345678</code
+                      >
+                      adds the role
+                    </li>
+                    <li>
+                      •
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >-123456789012345678</code
+                      >
+                      removes the role
+                    </li>
+                    <li>
+                      •
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >123456789012345678</code
+                      >
+                      without operator will error
+                    </li>
+                    <li>
+                      • Works with find functions:
+                      <code
+                        class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                        >+$findRole[Staff]</code
+                      >
+                    </li>
+                  </ul>
                 </li>
               </ul>
               <p class="text-xs text-gray-400 dark-text-3 mt-2">
@@ -1025,8 +1096,9 @@
                     class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
                     >$addStringSelect</code
                   >
-                  must have at least 1 option; String select menus must have at
-                  least as many options as the max value
+                  must have at least 1 option; Max value cannot exceed the
+                  number of options (you can't select 25 items if you only have
+                  1 option)
                 </li>
               </ul>
             </div>
@@ -1112,44 +1184,150 @@
             </h3>
             <p class="text-sm text-gray-400 dark-text-3 leading-relaxed mb-3">
               When arguments contain
-              <strong class="text-gray-300">variables</strong> or
-              <strong class="text-gray-300">nested functions</strong>, the
-              validator automatically skips validation for those arguments
-              because their values are dynamic and unknown at validation time.
+              <strong class="text-gray-300">variables</strong>,
+              <strong class="text-gray-300">ID-returning functions</strong>,
+              <strong class="text-gray-300">number-returning functions</strong>,
+              <strong class="text-gray-300">boolean-returning functions</strong
+              >, or the
+              <strong class="text-gray-300">special value !unchanged</strong>,
+              the validator automatically skips certain validations because
+              their values are dynamic, unknown at validation time, or have
+              special meaning.
             </p>
-            <div class="ml-4 mb-5">
-              <p class="text-xs font-semibold text-gray-300 mb-2">
-                Variables that trigger bypass:
-              </p>
-              <p class="text-xs text-gray-400 dark-text-3 mb-3">
-                <code
-                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
-                  >$var[]</code
-                >,
-                <code
-                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
-                  >$getUserVar[]</code
-                >,
-                <code
-                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
-                  >$getServerVar[]</code
-                >,
-                <code
-                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
-                  >$getChannelVar[]</code
-                >,
-                <code
-                  class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
-                  >$getVar[]</code
-                >, or any nested function
-              </p>
-              <p class="text-xs font-semibold text-gray-300 mb-2">
-                What gets skipped:
-              </p>
-              <p class="text-xs text-gray-400 dark-text-3">
-                Enum validation, Type validation, JSON syntax validation,
-                Parent-child ID validation
-              </p>
+            <div class="ml-4 mb-5 space-y-3">
+              <div>
+                <p class="text-xs font-semibold text-gray-300 mb-1">
+                  Variable functions that trigger bypass:
+                </p>
+                <p class="text-xs text-gray-400 dark-text-3">
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$var[]</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$getUserVar[]</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$getServerVar[]</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$getChannelVar[]</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$getVar[]</code
+                  >
+                </p>
+              </div>
+              <div>
+                <p class="text-xs font-semibold text-gray-300 mb-1">
+                  ID-returning functions (skip snowflake validation):
+                </p>
+                <p class="text-xs text-gray-400 dark-text-3">
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$authorID</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$channelID</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$messageID</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$guildID</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$findChannel</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$findRole</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$findUser</code
+                  >, and 20+ more ID functions
+                </p>
+              </div>
+              <div>
+                <p class="text-xs font-semibold text-gray-300 mb-1">
+                  Number-returning functions (skip number validation):
+                </p>
+                <p class="text-xs text-gray-400 dark-text-3">
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$sum</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$random</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$membersCount</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$boostCount</code
+                  >, and 30+ more count/math functions
+                </p>
+              </div>
+              <div>
+                <p class="text-xs font-semibold text-gray-300 mb-1">
+                  Boolean-returning functions (skip boolean validation):
+                </p>
+                <p class="text-xs text-gray-400 dark-text-3">
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$isBot</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$checkCondition</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$hasRole</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$channelExists</code
+                  >, and 20+ more check/is functions
+                </p>
+              </div>
+              <div>
+                <p class="text-xs font-semibold text-gray-300 mb-1">
+                  Special values:
+                </p>
+                <p class="text-xs text-gray-400 dark-text-3">
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >!unchanged</code
+                  >
+                  - Works in
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$modifyChannel</code
+                  >,
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$modifyRole</code
+                  >, and
+                  <code
+                    class="font-mono text-[#818cf8] bg-[#5865F2]/10 px-1 py-0.5 rounded"
+                    >$editThread</code
+                  >
+                  only
+                </p>
+              </div>
             </div>
 
             <!-- Escape Sequences -->
