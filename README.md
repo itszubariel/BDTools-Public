@@ -95,8 +95,8 @@ $httpGet[https://api.bdtools.xyz/random-pokemon?gen=1]
 
 ## Stack
 
-- **Frontend** — Vanilla JS, Tailwind CSS, Geist font
-- **Backend** — Netlify Functions (Node.js), MongoDB
+- **Frontend** — TypeScript (compiled to ES2020), Tailwind CSS, Geist font
+- **Backend** — Netlify Functions (TypeScript/Node.js), MongoDB
 - **Auth** — Discord OAuth2, JWT
 - **Deployment** — Netlify (continuous deployment from GitHub)
 - **Cron** — cron-job.org (triggers node status scraper every 2 minutes)
