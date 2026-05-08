@@ -1,17 +1,17 @@
-/escaper                      /Tools/escaper.html                     200
-/indenter                     /Tools/indenter.html                    200
-/highlighter                  /Tools/highlighter.html                 200
-/embed-builder                /Tools/embed-builder.html               200
-/send-embed-builder           /Tools/send-embed-builder.html          200
-/container-builder            /Tools/container-builder.html           200
-/bot-guild-list               /Tools/bot-guild-list.html              200
-/permission-calculator        /Tools/permission-calc.html             200
+/escaper                      /tools/html/escaper.html                 200
+/indenter                     /tools/html/indenter.html                200
+/highlighter                  /tools/html/highlighter.html             200
+/embed-builder                /tools/html/embed-builder.html           200
+/send-embed-builder           /tools/html/send-embed-builder.html      200
+/container-builder            /tools/html/container-builder.html       200
+/bot-guild-list               /tools/html/bot-guild-list.html          200
+/permission-calculator        /tools/html/permission-calc.html         200
 
-/docs/node-status             /docs/node-status.html                  200
-/docs/guild-list              /docs/guild-list.html                   200
-/docs/bdscript-checker        /docs/bdscript-checker.html             200
-/docs/others                  /docs/others.html                       200
-/docs                         /docs/index.html                        200
-/docs/*                       /docs/:splat                            200
+/docs/node-status             /docs/pages/node-status.html             200
+/docs/guild-list              /docs/pages/guild-list.html              200
+/docs/bdscript-checker        /docs/pages/bdscript-checker.html        200
+/docs/others                  /docs/pages/others.html                  200
+/docs                         /docs/index.html                         200
+/docs/*                       /docs/:splat                             200
 
-https://bdtools.netlify.app/* https://bdtools.xyz/:splat              301!
+https://bdtools.netlify.app/* https://bdtools.xyz/:splat               301!

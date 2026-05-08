@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <script>
+      (function () {
+        const isDark = localStorage.getItem("darkMode") === "enabled";
+        document.documentElement.classList.toggle("dark", isDark);
+        document.documentElement.classList.toggle("light", !isDark);
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BDTools | Bot Guild List</title>
+    <link rel="icon" href="https://bdtools.xyz/images/bdfd_logo.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/tools/css/bot-guild-list.css">
+  </head>
+
+  <body>
+    <div id="ldr">
+      <img src="https://bdtools.xyz/images/bdfd_logo.png" alt="" />
+      <p id="ldrtxt">Loading</p>
+    </div>
+    <div id="toasts"></div>
+
+    <!-- Nav -->
+    <nav>
+      <a href="/" class="nav-logo">
+        <img
+          src="https://bdtools.xyz/images/bdfd_logo.png"
+          onerror="this.style.display = 'none'"
+          alt=""
+        />
+        <span>BDTools</span>
+      </a>
+      <div class="spacer"></div>
+      <button
+        onclick="window.location.href = '/docs'"
+        style="
+          padding: 0.35rem 0.875rem;
+          background: var(--accent);
+          color: #fff;
+          border: none;
+          border-radius: var(--r);
+          font-size: 0.75rem;
+          font-weight: 700;
+          cursor: pointer;
+          font-family: &quot;Geist&quot;, sans-serif;
+          transition: background 0.15s;
+          white-space: nowrap;
+        "
+        onmouseover="this.style.background = '#4752c4'"
+        onmouseout="this.style.background = '#5865f2'"
+      >
+        <span class="api-btn-label">View API </span>→
+      </button>
+      <div class="tog" onclick="toggleTheme()">
+        <span class="tog-lbl">Dark</span>
+        <div class="tog-track on" id="themeToggle">
+          <div class="tog-thumb"></div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <div style="border-bottom: 1px solid var(--border)">
+      <div
+        style="max-width: 1280px; margin: 0 auto; padding: 2rem 1.5rem 1.5rem"
+        class="fu"
+      >
+        <div style="display: flex; align-items: flex-start; gap: 1rem">
+          <div
+            style="
+              width: 44px;
+              height: 44px;
+              flex-shrink: 0;
+              border-radius: 12px;
+              background: rgba(88, 101, 242, 0.1);
+              border: 1px solid rgba(88, 101, 242, 0.2);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            "
+          >
+            <svg
+              style="width: 20px; height: 20px; color: #5865f2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M4 6h16M4 10h16M4 14h16M4 18h16"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1
+              style="
+                font-size: 1.5rem;
+                font-weight: 900;
+                color: var(--text);
+                letter-spacing: -0.03em;
+              "
+            >
+              Bot Guild List
+            </h1>
+            <p
+              style="
+                color: var(--text2);
+                font-size: 0.875rem;
+                margin-top: 0.3rem;
+              "
+            >
+              Enter your API key to view your bot's servers.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <div
+        class="scroll-fade"
+        style="
+          background: var(--bg2);
+          border: 1px solid var(--border);
+          border-radius: 16px;
+          overflow: hidden;
+        "
+      >
+        <!-- Controls bar -->
+        <div
+          style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--border)"
+        >
+          <div
+            style="
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.75rem;
+              align-items: center;
+            "
+          >
+            <input
+              id="apiKeyInput"
+              type="password"
+              class="ifield"
+              style="flex: 1; min-width: 200px"
+              placeholder="Enter your API key…"
+              autocomplete="off"
+              onkeydown="if (event.key === 'Enter') loadGuilds();"
+            />
+            <button
+              onclick="loadGuilds()"
+              style="
+                padding: 0.5rem 1.25rem;
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                border-radius: 10px;
+                font-size: 0.8125rem;
+                font-weight: 700;
+                cursor: pointer;
+                font-family: &quot;Geist&quot;, sans-serif;
+                white-space: nowrap;
+                transition: background 0.15s;
+              "
+              onmouseover="this.style.background = '#4752c4'"
+              onmouseout="this.style.background = '#5865f2'"
+            >
+              Show Servers
+            </button>
+            <input
+              id="searchInput"
+              type="text"
+              class="ifield"
+              style="flex: 1; min-width: 140px"
+              placeholder="Search…"
+              oninput="onSearch()"
+            />
+            <select
+              id="sortSelect"
+              class="ifield"
+              style="cursor: pointer; color: var(--text2)"
+              onchange="onSort()"
+            >
+              <option value="name">Sort: Name</option>
+              <option value="members">Sort: Members</option>
+              <option value="id">Sort: ID</option>
+            </select>
+            <span
+              id="guildCount"
+              style="
+                font-size: 0.75rem;
+                font-family: &quot;Geist Mono&quot;, monospace;
+                color: var(--text3);
+                padding: 0.35rem 0.75rem;
+                background: var(--bg);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                white-space: nowrap;
+              "
+              >—</span
+            >
+          </div>
+        </div>
+
+        <!-- Skeleton grid -->
+        <div id="skeletonGrid" style="display: none">
+          <div id="skelBody" class="srv-grid"></div>
+        </div>
+
+        <!-- Loading spinner -->
+        <div
+          id="loadingState"
+          style="
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 5rem 0;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 1rem;
+            "
+          >
+            <div class="spinner"></div>
+            <p style="color: var(--text2); font-size: 0.875rem">
+              Fetching guild data…
+            </p>
+          </div>
+        </div>
+
+        <!-- Initial empty -->
+        <div id="emptyState" class="state-wrap">
+          <div class="state-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M4 6h16M4 10h16M4 14h16M4 18h16"
+              />
+            </svg>
+          </div>
+          <h3>No servers to show</h3>
+          <p>
+            Enter your API key and click <strong>Show Servers</strong> to view
+            your bot's servers.
+          </p>
+        </div>
+
+        <!-- Post-fetch empty -->
+        <div id="noServersState" style="display: none" class="state-wrap">
+          <div class="state-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <h3>No servers found</h3>
+          <p>Your bot isn't in any servers yet, or try a different search.</p>
+        </div>
+
+        <!-- Live grid -->
+        <div id="serversGrid" style="display: none">
+          <div id="guildGridBody" class="srv-grid"></div>
+          <div class="pg-row">
+            <button
+              id="prevBtn"
+              class="pg-btn"
+              onclick="changePage(-1)"
+              disabled
+            >
+              <svg
+                width="13"
+                height="13"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2.5"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Previous
+            </button>
+            <span id="pgInfo" class="pg-info">Page 1 of 1</span>
+            <button
+              id="nextBtn"
+              class="pg-btn"
+              onclick="changePage(1)"
+              disabled
+            >
+              Next
+              <svg
+                width="13"
+                height="13"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2.5"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+      <div class="foot-links">
+        <a href="/tos">Terms</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/contact">Contact</a>
+      </div>
+    </footer>
+
+    <script src="/dist/tools/ts/bot-guild-list.js"></script>
+  </body>
+</html>

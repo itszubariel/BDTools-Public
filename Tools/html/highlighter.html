@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <script>
+      (function () {
+        const isDark = localStorage.getItem("darkMode") === "enabled";
+        document.documentElement.classList.toggle("dark", isDark);
+        document.documentElement.classList.toggle("light", !isDark);
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BDTools | Code Highlighter</title>
+    <link rel="icon" href="https://bdtools.xyz/images/bdfd_logo.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/tools/css/highlighter.css">
+  </head>
+
+  <body>
+    <div id="ldr">
+      <img src="https://bdtools.xyz/images/bdfd_logo.png" alt="" />
+      <p id="ldrtxt">Loading</p>
+    </div>
+    <div id="toasts"></div>
+
+    <nav>
+      <a href="/" class="nav-logo"
+        ><img
+          src="https://bdtools.xyz/images/bdfd_logo.png"
+          onerror="this.style.display = 'none'"
+          alt=""
+        /><span>BDTools</span></a
+      >
+      <div class="spacer"></div>
+      <div class="tog" onclick="toggleTheme()">
+        <span class="tog-lbl">Dark</span>
+        <div class="tog-track on" id="tog">
+          <div class="tog-thumb"></div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="lowerNav border-b border-[#1e2130]">
+      <div class="max-w-[1080px] mx-auto px-6 py-10 fu">
+        <div class="flex items-start gap-4">
+          <div
+            class="w-11 h-11 flex-shrink-0 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
+          >
+            <svg
+              class="w-5 h-5 text-[#5865F2]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+              />
+            </svg>
+          </div>
+
+          <!-- Text Content -->
+          <div>
+            <h1
+              class="dark-text text-2xl font-black text-white tracking-tight dt"
+            >
+              Code Highlighter
+            </h1>
+
+            <p class="text-gray-400 text-sm mt-1 dt2">
+              Highlight different functions and text using unique colors for a
+              better BDFD coding experience.
+            </p>
+
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              <span
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
+                >JavaScript</span
+              >
+              <span
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
+                >HTML</span
+              >
+              <span
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
+                >Tailwind CSS</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <!-- Toolbar -->
+      <div class="toolbar fu fd1 scroll-fade">
+        <button class="btn btn-primary" id="add-function-btn">
+          + Add Function
+        </button>
+        <button class="btn btn-ghost" id="import-theme-btn">
+          ↑ Import Theme
+        </button>
+        <div style="flex: 1"></div>
+        <button class="btn btn-danger" id="delete-all">Delete All</button>
+        <button class="btn btn-primary" id="generate-code-btn">
+          Generate JSON
+        </button>
+      </div>
+
+      <!-- Fn cards -->
+      <div class="fn-grid fu fd1" id="functions-list"></div>
+
+      <!-- Output -->
+      <div class="card" style="margin-top: 1rem" class="fu fd2">
+        <div class="card-hdr">
+          <span class="card-hdr-title">Generated JSON Output</span>
+          <button class="icon-btn" id="copy-output" title="Copy">
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" />
+              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+            </svg>
+          </button>
+        </div>
+        <div class="card-body">
+          <textarea
+            id="output-text"
+            class="code-area"
+            style="min-height: 180px"
+            readonly
+            placeholder="Press 'Generate JSON' to build your theme output…"
+          ></textarea>
+        </div>
+      </div>
+    </main>
+
+    <!-- EDIT MODAL -->
+    <div class="overlay" id="edit-modal">
+      <div class="modal">
+        <button class="modal-close" id="close-modal">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Edit Highlight</h3>
+        <div style="margin-bottom: 0.875rem">
+          <span
+            style="
+              font-size: 0.6875rem;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.07em;
+              color: var(--text3);
+              display: block;
+              margin-bottom: 0.5rem;
+            "
+            >Color</span
+          >
+          <div style="display: flex; align-items: center; gap: 0.75rem">
+            <div
+              id="color-picker"
+              style="
+                width: 36px;
+                height: 36px;
+                border-radius: 8px;
+                cursor: pointer;
+                border: 1.5px solid var(--border2);
+              "
+            ></div>
+            <input
+              type="text"
+              id="hex-input"
+              class="finput"
+              style="
+                width: 110px;
+                font-family: var(--mono);
+                text-transform: uppercase;
+              "
+              placeholder="#FFFFFF"
+            />
+          </div>
+        </div>
+        <div style="margin-bottom: 0.875rem">
+          <span
+            style="
+              font-size: 0.6875rem;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.07em;
+              color: var(--text3);
+              display: block;
+              margin-bottom: 0.5rem;
+            "
+            >Style</span
+          >
+          <div class="style-row">
+            <button class="style-btn" data-style="0">Normal</button>
+            <button class="style-btn" data-style="2">Italic</button>
+            <button class="style-btn" data-style="1">Bold</button>
+            <button class="style-btn" data-style="3">Bold+Italic</button>
+          </div>
+        </div>
+        <div style="margin-bottom: 1rem">
+          <span
+            style="
+              font-size: 0.6875rem;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.07em;
+              color: var(--text3);
+              display: block;
+              margin-bottom: 0.5rem;
+            "
+            >Preview</span
+          >
+          <div
+            id="preview"
+            style="
+              padding: 0.625rem 0.875rem;
+              background: var(--bg);
+              border: 1.5px solid var(--border);
+              border-radius: var(--r);
+              font-family: var(--mono);
+              font-size: 0.875rem;
+            "
+          >
+            Sample Text
+          </div>
+        </div>
+        <button class="btn btn-primary" id="save-settings" style="width: 100%">
+          Save Settings
+        </button>
+      </div>
+    </div>
+
+    <!-- DELETE CONFIRM MODAL -->
+    <div class="overlay" id="delete-modal">
+      <div class="modal">
+        <h3>Confirm Deletion</h3>
+        <p
+          style="
+            font-size: 0.875rem;
+            color: var(--text2);
+            margin-bottom: 1.25rem;
+            line-height: 1.5;
+          "
+        >
+          Are you sure you want to delete this function highlight?
+        </p>
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
+          <button class="btn btn-ghost" id="cancel-delete">Cancel</button>
+          <button class="btn btn-danger" id="confirm-delete">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DELETE ALL CONFIRM -->
+    <div class="overlay" id="delete-all-modal">
+      <div class="modal">
+        <h3>Reset Theme</h3>
+        <p
+          style="
+            font-size: 0.875rem;
+            color: var(--text2);
+            margin-bottom: 1.25rem;
+            line-height: 1.5;
+          "
+        >
+          Delete the saved theme and reset to defaults? This cannot be undone.
+        </p>
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
+          <button class="btn btn-ghost" id="cancel-delete-all">Cancel</button>
+          <button class="btn btn-danger" id="confirm-delete-all">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD FUNCTION MODAL -->
+    <div class="overlay" id="add-function-overlay">
+      <div class="modal" style="width: 420px">
+        <button class="modal-close" id="cancel-add-function">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Add Function</h3>
+        <div style="position: relative; margin-bottom: 1rem">
+          <input
+            type="text"
+            id="function-search"
+            class="finput"
+            placeholder="Search functions (300+ available)…"
+            style="width: 100%; padding-left: 2.25rem"
+          />
+          <svg
+            style="
+              position: absolute;
+              left: 0.75rem;
+              top: 50%;
+              transform: translateY(-50%);
+              width: 16px;
+              height: 16px;
+              color: var(--text3);
+            "
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+        </div>
+        <div
+          id="function-list"
+          style="
+            max-height: 50vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border2) var(--bg2);
+          "
+        ></div>
+      </div>
+    </div>
+
+    <!-- IMPORT MODAL -->
+    <div class="overlay" id="import-overlay">
+      <div class="modal" style="width: 420px">
+        <button class="modal-close" id="cancel-import-btn">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <h3>Import JSON Theme</h3>
+        <textarea
+          id="import-theme-textarea"
+          class="code-area"
+          style="min-height: 160px; margin-bottom: 0.75rem"
+          placeholder="Paste your JSON theme here…"
+        ></textarea>
+        <p
+          id="import-error-msg"
+          style="
+            font-size: 0.8rem;
+            color: #f87171;
+            margin-bottom: 0.625rem;
+            display: none;
+          "
+        ></p>
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
+          <button class="btn btn-ghost" id="cancel-import-btn2">Cancel</button>
+          <button class="btn btn-primary" id="apply-import-btn">
+            Apply Theme
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+      <div class="foot-links">
+        <a href="/tos">Terms</a><a href="/privacy">Privacy</a
+        ><a href="/contact">Contact</a>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
+    <script src="/dist/tools/ts/highlighter.js"></script>
+  </body>
+</html>

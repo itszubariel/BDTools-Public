@@ -1,18 +1,24 @@
 {
-  "name": "api-generator",
+  "name": "bdtools",
   "version": "1.0.0",
   "main": "script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "npx nodemon server.js"
+    "dev": "npx nodemon server.js",
+    "build:browser": "tsc -p tsconfig.json",
+    "build:functions": "tsc -p netlify/functions/tsconfig.json",
+    "build": "npm run build:browser && npm run build:functions"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@types/jsonwebtoken": "^9.0.0",
+    "@types/node": "^20.0.0",
+    "nodemon": "^3.1.10",
+    "typescript": "^5.0.0"
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.2"

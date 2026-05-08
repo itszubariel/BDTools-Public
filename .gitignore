@@ -1,11 +1,7 @@
-/node_modules
+node_modules/
 .vscode/
 Test/
 archived/
-
 .env
-bdtools.txt
-TODO.md
 .DS_Store
-
-Tools/Dropped/
+tools/html/dropped

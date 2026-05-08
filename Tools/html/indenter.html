@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <script>
+      (function () {
+        const isDark = localStorage.getItem("darkMode") === "enabled";
+        document.documentElement.classList.toggle("dark", isDark);
+        document.documentElement.classList.toggle("light", !isDark);
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BDTools | Code Indenter</title>
+    <link rel="icon" href="https://bdtools.xyz/images/bdfd_logo.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/tools/css/indenter.css">
+  </head>
+
+  <body>
+    <div id="ldr">
+      <img src="https://bdtools.xyz/images/bdfd_logo.png" alt="" />
+      <p id="ldrtxt">Loading</p>
+    </div>
+    <div id="toasts"></div>
+
+    <nav>
+      <a href="/" class="nav-logo"
+        ><img
+          src="https://bdtools.xyz/images/bdfd_logo.png"
+          onerror="this.style.display = 'none'"
+          alt=""
+        /><span>BDTools</span></a
+      >
+      <div class="spacer"></div>
+      <div class="tog" onclick="toggleTheme()">
+        <span class="tog-lbl">Dark</span>
+        <div class="tog-track on" id="tog">
+          <div class="tog-thumb"></div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="lowerNav border-b border-[#1e2130]">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
+        <div class="flex items-start gap-4">
+          <div
+            class="w-11 h-11 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center flex-shrink-0"
+          >
+            <svg
+              class="w-5 h-5 text-[#5865F2]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M4 6h16M4 12h10M4 18h16"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1
+              class="dark-text text-2xl font-black text-white tracking-tight dark-text"
+            >
+              Code Indenter
+            </h1>
+            <p class="text-gray-400 text-sm mt-1 dark-text-2">
+              Automatically indent and clean up your BDFD command scripts for
+              better readability.
+            </p>
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              <span
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
+                >JavaScript</span
+              >
+              <span
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
+                >HTML</span
+              >
+              <span
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
+                >Tailwind CSS</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <!-- Toolbar -->
+      <div class="toolbar fu fd1 scroll-fade">
+        <label>Indent size:</label>
+        <select id="indentSize" class="finput">
+          <option value="2">2 spaces</option>
+          <option value="4" selected>4 spaces</option>
+          <option value="tab">Tab</option>
+        </select>
+        <div style="flex: 1"></div>
+        <button class="btn btn-primary" id="indent-btn">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+          >
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="15" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+          Indent Code
+        </button>
+        <button class="btn btn-ghost" id="clear-btn">Clear</button>
+      </div>
+
+      <div class="g2 fu fd1">
+        <div class="card">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Input</span>
+
+            <div style="display: flex; align-items: center; gap: 0.5rem">
+              <!-- Lines display -->
+              <span
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 0.35rem;
+                  padding: 0.2rem 0.5rem;
+                  border-radius: 6px;
+                  background: var(--bg3);
+                  border: 1px solid var(--border);
+                  font-size: 0.6875rem;
+                  color: var(--text3);
+                  font-family: var(--mono);
+                  margin-bottom: 0.25rem;
+                "
+              >
+                <span id="inlines" style="color: var(--text)">0</span>
+              </span>
+            </div>
+          </div>
+          <div class="card-body">
+            <textarea
+              id="inputArea"
+              class="code-area"
+              placeholder="Paste your BDFD code here…"
+              oninput="updateCount()"
+            ></textarea>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Indented Output</span>
+            <button class="icon-btn" id="copy-btn" title="Copy">
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+              </svg>
+            </button>
+          </div>
+          <div class="card-body">
+            <textarea
+              id="outputArea"
+              class="code-area"
+              readonly
+              placeholder="Indented output will appear here…"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+      <div class="foot-links">
+        <a href="/tos">Terms</a><a href="/privacy">Privacy</a
+        ><a href="/contact">Contact</a>
+      </div>
+    </footer>
+
+    <script src="/dist/tools/ts/indenter.js"></script>
+  </body>
+</html>

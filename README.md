@@ -66,7 +66,7 @@ Authentication uses JWT-based API keys generated via Discord OAuth. Guild list a
 
 Full API documentation at [bdtools.xyz/docs](https://bdtools.xyz/docs).
 
-```bash
+```shell
 # Example — fetch node status
 $httpGet[https://api.bdtools.xyz/node-status]
 

@@ -1,0 +1,987 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <script>
+      (function () {
+        const isDark = localStorage.getItem("darkMode") === "enabled";
+        document.documentElement.classList.toggle("dark", isDark);
+        document.documentElement.classList.toggle("light", !isDark);
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BDTools | Loop Maker</title>
+    <link rel="icon" href="https://bdtools.xyz/images/bdfd_logo.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Geist", sans-serif;
+        background: #07080f;
+        color: #f0eff8;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        -webkit-font-smoothing: antialiased;
+      }
+      :root {
+        --bg: #07080f;
+        --bg2: #0d0f1a;
+        --bg3: #12141f;
+        --bg4: #181a28;
+        --bg5: #1e2133;
+        --border: #1e2133;
+        --border2: #252840;
+        --accent: #5865f2;
+        --accent-h: #4752c4;
+        --accent-dim: rgba(88, 101, 242, 0.14);
+        --text: #f0eff8;
+        --text2: #8b8aa8;
+        --text3: #45435e;
+        --mono: "Geist Mono", monospace;
+        --r: 10px;
+        --r2: 14px;
+      }
+      html.light body {
+        background: #f1f2f9;
+        color: #0d0f1a;
+      }
+      html.light {
+        --bg: #f1f2f9;
+        --bg2: #ffffff;
+        --bg3: #e8e9f2;
+        --bg4: #dfe0ec;
+        --border: #dcdde8;
+        --border2: #d0d1de;
+        --text: #0d0f1a;
+        --text2: #54526e;
+        --text3: #a0a0b8;
+      }
+      html.light .dark-text {
+        color: #0d0f1a !important;
+      }
+      html.light .lowerNav {
+        background: rgba(244, 245, 250, 0.92) !important;
+        border-color: #e2e4ef !important;
+      }
+      #ldr {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.875rem;
+        transition: opacity 0.4s;
+      }
+      #ldr.out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #ldr img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        animation: ldrb 0.75s ease-in-out infinite alternate;
+      }
+      #ldr p {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--text2);
+      }
+      @keyframes ldrb {
+        to {
+          transform: translateY(-8px);
+        }
+      }
+      #toasts {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        pointer-events: none;
+      }
+      .toast {
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 0.875rem;
+        border-radius: var(--r);
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text);
+        position: relative;
+        overflow: hidden;
+        background:
+          radial-gradient(
+            120% 120% at 0% 0%,
+            rgba(88, 101, 242, 0.14),
+            transparent 65%
+          ),
+          var(--bg3);
+        border: 1px solid var(--border);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+        animation: tin 0.25s ease both;
+      }
+      .toast.s {
+        border-left: 3px solid #22c55e;
+      }
+      .toast.e {
+        border-left: 3px solid #ef4444;
+      }
+      .tbar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.3);
+        animation: tbar 4s linear forwards;
+      }
+      @keyframes tin {
+        from {
+          opacity: 0;
+          transform: translateX(12px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes tbar {
+        to {
+          width: 0;
+        }
+      }
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        border-bottom: 1px solid var(--border);
+        background: rgba(7, 8, 15, 0.88);
+        backdrop-filter: blur(18px);
+        height: 52px;
+        display: flex;
+        align-items: center;
+        padding: 0 1.5rem;
+        gap: 1rem;
+      }
+      html.light nav {
+        background: rgba(241, 242, 249, 0.9);
+      }
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+      }
+      .nav-logo img {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+      }
+      .nav-logo span {
+        font-weight: 800;
+        font-size: 0.9375rem;
+        color: var(--text);
+        letter-spacing: -0.02em;
+      }
+      .spacer {
+        flex: 1;
+      }
+      .tog {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        user-select: none;
+      }
+      .tog-lbl {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .tog-track {
+        width: 34px;
+        height: 19px;
+        border-radius: 999px;
+        background: var(--border2);
+        position: relative;
+        transition: background 0.2s;
+      }
+      .tog-track.on {
+        background: var(--accent);
+      }
+      .tog-thumb {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #fff;
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        transition: transform 0.2s;
+      }
+      .tog-track.on .tog-thumb {
+        transform: translateX(15px);
+      }
+      main {
+        flex: 1;
+        max-width: 860px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 1.75rem 1.5rem;
+      }
+      .card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--r2);
+        margin-bottom: 0.875rem;
+      }
+      .card-hdr {
+        padding: 0.625rem 1rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--bg3);
+        border-radius: var(--r2) var(--r2) 0 0;
+      }
+      .card-hdr-title {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text3);
+      }
+      .card-body {
+        padding: 1rem;
+      }
+      .slabel {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text3);
+        display: block;
+        margin-bottom: 0.4rem;
+      }
+      .finput {
+        width: 100%;
+        padding: 0.45rem 0.7rem;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
+        color: var(--text);
+        font-family: "Geist", sans-serif;
+        font-size: 0.8rem;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .finput:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent-dim);
+      }
+      .finput::placeholder {
+        color: var(--text3);
+      }
+      textarea.finput {
+        resize: vertical;
+        line-height: 1.6;
+      }
+      .out-area {
+        width: 100%;
+        min-height: 140px;
+        padding: 0.75rem 0.875rem;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
+        color: var(--text);
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        line-height: 1.8;
+        resize: vertical;
+        outline: none;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.4rem 0.875rem;
+        border-radius: var(--r);
+        font-size: 0.7875rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s;
+        border: 1.5px solid transparent;
+        font-family: "Geist", sans-serif;
+        white-space: nowrap;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .btn-primary:hover {
+        background: var(--accent-h);
+      }
+      .btn-ghost {
+        background: var(--bg3);
+        border-color: var(--border2);
+        color: var(--text2);
+      }
+      .btn-ghost:hover {
+        background: var(--bg4);
+        color: var(--text);
+      }
+      .btn-full {
+        width: 100%;
+        justify-content: center;
+      }
+      .g2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+      .g3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 0.75rem;
+      }
+      @media (max-width: 600px) {
+        .g2,
+        .g3 {
+          grid-template-columns: 1fr;
+        }
+      }
+      .tabs {
+        display: flex;
+        gap: 0.25rem;
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: var(--r2);
+        padding: 0.25rem;
+        margin-bottom: 1.25rem;
+      }
+      .tab {
+        flex: 1;
+        padding: 0.5rem 1rem;
+        border-radius: calc(var(--r2) - 3px);
+        font-size: 0.8125rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s;
+        border: none;
+        background: none;
+        color: var(--text2);
+        font-family: "Geist", sans-serif;
+        text-align: center;
+      }
+      .tab.active {
+        background: var(--bg2);
+        color: var(--text);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      }
+      .tab:hover:not(.active) {
+        color: var(--text);
+      }
+      .tab-panel {
+        display: none;
+      }
+      .tab-panel.active {
+        display: block;
+      }
+      .err {
+        font-size: 0.7rem;
+        color: #f87171;
+        margin-top: 0.3rem;
+        display: none;
+      }
+      .err.show {
+        display: block;
+      }
+      .field-invalid .finput {
+        border-color: #f87171 !important;
+      }
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      footer p {
+        font-size: 0.7rem;
+        color: var(--text3);
+      }
+      .foot-links {
+        display: flex;
+        gap: 1rem;
+      }
+      .foot-links a {
+        font-size: 0.7rem;
+        color: var(--text3);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+      .foot-links a:hover {
+        color: var(--text2);
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .fu {
+        animation: fadeUp 0.26s ease both;
+      }
+      .fd1 {
+        animation-delay: 0.05s;
+      }
+      .fd2 {
+        animation-delay: 0.1s;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ldr">
+      <img src="https://bdtools.xyz/images/bdfd_logo.png" alt="" />
+      <p id="ldrtxt">Loading</p>
+    </div>
+    <div id="toasts"></div>
+
+    <nav>
+      <a href="https://bdtools.xyz" class="nav-logo">
+        <img
+          src="https://bdtools.xyz/images/bdfd_logo.png"
+          onerror="this.style.display = 'none'"
+          alt=""
+        />
+        <span>BDTools</span>
+      </a>
+      <div class="spacer"></div>
+      <div class="tog" onclick="toggleTheme()">
+        <span class="tog-lbl">Dark</span>
+        <div class="tog-track on" id="tog"><div class="tog-thumb"></div></div>
+      </div>
+    </nav>
+
+    <div class="lowerNav border-b border-[#1e2130]">
+      <div class="max-w-[860px] mx-auto px-6 py-10 fu">
+        <div class="flex items-start gap-4">
+          <div
+            class="w-11 h-11 flex-shrink-0 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
+          >
+            <svg
+              class="w-5 h-5 text-[#5865F2]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1 class="dark-text text-2xl font-black text-white tracking-tight">
+              Loop Maker
+            </h1>
+            <p class="text-gray-400 text-sm mt-1">
+              Generate BDFD loop code — iterate over a list or run code a fixed
+              number of times.
+            </p>
+            <div class="flex flex-wrap gap-1.5 mt-3">
+              <span
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
+                >JavaScript</span
+              >
+              <span
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
+                >HTML</span
+              >
+              <span
+                style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                "
+                >BDFD</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <!-- Tabs -->
+      <div class="tabs fu fd1">
+        <button
+          class="tab active"
+          id="tab-foreach"
+          onclick="switchTab('foreach')"
+        >
+          For Each (List)
+        </button>
+        <button class="tab" id="tab-runtimes" onclick="switchTab('runtimes')">
+          Run X Times
+        </button>
+      </div>
+
+      <!-- Tab 1: For Each -->
+      <div class="tab-panel active fu fd1" id="panel-foreach">
+        <div class="card">
+          <div class="card-hdr">
+            <span class="card-hdr-title">For Each — Iterate over a list</span>
+          </div>
+          <div
+            class="card-body"
+            style="display: flex; flex-direction: column; gap: 0.875rem"
+          >
+            <p style="font-size:0.8rem;color:var(--text2);line-height:1.6;">
+              Runs your code once for each item in a list. The output separator joins all results together.
+              ⚠️ The <strong style="color:var(--text)">Code (escaped)</strong> field requires BDFD escaping: use <code style="font-family:var(--mono);font-size:.75em;background:var(--bg3);padding:.1em .3em;border-radius:3px;">%{DOL}%</code> instead of <code style="font-family:var(--mono);font-size:.75em;background:var(--bg3);padding:.1em .3em;border-radius:3px;">$</code>,
+              <code style="font-family:var(--mono);font-size:.75em;background:var(--bg3);padding:.1em .3em;border-radius:3px;">\;</code> instead of <code style="font-family:var(--mono);font-size:.75em;background:var(--bg3);padding:.1em .3em;border-radius:3px;">;</code>,
+              and <code style="font-family:var(--mono);font-size:.75em;background:var(--bg3);padding:.1em .3em;border-radius:3px;">\]</code> instead of <code style="font-family:var(--mono);font-size:.75em;background:var(--bg3);padding:.1em .3em;border-radius:3px;">]</code>.
+              <a href="https://nilpointer-software.github.io/bdfd-wiki/nightly/guides/general/textSplit.html" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">📖 How this works</a>
+            </p>
+            <div>
+              <span class="slabel"
+                >List <span style="color: #ef4444">*</span></span
+              >
+              <input
+                id="fe-list"
+                class="finput"
+                placeholder="e.g. apple, banana, cherry"
+              />
+              <p class="err" id="fe-list-err">List is required.</p>
+            </div>
+            <div class="g2">
+              <div>
+                <span class="slabel"
+                  >Input Separator <span style="color: #ef4444">*</span></span
+                >
+                <input
+                  id="fe-insep"
+                  class="finput"
+                  placeholder="e.g.  ,  (comma space)"
+                  value=", "
+                />
+                <p class="err" id="fe-insep-err">
+                  Input separator is required.
+                </p>
+              </div>
+              <div>
+                <span class="slabel">Output Separator</span>
+                <input
+                  id="fe-outsep"
+                  class="finput"
+                  placeholder="e.g. - or newline"
+                  value="-"
+                />
+              </div>
+            </div>
+            <div>
+              <span class="slabel"
+                >Element Name <span style="color: #ef4444">*</span></span
+              >
+              <input
+                id="fe-elem"
+                class="finput"
+                placeholder="e.g. Element"
+                value="Element"
+              />
+              <p class="err" id="fe-elem-err">Element name is required.</p>
+            </div>
+            <div>
+              <span class="slabel">
+                Code (escaped) <span style="color: #ef4444">*</span>
+              </span>
+              <textarea
+                id="fe-code"
+                class="finput"
+                rows="4"
+                placeholder="%{DOL}%url[decode\;Element\]"
+              ></textarea>
+              <p class="err" id="fe-code-err">Code is required.</p>
+            </div>
+            <button
+              class="btn btn-primary btn-full"
+              onclick="generateForEach()"
+            >
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <polygon points="5 3 19 12 5 21 5 3" />
+              </svg>
+              Generate Code
+            </button>
+          </div>
+        </div>
+
+        <div class="card fu fd2">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Output</span>
+            <button
+              class="btn btn-ghost"
+              style="padding: 0.25rem 0.625rem; font-size: 0.75rem"
+              onclick="copyOutput('fe-output')"
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+              </svg>
+              Copy
+            </button>
+          </div>
+          <div class="card-body">
+            <textarea
+              id="fe-output"
+              class="out-area"
+              readonly
+              placeholder="Generated loop code will appear here…"
+            ></textarea>
+          </div>
+        </div>
+        <p style="font-size:0.7rem;color:var(--text3);margin-top:-.375rem;margin-bottom:.875rem;line-height:1.6;padding:0 .25rem;">
+          💡 <strong style="color:var(--text2)">Test values:</strong>
+          List = <code style="font-family:var(--mono)">apple, banana, cherry</code> ·
+          Input sep = <code style="font-family:var(--mono)">, </code> ·
+          Output sep = <code style="font-family:var(--mono)">-</code> ·
+          Element = <code style="font-family:var(--mono)">Element</code> ·
+          Code = <code style="font-family:var(--mono)">%{DOL}%url[decode\;Element\]</code><br>
+          Expected output: <code style="font-family:var(--mono)">apple - banana - cherry</code>
+        </p>
+      </div>
+
+      <!-- Tab 2: Run X Times -->
+      <div class="tab-panel fu fd1" id="panel-runtimes">
+        <div class="card">
+          <div class="card-hdr">
+            <span class="card-hdr-title"
+              >Run X Times — Execute code a fixed number of times</span
+            >
+          </div>
+          <div
+            class="card-body"
+            style="display: flex; flex-direction: column; gap: 0.875rem"
+          >
+            <p style="font-size:0.8rem;color:var(--text2);line-height:1.6;">
+              Runs your code a fixed number of times. Use this for actions like clearing messages — not for sending repeated messages, as <code style="font-family:var(--mono);font-size:.75em;background:var(--bg3);padding:.1em .3em;border-radius:3px;">$sendMessage</code> won't work here. Functions like <code style="font-family:var(--mono);font-size:.75em;background:var(--bg3);padding:.1em .3em;border-radius:3px;">$clear[]</code> work correctly.
+              ⚠️ <code style="font-family:var(--mono);font-size:.75em;background:var(--bg3);padding:.1em .3em;border-radius:3px;">$repeatMessage</code> has a max of 10, but this method works around that limit mathematically.
+              <a href="https://nilpointer-software.github.io/bdfd-wiki/nightly/guides/general/repeatMessage.html" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">📖 How this works</a>
+            </p>
+            <div>
+              <span class="slabel"
+                >Number of Times <span style="color: #ef4444">*</span></span
+              >
+              <input
+                id="rt-count"
+                class="finput"
+                type="number"
+                min="1"
+                placeholder="e.g. 10"
+                style="max-width: 200px"
+              />
+              <p class="err" id="rt-count-err">Must be a positive integer.</p>
+            </div>
+            <div>
+              <span class="slabel">
+                Your Code <span style="color: #ef4444">*</span>
+              </span>
+              <textarea
+                id="rt-code"
+                class="finput"
+                rows="6"
+                placeholder="$$c[]clear[1]"
+              ></textarea>
+              <p class="err" id="rt-code-err">Code is required.</p>
+            </div>
+            <button
+              class="btn btn-primary btn-full"
+              onclick="generateRunTimes()"
+            >
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <polygon points="5 3 19 12 5 21 5 3" />
+              </svg>
+              Generate Code
+            </button>
+          </div>
+        </div>
+
+        <div class="card fu fd2">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Output</span>
+            <button
+              class="btn btn-ghost"
+              style="padding: 0.25rem 0.625rem; font-size: 0.75rem"
+              onclick="copyOutput('rt-output')"
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+              </svg>
+              Copy
+            </button>
+          </div>
+          <div class="card-body">
+            <textarea
+              id="rt-output"
+              class="out-area"
+              readonly
+              placeholder="Generated loop code will appear here…"
+            ></textarea>
+          </div>
+        </div>
+        <p style="font-size:0.7rem;color:var(--text3);margin-top:-.375rem;margin-bottom:.875rem;line-height:1.6;padding:0 .25rem;">
+          💡 <strong style="color:var(--text2)">Test values:</strong>
+          Amount = <code style="font-family:var(--mono)">3</code> ·
+          Code = <code style="font-family:var(--mono)">$$c[]clear[1]</code><br>
+          This will delete 3 messages. To verify it ran X times, count deleted messages.
+        </p>
+      </div>
+    </main>
+
+    <footer>
+      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+      <div class="foot-links">
+        <a href="/tos">Terms</a><a href="/privacy">Privacy</a
+        ><a href="/contact">Contact</a>
+      </div>
+    </footer>
+
+    <script>
+      // ── Loader ──
+      const ldrtxt = document.getElementById("ldrtxt");
+      let dc = 0;
+      const di = setInterval(() => {
+        dc = (dc + 1) % 4;
+        ldrtxt.textContent = "Loading" + ".".repeat(dc);
+      }, 350);
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          const l = document.getElementById("ldr");
+          l.classList.add("out");
+          setTimeout(() => l.remove(), 400);
+          clearInterval(di);
+        }, 900);
+      });
+
+      // ── Toast ──
+      function toast(msg, type = "s") {
+        const box = document.getElementById("toasts");
+        const t = document.createElement("div");
+        t.className = `toast ${type}`;
+        t.style.cssText = "position:relative;overflow:hidden;";
+        t.innerHTML = `<span>${msg}</span><div class="tbar"></div>`;
+        box.appendChild(t);
+        setTimeout(() => t.remove(), 4500);
+      }
+
+      // ── Theme ──
+      function toggleTheme() {
+        const h = document.documentElement;
+        const dark = h.classList.toggle("dark");
+        h.classList.toggle("light", !dark);
+        localStorage.setItem("darkMode", dark ? "enabled" : "disabled");
+        document.getElementById("tog").classList.toggle("on", dark);
+      }
+      (function () {
+        document
+          .getElementById("tog")
+          .classList.toggle(
+            "on",
+            document.documentElement.classList.contains("dark"),
+          );
+      })();
+
+      // ── Tabs ──
+      function switchTab(name) {
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-panel")
+          .forEach((p) => p.classList.remove("active"));
+        document.getElementById("tab-" + name).classList.add("active");
+        document.getElementById("panel-" + name).classList.add("active");
+      }
+
+      // ── Validation helpers ──
+      function setErr(id, msg) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.add("show");
+      }
+      function clearErr(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove("show");
+      }
+      function clearAllErrs(...ids) {
+        ids.forEach(clearErr);
+      }
+
+      // ── Copy ──
+      function copyOutput(id) {
+        const v = document.getElementById(id).value;
+        if (!v.trim()) {
+          toast("Nothing to copy", "e");
+          return;
+        }
+        navigator.clipboard
+          .writeText(v)
+          .then(() => toast("Copied!", "s"))
+          .catch(() => toast("Copy failed", "e"));
+      }
+
+      // ── Tab 1: For Each ──
+      function generateForEach() {
+        clearAllErrs(
+          "fe-list-err",
+          "fe-insep-err",
+          "fe-elem-err",
+          "fe-code-err",
+        );
+        const list = document.getElementById("fe-list").value;
+        const insep = document.getElementById("fe-insep").value;
+        const outsep = document.getElementById("fe-outsep").value;
+        const elem = document.getElementById("fe-elem").value.trim();
+        const code = document.getElementById("fe-code").value;
+
+        let valid = true;
+        if (!list.trim()) {
+          setErr("fe-list-err", "List is required.");
+          valid = false;
+        }
+        if (!insep) {
+          setErr("fe-insep-err", "Input separator is required.");
+          valid = false;
+        }
+        if (!elem) {
+          setErr("fe-elem-err", "Element name is required.");
+          valid = false;
+        }
+        if (!code.trim()) {
+          setErr("fe-code-err", "Code is required.");
+          valid = false;
+        }
+        if (!valid) return;
+
+        // Build the output using the specified template:
+        // $textSplit[<ESCAPED_CODE>;<ELEMENT>]
+        // $url[decode;$eval[$splitText[1]$replaceText[$url[encode;<LIST>];$url[encode;<INPUT_SEPARATOR>];$splitText[2]<OUTPUT_SEPARATOR>$splitText[1]]$splitText[2]]]
+        const out =
+          `$textSplit[${code};${elem}]\n` +
+          `$url[decode;$eval[$splitText[1]$replaceText[$url[encode;${list}];$url[encode;${insep}];$splitText[2]${outsep}$splitText[1]]$splitText[2]]]`;
+
+        document.getElementById("fe-output").value = out;
+        toast("Code generated!", "s");
+      }
+
+      // ── Tab 2: Run X Times ──
+      function generateRunTimes() {
+        clearAllErrs("rt-count-err", "rt-code-err");
+        const countRaw = document.getElementById("rt-count").value.trim();
+        const code = document.getElementById("rt-code").value;
+
+        let valid = true;
+        const n = parseInt(countRaw, 10);
+        if (!countRaw || isNaN(n) || n < 1 || String(n) !== countRaw) {
+          setErr("rt-count-err", "Must be a positive integer (e.g. 5).");
+          valid = false;
+        }
+        if (!code.trim()) {
+          setErr("rt-code-err", "Code is required.");
+          valid = false;
+        }
+        if (!valid) return;
+
+        const out =
+          `$var[amount;${n}]\n` +
+          `$async[code]\n` +
+          `  ${code}\n` +
+          `$endasync\n` +
+          `$var[x;$sum[1e$calculate[$var[amount]**0.125+1];-1]]\n` +
+          `$eval[$repeatMessage[3;$$c[]var[x\\;$$c[]replaceText[$$c[]var[x\\]\\;9\\;$$c[]var[x\\]\\]\\]]]\n` +
+          `$eval[$replaceText[$cropText[$var[x];$var[amount];];9;$trimSpace[$await[code]]]]`;
+
+        document.getElementById("rt-output").value = out;
+        toast("Code generated!", "s");
+      }
+    </script>
+  </body>
+</html>
