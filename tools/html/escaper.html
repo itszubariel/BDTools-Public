@@ -1,261 +1,193 @@
 <!doctype html>
 <html lang="en" class="dark">
-  <head>
-    <script>
-      (function () {
-        const isDark = localStorage.getItem("darkMode") === "enabled";
-        document.documentElement.classList.toggle("dark", isDark);
-        document.documentElement.classList.toggle("light", !isDark);
-      })();
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>BDTools | Character Escaper</title>
-    <link rel="icon" href="https://bdtools.xyz/images/bdtools_logo.png" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="/tools/css/escaper.css" />
-  </head>
 
-  <body>
-    <div id="ldr">
-      <img src="https://bdtools.xyz/images/bdtools_logo.png" alt="" />
-      <p id="ldrtxt">Loading</p>
-    </div>
-    <div id="toasts"></div>
+<head>
+  <script>
+    (function () {
+      const isDark = localStorage.getItem("darkMode") === "enabled";
+      document.documentElement.classList.toggle("dark", isDark);
+      document.documentElement.classList.toggle("light", !isDark);
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BDTools | Character Escaper</title>
+  <link rel="icon" href="https://bdtools.xyz/images/bdtools_logo.png" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/tools/css/escaper.css" />
+</head>
 
-    <nav>
-      <a href="/" class="nav-logo"
-        ><img
-          src="https://bdtools.xyz/images/bdtools_logo.png"
-          onerror="this.style.display = 'none'"
-          alt=""
-        /><span>BDTools</span></a
-      >
-      <div class="spacer"></div>
-      <div class="tog" onclick="toggleTheme()">
-        <span class="tog-lbl">Dark</span>
-        <div class="tog-track on" id="tog">
-          <div class="tog-thumb"></div>
-        </div>
-      </div>
-    </nav>
+<body>
+  <div id="ldr">
+    <img src="https://bdtools.xyz/images/bdtools_logo.png" alt="" />
+    <p id="ldrtxt">Loading</p>
+  </div>
+  <div id="toasts"></div>
 
-    <div class="lowerNav border-b border-[#1e2130]">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
-        <div class="flex items-start gap-4">
-          <div
-            class="w-11 h-11 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center flex-shrink-0"
-          >
-            <svg
-              class="w-5 h-5 text-[#5865F2]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-              />
-            </svg>
-          </div>
-          <div>
-            <h1 class="dark-text text-2xl font-black tracking-tight">
-              Character Escaper
-            </h1>
-            <p class="text-gray-400 text-sm mt-1">
-              Escape special characters in your BDFD scripts.
-            </p>
-            <div class="flex flex-wrap gap-1.5 mt-3">
-              <span
-                style="
-                  font-size: 10px;
-                  font-family: var(--mono);
-                  background: var(--bg4);
-                  border: 1px solid var(--border2);
-                  color: var(--text2);
-                  padding: 2px 8px;
-                  border-radius: 6px;
-                "
-                >JavaScript</span
-              >
-              <span
-                style="
-                  font-size: 10px;
-                  font-family: var(--mono);
-                  background: var(--bg4);
-                  border: 1px solid var(--border2);
-                  color: var(--text2);
-                  padding: 2px 8px;
-                  border-radius: 6px;
-                "
-                >HTML</span
-              >
-              <span
-                style="
-                  font-size: 10px;
-                  font-family: var(--mono);
-                  background: var(--bg4);
-                  border: 1px solid var(--border2);
-                  color: var(--text2);
-                  padding: 2px 8px;
-                  border-radius: 6px;
-                "
-                >Tailwind CSS</span
-              >
-            </div>
-          </div>
-        </div>
+  <nav>
+    <a href="/" class="nav-logo"><img src="https://bdtools.xyz/images/bdtools_logo.png"
+        onerror="this.style.display = 'none'" alt="" /><span>BDTools</span></a>
+    <div class="spacer"></div>
+    <div class="tog" onclick="toggleTheme()">
+      <span class="tog-lbl">Dark</span>
+      <div class="tog-track on" id="tog">
+        <div class="tog-thumb"></div>
       </div>
     </div>
+  </nav>
 
-    <main>
-      <!-- Toolbar - Matching Indenter Style -->
-      <!-- Toolbar -->
-      <div class="toolbar fu fd1 scroll-fade">
-        <span class="toolbar-label">Escape Rules:</span>
-
-        <div class="rule-row">
-          <div
-            class="rule-chip rule-select"
-            data-from="$"
-            data-a="%{DOL}%"
-            data-b="$$c[]"
-          >
-            <span class="from">$</span>
-            <span class="arr">→</span>
-            <select class="rule-choice">
-              <option value="a">%{DOL}%</option>
-              <option value="b" selected>$$c[]</option>
-            </select>
-          </div>
-
-          <div
-            class="rule-chip rule-select"
-            data-from=";"
-            data-a="\;"
-            data-b="%{-SEMICOL-}%"
-          >
-            <span class="from">;</span>
-            <span class="arr">→</span>
-            <select class="rule-choice">
-              <option value="a">\;</option>
-              <option value="b">%{-SEMICOL-}%</option>
-            </select>
-          </div>
-
-          <div
-            class="rule-chip rule-select"
-            data-from="]"
-            data-a="\]"
-            data-b="%ESCAPED%"
-          >
-            <span class="from">]</span>
-            <span class="arr">→</span>
-            <select class="rule-choice">
-              <option value="a">\]</option>
-              <option value="b">%ESCAPED%</option>
-            </select>
-          </div>
-
-          <div class="rule-chip rule-select" data-from="\\">
-            <span class="from">\</span>
-            <span class="arr">→</span>
-            <span class="to">\\</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Input & Output -->
-      <div class="g2 fu fd1">
-        <div class="card">
-          <div class="card-hdr">
-            <span class="card-hdr-title">Input</span>
-            <button class="icon-btn" id="clear-input" title="Clear">
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.2"
-              >
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                <path d="M10 11v6M14 11v6" />
-              </svg>
-            </button>
-          </div>
-          <div class="card-body">
-            <textarea
-              id="input-text"
-              class="code-area"
-              placeholder="Paste your BDFD code here…"
-            ></textarea>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-hdr">
-            <span class="card-hdr-title">Escaped Output</span>
-            <button class="icon-btn" id="copy-output" title="Copy">
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.2"
-              >
-                <rect x="9" y="9" width="13" height="13" rx="2" />
-                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-              </svg>
-            </button>
-          </div>
-          <div class="card-body">
-            <textarea
-              id="output-text"
-              class="code-area"
-              readonly
-              placeholder="Escaped output will appear here…"
-            ></textarea>
-          </div>
-        </div>
-      </div>
-
-      <!-- Escape Button - Centered at bottom -->
-      <div style="margin-top: 1.5rem; text-align: center" class="fu fd2">
-        <button class="btn btn-primary" id="replace-btn">
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <polyline points="17 1 21 5 17 9" />
-            <path d="M3 11V9a4 4 0 014-4h14" />
-            <polyline points="7 23 3 19 7 15" />
-            <path d="M21 13v2a4 4 0 01-4 4H3" />
+  <div class="lowerNav border-b border-[#1e2130]">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
+      <div class="flex items-start gap-4">
+        <div
+          class="w-11 h-11 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+              d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
           </svg>
-          Escape Code
-        </button>
+        </div>
+        <div>
+          <h1 class="dark-text text-2xl font-black tracking-tight">
+            Character Escaper
+          </h1>
+          <p class="text-gray-400 text-sm mt-1">
+            Escape special characters in your BDFD scripts.
+          </p>
+          <div class="flex flex-wrap gap-1.5 mt-3">
+            <span style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                ">JavaScript</span>
+            <span style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                ">HTML</span>
+            <span style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                ">Tailwind CSS</span>
+          </div>
+        </div>
       </div>
-    </main>
+    </div>
+  </div>
 
-    <footer>
-      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
-      <div class="foot-links">
-        <a href="/tos">Terms</a><a href="/privacy">Privacy</a
-        ><a href="/contact">Contact</a>
+  <main>
+    <!-- Toolbar - Matching Indenter Style -->
+    <!-- Toolbar -->
+    <div class="toolbar fu fd1 scroll-fade">
+      <span class="toolbar-label">Escape Rules:</span>
+
+      <div class="rule-row">
+        <div class="rule-chip rule-select" data-from="$" data-a="%{DOL}%" data-b="$$c[]">
+          <span class="from">$</span>
+          <span class="arr">→</span>
+          <select class="rule-choice">
+            <option value="a">%{DOL}%</option>
+            <option value="b" selected>$$c[]</option>
+          </select>
+        </div>
+
+        <div class="rule-chip rule-select" data-from=";" data-a="\;" data-b="%{-SEMICOL-}%">
+          <span class="from">;</span>
+          <span class="arr">→</span>
+          <select class="rule-choice">
+            <option value="a">\;</option>
+            <option value="b">%{-SEMICOL-}%</option>
+          </select>
+        </div>
+
+        <div class="rule-chip rule-select" data-from="]" data-a="\]" data-b="%ESCAPED%">
+          <span class="from">]</span>
+          <span class="arr">→</span>
+          <select class="rule-choice">
+            <option value="a">\]</option>
+            <option value="b">%ESCAPED%</option>
+          </select>
+        </div>
+
+        <div class="rule-chip rule-select" data-from="\\">
+          <span class="from">\</span>
+          <span class="arr">→</span>
+          <span class="to">\\</span>
+        </div>
       </div>
-    </footer>
+    </div>
 
-    <script src="/dist/tools/ts/escaper.js"></script>
-  </body>
+    <!-- Input & Output -->
+    <div class="g2 fu fd1">
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-hdr-title">Input</span>
+          <button class="icon-btn" id="clear-input" title="Clear">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+              <path d="M10 11v6M14 11v6" />
+            </svg>
+          </button>
+        </div>
+        <div class="card-body">
+          <textarea id="input-text" class="code-area" placeholder="Paste your BDFD code here…"></textarea>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-hdr-title">Escaped Output</span>
+          <button class="icon-btn" id="copy-output" title="Copy">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <rect x="9" y="9" width="13" height="13" rx="2" />
+              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+            </svg>
+          </button>
+        </div>
+        <div class="card-body">
+          <textarea id="output-text" class="code-area" readonly
+            placeholder="Escaped output will appear here…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Escape Button - Centered at bottom -->
+    <div style="margin-top: 1.5rem; text-align: center" class="fu fd2">
+      <button class="btn btn-primary" id="replace-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="17 1 21 5 17 9" />
+          <path d="M3 11V9a4 4 0 014-4h14" />
+          <polyline points="7 23 3 19 7 15" />
+          <path d="M21 13v2a4 4 0 01-4 4H3" />
+        </svg>
+        Escape Code
+      </button>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+    <div class="foot-links">
+      <a href="/tos">Terms</a><a href="/privacy">Privacy</a><a href="/contact">Contact</a>
+    </div>
+  </footer>
+
+  <script src="/dist/tools/ts/escaper.js"></script>
+</body>
+
 </html>

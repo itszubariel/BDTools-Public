@@ -2,6 +2,6 @@ node_modules/
 .vscode/
 Test/
 archived/
-.env
+
 .DS_Store
 tools/html/dropped

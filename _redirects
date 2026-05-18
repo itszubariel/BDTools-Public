@@ -9,7 +9,7 @@
 
 /docs/node-status             /docs/pages/node-status.html             200
 /docs/guild-list              /docs/pages/guild-list.html              200
-/docs/bdscript-checker        /docs/pages/bdscript-checker.html        200
+/docs/bdscript                /docs/pages/bdscript.html                200
 /docs/others                  /docs/pages/others.html                  200
 /docs                         /docs/index.html                         200
 /docs/*                       /docs/:splat                             200

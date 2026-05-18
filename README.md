@@ -48,11 +48,12 @@ BDTools exposes a serverless API for bot integrations and BDFD tooling.
 | `/node-status/history` | `GET` | Time-series snapshots for the last 7 days. Supports `?limit=24h` or `?graph=true` for PNG charts |
 | `/images/:id.png` | `GET` | Dynamically generated PNG charts for node status history |
 
-### BDScript Checker
+### BDScript
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/bdscript-checker` | `POST` | Comprehensive BDScript/BDFD code validator. Catches syntax errors, validates arguments, checks parent-child relationships, and enforces Components v2 rules. Returns detailed error messages with line numbers. |
+| `/function-check` | `GET` | Fuzzy function name lookup. Finds the closest matching BDFD function from a name or typo. Accepts `$` prefix and brackets. |
 
 ### Other Endpoints
 

@@ -1,868 +1,629 @@
 <!doctype html>
 <html lang="en" class="dark">
-  <head>
-    <script>
-      (function () {
-        const isDark = localStorage.getItem("darkMode") === "enabled";
-        document.documentElement.classList.toggle("dark", isDark);
-        document.documentElement.classList.toggle("light", !isDark);
-      })();
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>BDTools | Embed Builder</title>
-    <link rel="icon" href="https://bdtools.xyz/images/bdtools_logo.png" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="/tools/css/embed-builder.css">
-  </head>
 
-  <body>
-    <div id="ldr">
-      <img src="https://bdtools.xyz/images/bdtools_logo.png" alt="" />
-      <p id="ldrtxt">Loading</p>
-    </div>
-    <div id="toasts"></div>
+<head>
+  <script>
+    (function () {
+      const isDark = localStorage.getItem("darkMode") === "enabled";
+      document.documentElement.classList.toggle("dark", isDark);
+      document.documentElement.classList.toggle("light", !isDark);
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BDTools | Embed Builder</title>
+  <link rel="icon" href="https://bdtools.xyz/images/bdtools_logo.png" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/tools/css/embed-builder.css">
+</head>
 
-    <nav>
-      <a href="/" class="nav-logo"
-        ><img
-          src="https://bdtools.xyz/images/bdtools_logo.png"
-          onerror="this.style.display = 'none'"
-          alt=""
-        /><span>BDTools</span></a
-      >
-      <div class="spacer"></div>
-      <div class="tog" onclick="toggleTheme()">
-        <span class="tog-lbl">Dark</span>
-        <div class="tog-track on" id="tog">
-          <div class="tog-thumb"></div>
-        </div>
-      </div>
-    </nav>
+<body>
+  <div id="ldr">
+    <img src="https://bdtools.xyz/images/bdtools_logo.png" alt="" />
+    <p id="ldrtxt">Loading</p>
+  </div>
+  <div id="toasts"></div>
 
-    <div class="lowerNav border-b border-[#1e2130]">
-      <div class="max-w-[1080px] mx-auto px-6 py-10 fu">
-        <div class="flex items-start gap-4">
-          <div
-            class="w-11 h-11 flex-shrink-0 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
-          >
-            <svg
-              class="w-5 h-5 text-[#5865F2]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-              />
-            </svg>
-          </div>
-
-          <!-- Text Content -->
-          <div>
-            <h1
-              class="dark-text text-2xl font-black text-white tracking-tight dt"
-            >
-              Embed Builder
-              <span class="text-sm font-normal text-gray-500"
-                >(Supports Components)</span
-              >
-            </h1>
-
-            <p class="text-gray-400 text-sm mt-1 dt2">
-              Make Embed codes using simple fillouts. Fill out the fields below
-              and click "Generate Embed" to create your BDFD embed code.
-            </p>
-            <div class="flex flex-wrap gap-1.5 mt-3">
-              <span
-                style="
-                  font-size: 10px;
-                  font-family: var(--mono);
-                  background: var(--bg4);
-                  border: 1px solid var(--border2);
-                  color: var(--text2);
-                  padding: 2px 8px;
-                  border-radius: 6px;
-                "
-                >JavaScript</span
-              >
-              <span
-                style="
-                  font-size: 10px;
-                  font-family: var(--mono);
-                  background: var(--bg4);
-                  border: 1px solid var(--border2);
-                  color: var(--text2);
-                  padding: 2px 8px;
-                  border-radius: 6px;
-                "
-                >HTML</span
-              >
-              <span
-                style="
-                  font-size: 10px;
-                  font-family: var(--mono);
-                  background: var(--bg4);
-                  border: 1px solid var(--border2);
-                  color: var(--text2);
-                  padding: 2px 8px;
-                  border-radius: 6px;
-                "
-                >Tailwind CSS</span
-              >
-            </div>
-          </div>
-        </div>
+  <nav>
+    <a href="/" class="nav-logo"><img src="https://bdtools.xyz/images/bdtools_logo.png"
+        onerror="this.style.display = 'none'" alt="" /><span>BDTools</span></a>
+    <div class="spacer"></div>
+    <div class="tog" onclick="toggleTheme()">
+      <span class="tog-lbl">Dark</span>
+      <div class="tog-track on" id="tog">
+        <div class="tog-thumb"></div>
       </div>
     </div>
+  </nav>
 
-    <main>
-      <div class="layout">
-        <!-- LEFT: form -->
+  <div class="lowerNav border-b border-[#1e2130]">
+    <div class="max-w-[1080px] mx-auto px-6 py-10 fu">
+      <div class="flex items-start gap-4">
+        <div
+          class="w-11 h-11 flex-shrink-0 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center">
+          <svg class="w-5 h-5 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+
+        <!-- Text Content -->
         <div>
-          <!-- Action bar -->
-          <div class="action-bar fu fd1 scroll-fade">
-            <button class="btn btn-ghost" id="clear-input">
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.2"
-              >
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-              </svg>
-              Clear All
-            </button>
-            <div style="flex: 1"></div>
-            <button class="btn btn-ghost" id="add-field-btn">+ Field</button>
-            <button class="btn btn-ghost" id="add-button-btn">+ Button</button>
-            <button class="btn btn-ghost" id="add-selectmenu-btn">
-              + Select Menu
-            </button>
-            <button class="btn btn-ghost" id="add-modal-btn">+ Modal</button>
+          <h1 class="dark-text text-2xl font-black text-white tracking-tight dt">
+            Embed Builder
+            <span class="text-sm font-normal text-gray-500">(Supports Components)</span>
+          </h1>
+
+          <p class="text-gray-400 text-sm mt-1 dt2">
+            Make Embed codes using simple fillouts. Fill out the fields below
+            and click "Generate Embed" to create your BDFD embed code.
+          </p>
+          <div class="flex flex-wrap gap-1.5 mt-3">
+            <span style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                ">JavaScript</span>
+            <span style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                ">HTML</span>
+            <span style="
+                  font-size: 10px;
+                  font-family: var(--mono);
+                  background: var(--bg4);
+                  border: 1px solid var(--border2);
+                  color: var(--text2);
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                ">Tailwind CSS</span>
           </div>
-          <p
-            style="
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="layout">
+      <!-- LEFT: form -->
+      <div>
+        <!-- Action bar -->
+        <div class="action-bar fu fd1 scroll-fade">
+          <button class="btn btn-ghost" id="clear-input">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+            </svg>
+            Clear All
+          </button>
+          <div style="flex: 1"></div>
+          <button class="btn btn-ghost" id="add-field-btn">+ Field</button>
+          <button class="btn btn-ghost" id="add-button-btn">+ Button</button>
+          <button class="btn btn-ghost" id="add-selectmenu-btn">
+            + Select Menu
+          </button>
+          <button class="btn btn-ghost" id="add-modal-btn">+ Modal</button>
+        </div>
+        <p style="
               font-size: 0.7rem;
               color: var(--text3);
               margin-bottom: 0.75rem;
               margin-top: -0.375rem;
-            "
-          >
-            <svg
-              style="
+            ">
+          <svg style="
                 display: inline;
                 vertical-align: -0.1em;
                 margin-right: 0.25rem;
-              "
-              width="11"
-              height="11"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <path
-                d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
-              />
-              <polyline points="17 21 17 13 7 13 7 21" />
-              <polyline points="7 3 7 8 15 8" />
-            </svg>
-            Your work is auto-saved locally.
-          </p>
+              " width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+            <polyline points="17 21 17 13 7 13 7 21" />
+            <polyline points="7 3 7 8 15 8" />
+          </svg>
+          Your work is auto-saved locally.
+        </p>
 
-          <!-- Author -->
-          <div class="card fu fd1">
-            <div class="card-hdr">
-              <span class="card-hdr-title">Author</span>
-            </div>
-            <div class="card-body">
-              <div class="g3">
-                <div class="section">
-                  <span class="slabel">Name</span
-                  ><input
-                    id="author-input"
-                    class="finput"
-                    placeholder="Author name"
-                  />
-                </div>
-                <div class="section">
-                  <span class="slabel">Icon URL</span
-                  ><input
-                    id="author-icon-input"
-                    class="finput"
-                    placeholder="https://…"
-                  />
-                </div>
-                <div class="section">
-                  <span class="slabel">Author URL</span
-                  ><input
-                    id="author-url-input"
-                    class="finput"
-                    placeholder="https://…"
-                  />
-                </div>
-              </div>
-            </div>
+        <!-- Author -->
+        <div class="card fu fd1">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Author</span>
           </div>
-
-          <!-- Title + Description -->
-          <div class="card fu fd1">
-            <div class="card-hdr">
-              <span class="card-hdr-title">Content</span>
-            </div>
-            <div class="card-body">
-              <div class="g2" style="margin-bottom: 0.625rem">
-                <div class="section">
-                  <span class="slabel">Title</span
-                  ><input
-                    id="title-input"
-                    class="finput"
-                    placeholder="Embed title"
-                  />
-                </div>
-                <div class="section">
-                  <span class="slabel">Title URL</span
-                  ><input
-                    id="title-url-input"
-                    class="finput"
-                    placeholder="https://…"
-                  />
-                </div>
+          <div class="card-body">
+            <div class="g3">
+              <div class="section">
+                <span class="slabel">Name</span><input id="author-input" class="finput" placeholder="Author name" />
               </div>
               <div class="section">
-                <span class="slabel">Description</span
-                ><textarea
-                  id="description-input"
-                  class="finput"
-                  rows="4"
-                  placeholder="Embed description…"
-                ></textarea>
+                <span class="slabel">Icon URL</span><input id="author-icon-input" class="finput"
+                  placeholder="https://…" />
               </div>
-            </div>
-          </div>
-
-          <!-- Media + Style -->
-          <div class="card fu fd1">
-            <div class="card-hdr">
-              <span class="card-hdr-title">Media &amp; Style</span>
-            </div>
-            <div class="card-body">
-              <div class="g3">
-                <div class="section">
-                  <span class="slabel">Thumbnail URL</span
-                  ><input
-                    id="thumbnail-input"
-                    class="finput"
-                    placeholder="https://…"
-                  />
-                </div>
-                <div class="section">
-                  <span class="slabel">Image URL</span
-                  ><input
-                    id="image-input"
-                    class="finput"
-                    placeholder="https://…"
-                  />
-                </div>
-                <div class="section">
-                  <span class="slabel">Colour (hex)</span
-                  ><input
-                    id="color-input"
-                    class="finput"
-                    placeholder="#5865F2"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Footer -->
-          <div class="card fu fd1">
-            <div class="card-hdr">
-              <span class="card-hdr-title">Footer</span>
-            </div>
-            <div class="card-body">
-              <div class="g2">
-                <div class="section">
-                  <span class="slabel">Footer Text</span
-                  ><input
-                    id="footer-input"
-                    class="finput"
-                    placeholder="Footer text"
-                  />
-                </div>
-                <div class="section">
-                  <span class="slabel">Footer Icon URL</span
-                  ><input
-                    id="footer-icon-input"
-                    class="finput"
-                    placeholder="https://…"
-                  />
-                </div>
-              </div>
-              <div style="margin-top: 0.625rem">
-                <label class="chk"
-                  ><input type="checkbox" id="timestamp-input" /><span
-                    >Add Timestamp</span
-                  ></label
-                >
-              </div>
-            </div>
-          </div>
-
-          <!-- Components injected here -->
-          <div id="fields-container"></div>
-          <div id="buttons-container"></div>
-          <div id="selects-container"></div>
-          <div id="modals-container"></div>
-
-          <!-- Generate + output -->
-          <div class="card fu fd2">
-            <div class="card-hdr">
-              <span class="card-hdr-title">Output</span>
-            </div>
-            <div class="card-body">
-              <button
-                class="btn btn-primary btn-full"
-                id="replace-btn"
-                style="margin-bottom: 0.75rem"
-              >
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                >
-                  <polygon points="5 3 19 12 5 21 5 3" />
-                </svg>
-                Generate Embed Code
-              </button>
-              <textarea
-                id="output-text"
-                class="out-area"
-                readonly
-                placeholder="Your BDFD embed code will appear here…"
-              ></textarea>
-              <div
-                style="
-                  display: flex;
-                  justify-content: flex-end;
-                  margin-top: 0.5rem;
-                "
-              >
-                <button class="btn btn-ghost" id="save-preset">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.2"
-                  >
-                    <path
-                      d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
-                    />
-                    <polyline points="17 21 17 13 7 13 7 21" />
-                    <polyline points="7 3 7 8 15 8" />
-                  </svg>
-                  Save Preset
-                </button>
-                <button class="btn btn-ghost" id="load-preset">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.2"
-                  >
-                    <path
-                      d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 002-2v-4M17 8l-5-5-5 5M12 3v12"
-                    />
-                  </svg>
-                  Load Preset
-                </button>
-                <button class="btn btn-ghost" id="copy-output">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.2"
-                  >
-                    <rect x="9" y="9" width="13" height="13" rx="2" />
-                    <path
-                      d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"
-                    />
-                  </svg>
-                  Copy Output
-                </button>
+              <div class="section">
+                <span class="slabel">Author URL</span><input id="author-url-input" class="finput"
+                  placeholder="https://…" />
               </div>
             </div>
           </div>
         </div>
 
-        <div class="right-panel fu fd2">
-          <!-- Preview -->
-          <div class="card">
-            <div class="card-hdr">
-              <span class="card-hdr-title">Live Preview</span>
-            </div>
-            <div class="card-body">
-              <div class="preview-wrap">
-                <div id="embed-preview"></div>
+        <!-- Title + Description -->
+        <div class="card fu fd1">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Content</span>
+          </div>
+          <div class="card-body">
+            <div class="g2" style="margin-bottom: 0.625rem">
+              <div class="section">
+                <span class="slabel">Title</span><input id="title-input" class="finput" placeholder="Embed title" />
               </div>
-              <p
-                style="
-                  font-size: 0.7rem;
-                  color: var(--text3);
-                  margin-top: 0.5rem;
-                  line-height: 1.4;
-                "
-              >
-                Press Generate to refresh components &amp; fields in the
-                preview.
-              </p>
+              <div class="section">
+                <span class="slabel">Title URL</span><input id="title-url-input" class="finput"
+                  placeholder="https://…" />
+              </div>
+            </div>
+            <div class="section">
+              <span class="slabel">Description</span><textarea id="description-input" class="finput" rows="4"
+                placeholder="Embed description…"></textarea>
             </div>
           </div>
-          <!-- Param reference -->
-          <div class="card" style="margin-top: 0.875rem">
-            <div class="card-hdr">
-              <span class="card-hdr-title">Parameter Reference</span>
+        </div>
+
+        <!-- Media + Style -->
+        <div class="card fu fd1">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Media &amp; Style</span>
+          </div>
+          <div class="card-body">
+            <div class="g3">
+              <div class="section">
+                <span class="slabel">Thumbnail URL</span><input id="thumbnail-input" class="finput"
+                  placeholder="https://…" />
+              </div>
+              <div class="section">
+                <span class="slabel">Image URL</span><input id="image-input" class="finput" placeholder="https://…" />
+              </div>
+              <div class="section">
+                <span class="slabel">Colour (hex)</span><input id="color-input" class="finput" placeholder="#5865F2" />
+              </div>
             </div>
-            <div class="card-body" style="overflow-x: auto">
-              <table class="param-table">
-                <tr>
-                  <th>Param</th>
-                  <th>Type</th>
-                </tr>
+          </div>
+        </div>
 
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/author.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Author Name</a
-                    >
-                  </td>
-                  <td>String, optional</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/authorIcon.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Author Icon URL</a
-                    >
-                  </td>
-                  <td>URL, optional</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/authorURL.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Author URL</a
-                    >
-                  </td>
-                  <td>URL, optional</td>
-                </tr>
+        <!-- Footer -->
+        <div class="card fu fd1">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Footer</span>
+          </div>
+          <div class="card-body">
+            <div class="g2">
+              <div class="section">
+                <span class="slabel">Footer Text</span><input id="footer-input" class="finput"
+                  placeholder="Footer text" />
+              </div>
+              <div class="section">
+                <span class="slabel">Footer Icon URL</span><input id="footer-icon-input" class="finput"
+                  placeholder="https://…" />
+              </div>
+            </div>
+            <div style="margin-top: 0.625rem">
+              <label class="chk"><input type="checkbox" id="timestamp-input" /><span>Add Timestamp</span></label>
+            </div>
+          </div>
+        </div>
 
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/title.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Title</a
-                    >
-                  </td>
-                  <td>String, optional</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/embeddedURL.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Title URL</a
-                    >
-                  </td>
-                  <td>URL, optional</td>
-                </tr>
+        <!-- Components injected here -->
+        <div id="fields-container"></div>
+        <div id="buttons-container"></div>
+        <div id="selects-container"></div>
+        <div id="modals-container"></div>
 
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/description.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Description</a
-                    >
-                  </td>
-                  <td>String, optional</td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/thumbnail.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Thumbnail URL</a
-                    >
-                  </td>
-                  <td>URL, optional</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/image.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Image URL</a
-                    >
-                  </td>
-                  <td>URL, optional</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/color.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Color</a
-                    >
-                  </td>
-                  <td>Hex/int, optional</td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/footer.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Footer Text</a
-                    >
-                  </td>
-                  <td>String, optional</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/footerIcon.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Footer Icon URL</a
-                    >
-                  </td>
-                  <td>URL, optional</td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addTimestamp.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Timestamp</a
-                    >
-                  </td>
-                  <td>Boolean, yes / no</td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addField.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Field Name</a
-                    >
-                  </td>
-                  <td>String, required (per field)</td>
-                </tr>
-                <tr>
-                  <td>Field Value</td>
-                  <td>String, required (per field)</td>
-                </tr>
-                <tr>
-                  <td>Field Inline</td>
-                  <td>Boolean, yes / no</td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addButton.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Button ID / URL</a
-                    >
-                  </td>
-                  <td>String / URL, required (per button)</td>
-                </tr>
-                <tr>
-                  <td>Button Label</td>
-                  <td>String, required</td>
-                </tr>
-                <tr>
-                  <td>Button Style</td>
-                  <td>Enum (primary, secondary, success, danger, link)</td>
-                </tr>
-                <tr>
-                  <td>Button Emoji</td>
-                  <td>String, optional</td>
-                </tr>
-                <tr>
-                  <td>Button Message ID</td>
-                  <td>Snowflake, optional</td>
-                </tr>
-                <tr>
-                  <td>Button New Row</td>
-                  <td>Boolean, yes / no</td>
-                </tr>
-                <tr>
-                  <td>Button Disabled</td>
-                  <td>Boolean, yes / no</td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/newSelectMenu.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Select Menu ID</a
-                    >
-                  </td>
-                  <td>String, required</td>
-                </tr>
-                <tr>
-                  <td>Select Menu Min</td>
-                  <td>Integer</td>
-                </tr>
-                <tr>
-                  <td>Select Menu Max</td>
-                  <td>Integer</td>
-                </tr>
-                <tr>
-                  <td>Select Menu Placeholder</td>
-                  <td>String, optional</td>
-                </tr>
-                <tr>
-                  <td>Select Menu Message ID</td>
-                  <td>Snowflake, optional</td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addSelectMenuOption.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Select Option ID</a
-                    >
-                  </td>
-                  <td>String, required (must match menu ID)</td>
-                </tr>
-                <tr>
-                  <td>Select Option Label</td>
-                  <td>String, required</td>
-                </tr>
-                <tr>
-                  <td>Select Option Value</td>
-                  <td>String, required</td>
-                </tr>
-                <tr>
-                  <td>Select Option Description</td>
-                  <td>String, required</td>
-                </tr>
-                <tr>
-                  <td>Select Option Emoji</td>
-                  <td>String, optional</td>
-                </tr>
-                <tr>
-                  <td>Select Option Default</td>
-                  <td>Boolean, yes / no</td>
-                </tr>
-                <tr>
-                  <td>Select Option Message ID</td>
-                  <td>Snowflake, optional</td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/newModal.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Modal ID</a
-                    >
-                  </td>
-                  <td>String, required</td>
-                </tr>
-                <tr>
-                  <td>Modal Title</td>
-                  <td>String, required</td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addTextInput.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >Text Input ID</a
-                    >
-                  </td>
-                  <td>String, required</td>
-                </tr>
-                <tr>
-                  <td>Text Input Style</td>
-                  <td>Enum (short / paragraph)</td>
-                </tr>
-                <tr>
-                  <td>Text Input Label</td>
-                  <td>String, required</td>
-                </tr>
-                <tr>
-                  <td>Text Input Min Length</td>
-                  <td>Integer</td>
-                </tr>
-                <tr>
-                  <td>Text Input Max Length</td>
-                  <td>Integer</td>
-                </tr>
-                <tr>
-                  <td>Text Input Required</td>
-                  <td>Boolean, yes / no</td>
-                </tr>
-                <tr>
-                  <td>Text Input Default Value</td>
-                  <td>String, optional</td>
-                </tr>
-                <tr>
-                  <td>Text Input Placeholder</td>
-                  <td>String, optional</td>
-                </tr>
-              </table>
+        <!-- Generate + output -->
+        <div class="card fu fd2">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Output</span>
+          </div>
+          <div class="card-body">
+            <button class="btn btn-primary btn-full" id="replace-btn" style="margin-bottom: 0.75rem">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polygon points="5 3 19 12 5 21 5 3" />
+              </svg>
+              Generate Embed Code
+            </button>
+            <textarea id="output-text" class="out-area" readonly
+              placeholder="Your BDFD embed code will appear here…"></textarea>
+            <div style="
+                  display: flex;
+                  justify-content: flex-end;
+                  margin-top: 0.5rem;
+                ">
+              <button class="btn btn-ghost" id="save-preset">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                  <polyline points="17 21 17 13 7 13 7 21" />
+                  <polyline points="7 3 7 8 15 8" />
+                </svg>
+                Save Preset
+              </button>
+              <button class="btn btn-ghost" id="load-preset">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 002-2v-4M17 8l-5-5-5 5M12 3v12" />
+                </svg>
+                Load Preset
+              </button>
+              <button class="btn btn-ghost" id="copy-output">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" />
+                  <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                </svg>
+                Copy Output
+              </button>
             </div>
           </div>
         </div>
       </div>
-    </main>
 
-    <!-- Preset Modal -->
-    <div class="overlay" id="preset-modal">
-      <div class="preset-modal-box" style="width: 500px; max-width: 90%">
-        <button class="modal-close" id="close-preset-modal">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-        <h3>Manage Presets</h3>
-        <div
-          id="preset-list"
-          style="max-height: 50vh; overflow-y: auto; scrollbar-width: thin"
-        ></div>
-        <p
-          id="no-presets"
-          style="
+      <div class="right-panel fu fd2">
+        <!-- Preview -->
+        <div class="card">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Live Preview</span>
+          </div>
+          <div class="card-body">
+            <div class="preview-wrap">
+              <div id="embed-preview"></div>
+            </div>
+            <p style="
+                  font-size: 0.7rem;
+                  color: var(--text3);
+                  margin-top: 0.5rem;
+                  line-height: 1.4;
+                ">
+              Press Generate to refresh components &amp; fields in the
+              preview.
+            </p>
+          </div>
+        </div>
+        <!-- Param reference -->
+        <div class="card" style="margin-top: 0.875rem">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Parameter Reference</span>
+          </div>
+          <div class="card-body" style="overflow-x: auto">
+            <table class="param-table">
+              <tr>
+                <th>Param</th>
+                <th>Type</th>
+              </tr>
+
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/author.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Author Name</a>
+                </td>
+                <td>String, optional</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/authorIcon.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Author Icon URL</a>
+                </td>
+                <td>URL, optional</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/authorURL.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Author URL</a>
+                </td>
+                <td>URL, optional</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/title.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Title</a>
+                </td>
+                <td>String, optional</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/embeddedURL.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Title URL</a>
+                </td>
+                <td>URL, optional</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/description.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Description</a>
+                </td>
+                <td>String, optional</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/thumbnail.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Thumbnail URL</a>
+                </td>
+                <td>URL, optional</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/image.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Image URL</a>
+                </td>
+                <td>URL, optional</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/color.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Color</a>
+                </td>
+                <td>Hex/int, optional</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/footer.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Footer Text</a>
+                </td>
+                <td>String, optional</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/footerIcon.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Footer Icon URL</a>
+                </td>
+                <td>URL, optional</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addTimestamp.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Timestamp</a>
+                </td>
+                <td>Boolean, yes / no</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addField.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Field Name</a>
+                </td>
+                <td>String, required (per field)</td>
+              </tr>
+              <tr>
+                <td>Field Value</td>
+                <td>String, required (per field)</td>
+              </tr>
+              <tr>
+                <td>Field Inline</td>
+                <td>Boolean, yes / no</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addButton.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Button ID / URL</a>
+                </td>
+                <td>String / URL, required (per button)</td>
+              </tr>
+              <tr>
+                <td>Button Label</td>
+                <td>String, required</td>
+              </tr>
+              <tr>
+                <td>Button Style</td>
+                <td>Enum (primary, secondary, success, danger, link)</td>
+              </tr>
+              <tr>
+                <td>Button Emoji</td>
+                <td>String, optional</td>
+              </tr>
+              <tr>
+                <td>Button Message ID</td>
+                <td>Snowflake, optional</td>
+              </tr>
+              <tr>
+                <td>Button New Row</td>
+                <td>Boolean, yes / no</td>
+              </tr>
+              <tr>
+                <td>Button Disabled</td>
+                <td>Boolean, yes / no</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/newSelectMenu.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Select Menu ID</a>
+                </td>
+                <td>String, required</td>
+              </tr>
+              <tr>
+                <td>Select Menu Min</td>
+                <td>Integer</td>
+              </tr>
+              <tr>
+                <td>Select Menu Max</td>
+                <td>Integer</td>
+              </tr>
+              <tr>
+                <td>Select Menu Placeholder</td>
+                <td>String, optional</td>
+              </tr>
+              <tr>
+                <td>Select Menu Message ID</td>
+                <td>Snowflake, optional</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addSelectMenuOption.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Select Option ID</a>
+                </td>
+                <td>String, required (must match menu ID)</td>
+              </tr>
+              <tr>
+                <td>Select Option Label</td>
+                <td>String, required</td>
+              </tr>
+              <tr>
+                <td>Select Option Value</td>
+                <td>String, required</td>
+              </tr>
+              <tr>
+                <td>Select Option Description</td>
+                <td>String, required</td>
+              </tr>
+              <tr>
+                <td>Select Option Emoji</td>
+                <td>String, optional</td>
+              </tr>
+              <tr>
+                <td>Select Option Default</td>
+                <td>Boolean, yes / no</td>
+              </tr>
+              <tr>
+                <td>Select Option Message ID</td>
+                <td>Snowflake, optional</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/newModal.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Modal ID</a>
+                </td>
+                <td>String, required</td>
+              </tr>
+              <tr>
+                <td>Modal Title</td>
+                <td>String, required</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addTextInput.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">Text Input ID</a>
+                </td>
+                <td>String, required</td>
+              </tr>
+              <tr>
+                <td>Text Input Style</td>
+                <td>Enum (short / paragraph)</td>
+              </tr>
+              <tr>
+                <td>Text Input Label</td>
+                <td>String, required</td>
+              </tr>
+              <tr>
+                <td>Text Input Min Length</td>
+                <td>Integer</td>
+              </tr>
+              <tr>
+                <td>Text Input Max Length</td>
+                <td>Integer</td>
+              </tr>
+              <tr>
+                <td>Text Input Required</td>
+                <td>Boolean, yes / no</td>
+              </tr>
+              <tr>
+                <td>Text Input Default Value</td>
+                <td>String, optional</td>
+              </tr>
+              <tr>
+                <td>Text Input Placeholder</td>
+                <td>String, optional</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Preset Modal -->
+  <div class="overlay" id="preset-modal">
+    <div class="preset-modal-box" style="width: 500px; max-width: 90%">
+      <button class="modal-close" id="close-preset-modal">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <h3>Manage Presets</h3>
+      <div id="preset-list" style="max-height: 50vh; overflow-y: auto; scrollbar-width: thin"></div>
+      <p id="no-presets" style="
             font-size: 0.8rem;
             color: var(--text3);
             text-align: center;
             padding: 2rem 0;
             display: none;
-          "
-        >
-          No presets saved yet.
-        </p>
-      </div>
+          ">
+        No presets saved yet.
+      </p>
     </div>
+  </div>
 
-    <!-- Save Preset Name Modal -->
-    <div class="overlay" id="save-preset-modal">
-      <div class="preset-modal-box" style="width: 380px">
-        <button class="modal-close" id="close-save-preset-modal">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-        <h3>Save Preset</h3>
-        <div style="margin-bottom: 1rem">
-          <span
-            style="
+  <!-- Save Preset Name Modal -->
+  <div class="overlay" id="save-preset-modal">
+    <div class="preset-modal-box" style="width: 380px">
+      <button class="modal-close" id="close-save-preset-modal">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <h3>Save Preset</h3>
+      <div style="margin-bottom: 1rem">
+        <span style="
               font-size: 0.6875rem;
               font-weight: 700;
               text-transform: uppercase;
@@ -870,32 +631,25 @@
               color: var(--text3);
               display: block;
               margin-bottom: 0.5rem;
-            "
-            >Preset Name</span
-          >
-          <input
-            type="text"
-            id="preset-name-input"
-            class="finput"
-            placeholder="Enter preset name..."
-            style="width: 100%"
-          />
-        </div>
-        <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
-          <button class="btn btn-ghost" id="cancel-save-preset">Cancel</button>
-          <button class="btn btn-primary" id="confirm-save-preset">Save</button>
-        </div>
+            ">Preset Name</span>
+        <input type="text" id="preset-name-input" class="finput" placeholder="Enter preset name..."
+          style="width: 100%" />
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
+        <button class="btn btn-ghost" id="cancel-save-preset">Cancel</button>
+        <button class="btn btn-primary" id="confirm-save-preset">Save</button>
       </div>
     </div>
+  </div>
 
-    <footer>
-      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
-      <div class="foot-links">
-        <a href="/tos">Terms</a><a href="/privacy">Privacy</a
-        ><a href="/contact">Contact</a>
-      </div>
-    </footer>
+  <footer>
+    <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+    <div class="foot-links">
+      <a href="/tos">Terms</a><a href="/privacy">Privacy</a><a href="/contact">Contact</a>
+    </div>
+  </footer>
 
-    <script src="/dist/tools/ts/embed-builder.js"></script>
-  </body>
+  <script src="/dist/tools/ts/embed-builder.js"></script>
+</body>
+
 </html>

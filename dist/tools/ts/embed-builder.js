@@ -104,7 +104,7 @@ function ebSaveState() {
       if (el) state.dynamics[id] = el.innerHTML;
     });
     localStorage.setItem(EB_LS_KEY, JSON.stringify(state));
-  } catch (e) {}
+  } catch (e) { }
 }
 function ebLoadState() {
   try {
@@ -201,7 +201,7 @@ function ebLoadState() {
       });
     }
     updatePreview();
-  } catch (e) {}
+  } catch (e) { }
 }
 /* ── helper to build an input group row ── */
 const INP = "finput";
@@ -849,7 +849,7 @@ document.getElementById("replace-btn").addEventListener("click", () => {
       );
       const ph = sanitizeInput(
         sd.querySelector('input[id^="select-placeholder-"]')?.value.trim() ||
-          "",
+        "",
       );
       const msgid = sanitizeInput(
         sd.querySelector('input[id^="select-messageid-"]')?.value.trim() || "",
@@ -869,15 +869,15 @@ document.getElementById("replace-btn").addEventListener("click", () => {
       opts.forEach((od, j) => {
         const optId = sanitizeInput(
           od.querySelector('input[id^="select-option-id-"]')?.value.trim() ||
-            "",
+          "",
         );
         const lbl = sanitizeInput(
           od.querySelector('input[id^="select-option-label-"]')?.value.trim() ||
-            "",
+          "",
         );
         const val = sanitizeInput(
           od.querySelector('input[id^="select-option-value-"]')?.value.trim() ||
-            "",
+          "",
         );
         const desc = sanitizeInput(
           od
@@ -890,7 +890,7 @@ document.getElementById("replace-btn").addEventListener("click", () => {
           : "";
         const emoji = sanitizeInput(
           od.querySelector('input[id^="select-option-emoji-"]')?.value.trim() ||
-            "",
+          "",
         );
         const omid = sanitizeInput(
           od
@@ -949,7 +949,7 @@ document.getElementById("replace-btn").addEventListener("click", () => {
         const style = tid.querySelector("select")?.value || "short";
         const label = sanitizeInput(
           tid.querySelector('input[id^="modal-text-label-"]')?.value.trim() ||
-            "",
+          "",
         );
         const min = Number(
           tid.querySelector('input[id^="modal-text-min-"]')?.value || 0,
@@ -963,7 +963,7 @@ document.getElementById("replace-btn").addEventListener("click", () => {
           : "false";
         const val = sanitizeInput(
           tid.querySelector('input[id^="modal-text-value-"]')?.value.trim() ||
-            "",
+          "",
         );
         const ph = sanitizeInput(
           tid
@@ -1396,9 +1396,8 @@ function updatePreview() {
           <span class="preview-badge">BOT</span>
           <span class="preview-time">${ts}</span>
         </div>
-        ${
-          hasContent
-            ? `
+        ${hasContent
+      ? `
         <div class="preview-embed">
           <div class="embed-pill" style="background:${color}"></div>
           <div class="embed-body" style="padding-right:${thumbnail ? "88px" : ".75rem"}">
@@ -1411,8 +1410,8 @@ function updatePreview() {
             ${thumbnail ? `<img src="${thumbnail}" class="embed-thumb" onerror="this.style.display='none'">` : ""}
           </div>
         </div>`
-            : '<p style="font-size:.8rem;color:#72767d;font-style:italic">Fill in the form to see a preview…</p>'
-        }
+      : '<p style="font-size:.8rem;color:#72767d;font-style:italic">Fill in the form to see a preview…</p>'
+    }
         ${buttonsHTML ? `<div style="display:flex;gap:.375rem;flex-wrap:wrap;margin-top:.25rem">${buttonsHTML}</div>` : ""}
       </div>
     </div>`;

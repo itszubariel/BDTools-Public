@@ -88,7 +88,7 @@ const handler = async (event) => {
     let errorText = "";
     try {
       errorText = await res.text();
-    } catch (_) {}
+    } catch (_) { }
     console.error(
       `[contact] ❌ Discord webhook rejected the request (HTTP ${res.status}): ${errorText}`,
     );

@@ -647,9 +647,9 @@ Retrieve the stored guild list for your bot. This endpoint is restricted to requ
 
 ---
 
-## BDScript Checker
+## BDScript
 
-Comprehensive BDScript/BDFD code validator that catches syntax errors and common mistakes before you run your code. Made specially for the `!run` command by BDSuper in the BDFD Support Server.
+Endpoints for working with BDScript, BDFD's scripting language. Includes a bdscript checker/validator and function check/lookup using fuse.js
 
 ### POST /bdscript-checker
 
@@ -814,6 +814,8 @@ Validates argument types including Number, Boolean, Integer, and Snowflake (Disc
     - `-123456789012345678` removes the role
     - `123456789012345678` without operator will error
     - Works with find functions: `+$findRole[Staff]`
+- **URL**: Must be a valid `http://` or `https://` URL, only validated for pure `URL` type arguments, not `String | URL` unions. 
+
 
 **Special Value:** The BDFD special value `!unchanged` is recognized in `$modifyChannel`, `$modifyRole`, and `$editThread` only and skips type validation. This value indicates "keep the current value unchanged".
 
@@ -1021,6 +1023,39 @@ Validates BDFD's requirements for Components v2 to catch errors before running c
 }
 ```
 
+#### 12. Modal Text Input Validation
+Validates `$addTextInput` arguments beyond just requiring `$newModal`.
+
+**Rules:**
+- Min and max length must be integers between 0 and 4000
+- Min cannot exceed max
+- Value cannot exceed 4000 characters (resolved after escape sequences)
+- Placeholder cannot exceed 100 characters
+- All checks skipped when values contain variable or number-returning functions
+
+**Example Errors:**
+```json
+{
+  "function": "$addTextInput",
+  "line": 1,
+  "message": "$addTextInput - Minimum length must be between 0 and 4000, got 5000"
+}
+```
+```json
+{
+  "function": "$addTextInput",
+  "line": 1,
+  "message": "$addTextInput - Minimum length (10) cannot be greater than Maximum length (5)"
+}
+```
+```json
+{
+  "function": "$addTextInput",
+  "line": 1,
+  "message": "$addTextInput - Placeholder cannot exceed 100 characters, got 150"
+}
+```
+
 **Select Menus:**
 - `$newSelectMenu` and `$editSelectMenu` must have at least 1 option
 - `$addStringSelect` must have at least 1 option
@@ -1042,7 +1077,7 @@ Validates BDFD's requirements for Components v2 to catch errors before running c
 }
 ```
 
-#### 12. Negative Number Validation
+#### 13. Negative Number Validation
 Validates that functions which don't accept negative numbers receive valid values.
 
 **Functions checked:**
@@ -1066,7 +1101,7 @@ Validates that functions which don't accept negative numbers receive valid value
 }
 ```
 
-#### 13. Min/Max Value Validation
+#### 14. Min/Max Value Validation
 Validates min and max value constraints for select menus.
 
 **$newSelectMenu / $editSelectMenu:**
@@ -1109,7 +1144,7 @@ Validates min and max value constraints for select menus.
 }
 ```
 
-#### 14. Variable Name Validation
+#### 15. Variable Name Validation
 Validates that "Variable name" arguments contain literal string names, not function calls.
 
 **Affected functions:**
@@ -1130,7 +1165,7 @@ Validates that "Variable name" arguments contain literal string names, not funct
 }
 ```
 
-#### 15. Function Context Compatibility
+#### 16. Function Context Compatibility
 Validates that functions are used in compatible contexts.
 
 **Embed builders cannot be inside message senders:**
@@ -1175,6 +1210,7 @@ When arguments contain **variables**, **ID-returning functions**, **number-retur
 - `$getServerVar[]`
 - `$getChannelVar[]`
 - `$getVar[]`
+- `$message[]` / `$noMentionMessage` / `$mentioned[]` (user input - can be any type)
 
 **ID-returning functions that skip snowflake validation:**
 - `$afkChannelID`, `$authorID`, `$botID`, `$botOwnerID`, `$categoryID`, `$channelID`, `$dmChannelID`
@@ -1351,6 +1387,65 @@ $httpResult
   "error": "Internal server error"
 }
 ```
+
+---
+
+### GET /function-check
+
+Looks up a BDFD function by name using fuzzy matching. Useful for finding the correct function name when you're unsure of the exact spelling. Accepts the function name with or without the `$` prefix, with or without brackets.
+
+**Auth Required:** No  
+**Rate Limit:** None
+
+**Input Methods (in priority order):**
+- Path parameter: `/function-check/sendMessage`
+- Query parameter: `?input=sendMessage`
+- POST body: `{ "input": "sendMessage" }`
+
+**Query Parameters:**
+- `input` (string, optional) — The function name to look up
+
+**Success Response (200):**
+```json
+{
+  "input": "sendmesage",
+  "normalizedInput": "sendmesage",
+  "matchedFunction": "$sendMessage",
+  "suggestedFunction": "$sendMessage[]",
+  "exact": false,
+  "confidence": "82%"
+}
+```
+
+**Fields:**
+- `input` — The raw input you provided
+- `normalizedInput` — Input after stripping `$`, brackets, and whitespace
+- `matchedFunction` — The best matching BDFD function name
+- `suggestedFunction` — Same but with empty brackets appended
+- `exact` — `true` if the match was exact, `false` if fuzzy
+- `confidence` — How confident the matcher is (100% = exact match)
+
+**Error Response (400) - Missing Input:**
+```json
+{
+  "error": "Missing function input.",
+  "hint": "Call /function-check/<function-name> or provide ?input=<function-name>"
+}
+```
+
+**Error Response (404) - No Match:**
+```json
+{
+  "error": "No matching function found.",
+  "input": "xyzqwerty"
+}
+```
+
+**Example Requests:**
+- `/function-check/sendMessage` — exact match
+- `/function-check/sendmesage` — fuzzy match
+- `/function-check/$getUserVar` — strips `$` automatically
+- `/function-check/$setUserVar[name;value]` — strips brackets automatically
 
 ---
 ## Other Endpoints
@@ -1570,7 +1665,7 @@ Authorization: Bearer BDTools-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 **Authentication by endpoint:**
 - **Node Status**: No auth required (public)
 - **Bot Guild List**: Auth required
-- **BDScript Checker**: Auth required
+- **BDScript**: Auth required + No auth required (public)
 - **Other Endpoints**: No auth required (public)
 
 ### Rate Limits

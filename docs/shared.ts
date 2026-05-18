@@ -1,5 +1,3 @@
-// window.BYPASS_AUTH = true;
-
 /* ── Theme Toggle ── */
 function toggleTheme(): void {
   const html = document.documentElement;
@@ -247,7 +245,7 @@ function initScrollSpy(): void {
         showApp(session.user, session.apiKey);
         return;
       }
-    } catch (_) {}
+    } catch (_) { }
     localStorage.removeItem("bdtools_session");
   }
 
@@ -269,7 +267,7 @@ function showSection(sectionId: string): void {
   const targetSection = document.getElementById(sectionId);
   if (targetSection) {
     targetSection.classList.remove("hidden");
-    
+
     // Force immediate visibility for all scroll-fade elements
     // Do this synchronously before any scroll happens
     const fadeElements = targetSection.querySelectorAll(".scroll-fade");
@@ -277,7 +275,7 @@ function showSection(sectionId: string): void {
       el.classList.add("visible");
       el.classList.remove("scroll-fade");
     });
-    
+
     // Also handle if the section itself has scroll-fade
     if (targetSection.classList.contains("scroll-fade")) {
       targetSection.classList.add("visible");

@@ -48,7 +48,7 @@ const LS_KEY = "bdtools_compv2_state";
 function saveState() {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify({ uidCounter, components }));
-  } catch (e) {}
+  } catch (e) { }
 }
 function loadState() {
   try {
@@ -59,7 +59,7 @@ function loadState() {
       components = parsed.components;
       uidCounter = parsed.uidCounter || 0;
     }
-  } catch (e) {}
+  } catch (e) { }
 }
 function getContainerIds() {
   return components
@@ -509,7 +509,7 @@ function saveCV2State() {
       }
     });
     saveState();
-  } catch (e) {}
+  } catch (e) { }
 }
 function refreshAllDropdowns() {
   const containerIds = getContainerIds();
@@ -1012,7 +1012,7 @@ function updatePreview() {
 function renderContainerPreview(comp, children) {
   const color =
     comp.fields.color &&
-    /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(comp.fields.color)
+      /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(comp.fields.color)
       ? comp.fields.color
       : null;
   const spoiler = comp.fields.spoiler;

@@ -1,80 +1,66 @@
 <!doctype html>
 <html lang="en" class="dark">
-  <head>
-    <script>
-      (function () {
-        const isDark = localStorage.getItem("darkMode") === "enabled";
-        document.documentElement.classList.toggle("dark", isDark);
-        document.documentElement.classList.toggle("light", !isDark);
-      })();
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>BDTools | CompV2 Builder</title>
-    <link rel="icon" href="https://bdtools.xyz/images/bdtools_logo.png" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="/tools/css/container-builder.css">
-  </head>
-  <body>
-    <div id="ldr">
-      <img src="https://bdtools.xyz/images/bdtools_logo.png" alt="" />
-      <p id="ldrtxt">Loading</p>
-    </div>
-    <div id="toasts"></div>
-    <nav>
-      <a href="/" class="nav-logo">
-        <img
-          src="https://bdtools.xyz/images/bdtools_logo.png"
-          onerror="this.style.display = 'none'"
-          alt=""
-        />
-        <span>BDTools</span>
-      </a>
-      <div class="spacer"></div>
-      <div class="tog" onclick="toggleTheme()">
-        <span class="tog-lbl">Dark</span>
-        <div class="tog-track on" id="tog"><div class="tog-thumb"></div></div>
+
+<head>
+  <script>
+    (function () {
+      const isDark = localStorage.getItem("darkMode") === "enabled";
+      document.documentElement.classList.toggle("dark", isDark);
+      document.documentElement.classList.toggle("light", !isDark);
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BDTools | CompV2 Builder</title>
+  <link rel="icon" href="https://bdtools.xyz/images/bdtools_logo.png" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/tools/css/container-builder.css">
+</head>
+
+<body>
+  <div id="ldr">
+    <img src="https://bdtools.xyz/images/bdtools_logo.png" alt="" />
+    <p id="ldrtxt">Loading</p>
+  </div>
+  <div id="toasts"></div>
+  <nav>
+    <a href="/" class="nav-logo">
+      <img src="https://bdtools.xyz/images/bdtools_logo.png" onerror="this.style.display = 'none'" alt="" />
+      <span>BDTools</span>
+    </a>
+    <div class="spacer"></div>
+    <div class="tog" onclick="toggleTheme()">
+      <span class="tog-lbl">Dark</span>
+      <div class="tog-track on" id="tog">
+        <div class="tog-thumb"></div>
       </div>
-    </nav>
-    <div class="lowerNav border-b border-[#1e2130]">
-      <div class="max-w-[1080px] mx-auto px-6 py-10 fu">
-        <div class="flex items-start gap-4">
-          <div
-            class="w-11 h-11 flex-shrink-0 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center"
-          >
-            <svg
-              class="w-5 h-5 text-[#5865F2]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-                d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
-              />
-            </svg>
-          </div>
-          <div>
-            <h1 class="dark-text text-2xl font-black text-white tracking-tight">
-              CompV2 Builder
-              <span class="text-sm font-normal text-gray-500"
-                >(Container Components)</span
-              >
-            </h1>
-            <p class="text-gray-400 text-sm mt-1">
-              Build Discord Component V2 layouts visually with containers,
-              sections, text displays, media galleries, separators and buttons,
-              then generate your BDFD code.
-            </p>
-            <div class="flex flex-wrap gap-1.5 mt-3">
-              <span
-                style="
+    </div>
+  </nav>
+  <div class="lowerNav border-b border-[#1e2130]">
+    <div class="max-w-[1080px] mx-auto px-6 py-10 fu">
+      <div class="flex items-start gap-4">
+        <div
+          class="w-11 h-11 flex-shrink-0 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center">
+          <svg class="w-5 h-5 text-[#5865F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+              d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="dark-text text-2xl font-black text-white tracking-tight">
+            CompV2 Builder
+            <span class="text-sm font-normal text-gray-500">(Container Components)</span>
+          </h1>
+          <p class="text-gray-400 text-sm mt-1">
+            Build Discord Component V2 layouts visually with containers,
+            sections, text displays, media galleries, separators and buttons,
+            then generate your BDFD code.
+          </p>
+          <div class="flex flex-wrap gap-1.5 mt-3">
+            <span style="
                   font-size: 10px;
                   font-family: var(--mono);
                   background: var(--bg4);
@@ -82,11 +68,8 @@
                   color: var(--text2);
                   padding: 2px 8px;
                   border-radius: 6px;
-                "
-                >JavaScript</span
-              >
-              <span
-                style="
+                ">JavaScript</span>
+            <span style="
                   font-size: 10px;
                   font-family: var(--mono);
                   background: var(--bg4);
@@ -94,11 +77,8 @@
                   color: var(--text2);
                   padding: 2px 8px;
                   border-radius: 6px;
-                "
-                >HTML</span
-              >
-              <span
-                style="
+                ">HTML</span>
+            <span style="
                   font-size: 10px;
                   font-family: var(--mono);
                   background: var(--bg4);
@@ -106,493 +86,344 @@
                   color: var(--text2);
                   padding: 2px 8px;
                   border-radius: 6px;
-                "
-                >CompV2 / Containers</span
-              >
-            </div>
+                ">CompV2 / Containers</span>
           </div>
         </div>
       </div>
     </div>
-    <main>
-      <div class="layout">
-        <div>
-          <div class="callout fu fd1 scroll-fade">
-            <strong>How it works:</strong> Components are a flat list. Add a
-            <strong>Container</strong> first, then add other components and
-            assign them by name. <strong>Sections</strong> have their own name,
-            text displays and thumbnails attach to a section by selecting its
-            name. <strong>Action Rows</strong> have their own ID, buttons and
-            selects attach to them by ID. Containers are output first in the
-            generated code.
-          </div>
-          <p
-            style="
+  </div>
+  <main>
+    <div class="layout">
+      <div>
+        <div class="callout fu fd1 scroll-fade">
+          <strong>How it works:</strong> Components are a flat list. Add a
+          <strong>Container</strong> first, then add other components and
+          assign them by name. <strong>Sections</strong> have their own name,
+          text displays and thumbnails attach to a section by selecting its
+          name. <strong>Action Rows</strong> have their own ID, buttons and
+          selects attach to them by ID. Containers are output first in the
+          generated code.
+        </div>
+        <p style="
               font-size: 0.7rem;
               color: var(--text3);
               margin-bottom: 0.75rem;
               margin-top: -0.5rem;
-            "
-          >
-            <svg
-              style="
+            ">
+          <svg style="
                 display: inline;
                 vertical-align: -0.1em;
                 margin-right: 0.25rem;
-              "
-              width="11"
-              height="11"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <path
-                d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
-              />
-              <polyline points="17 21 17 13 7 13 7 21" />
-              <polyline points="7 3 7 8 15 8" />
+              " width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+            <polyline points="17 21 17 13 7 13 7 21" />
+            <polyline points="7 3 7 8 15 8" />
+          </svg>
+          Your work is auto-saved locally.
+        </p>
+        <div class="action-bar fu fd1">
+          <button class="btn btn-ghost" id="clear-btn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
             </svg>
-            Your work is auto-saved locally.
-          </p>
-          <div class="action-bar fu fd1">
-            <button class="btn btn-ghost" id="clear-btn">
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.2"
-              >
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-              </svg>
-              Clear All
-            </button>
-            <div style="flex: 1"></div>
-            <button class="btn btn-ghost" id="add-textdisplay-btn">
-              + Text Display
-            </button>
-            <button class="btn btn-ghost" id="add-separator-btn">
-              + Separator
-            </button>
-            <button class="btn btn-ghost" id="add-section-btn">
-              + Section
-            </button>
-            <button class="btn btn-ghost" id="add-thumbnail-btn">
-              + Thumbnail
-            </button>
-            <button class="btn btn-ghost" id="add-mediagallery-btn">
-              + Media Gallery
-            </button>
-            <button class="btn btn-ghost" id="add-mediagalleryitem-btn">
-              + Media Item
-            </button>
-            <button class="btn btn-ghost" id="add-actionrow-btn">
-              + Action Row
-            </button>
-            <button class="btn btn-ghost" id="add-buttoncv2-btn">
-              + Button
-            </button>
-            <button class="btn btn-ghost" id="add-userselect-btn">
-              + User Select
-            </button>
-            <button class="btn btn-ghost" id="add-roleselect-btn">
-              + Role Select
-            </button>
-            <button class="btn btn-ghost" id="add-mentionableselect-btn">
-              + Mentionable Select
-            </button>
-            <button class="btn btn-ghost" id="add-stringselect-btn">
-              + String Select
-            </button>
-            <button class="btn btn-primary" id="add-container-btn">
-              + Container
-            </button>
+            Clear All
+          </button>
+          <div style="flex: 1"></div>
+          <button class="btn btn-ghost" id="add-textdisplay-btn">
+            + Text Display
+          </button>
+          <button class="btn btn-ghost" id="add-separator-btn">
+            + Separator
+          </button>
+          <button class="btn btn-ghost" id="add-section-btn">
+            + Section
+          </button>
+          <button class="btn btn-ghost" id="add-thumbnail-btn">
+            + Thumbnail
+          </button>
+          <button class="btn btn-ghost" id="add-mediagallery-btn">
+            + Media Gallery
+          </button>
+          <button class="btn btn-ghost" id="add-mediagalleryitem-btn">
+            + Media Item
+          </button>
+          <button class="btn btn-ghost" id="add-actionrow-btn">
+            + Action Row
+          </button>
+          <button class="btn btn-ghost" id="add-buttoncv2-btn">
+            + Button
+          </button>
+          <button class="btn btn-ghost" id="add-userselect-btn">
+            + User Select
+          </button>
+          <button class="btn btn-ghost" id="add-roleselect-btn">
+            + Role Select
+          </button>
+          <button class="btn btn-ghost" id="add-mentionableselect-btn">
+            + Mentionable Select
+          </button>
+          <button class="btn btn-ghost" id="add-stringselect-btn">
+            + String Select
+          </button>
+          <button class="btn btn-primary" id="add-container-btn">
+            + Container
+          </button>
+        </div>
+        <div id="components-root"></div>
+        <div class="card fu fd2">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Output</span>
           </div>
-          <div id="components-root"></div>
-          <div class="card fu fd2">
-            <div class="card-hdr">
-              <span class="card-hdr-title">Output</span>
-            </div>
-            <div class="card-body">
-              <button
-                class="btn btn-primary btn-full"
-                id="generate-btn"
-                style="margin-bottom: 0.75rem"
-              >
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                >
-                  <polygon points="5 3 19 12 5 21 5 3" />
-                </svg>
-                Generate CompV2 Code
-              </button>
-              <textarea
-                id="output-text"
-                class="out-area"
-                readonly
-                placeholder="Your BDFD CompV2 code will appear here…"
-              ></textarea>
-              <div
-                style="
+          <div class="card-body">
+            <button class="btn btn-primary btn-full" id="generate-btn" style="margin-bottom: 0.75rem">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polygon points="5 3 19 12 5 21 5 3" />
+              </svg>
+              Generate CompV2 Code
+            </button>
+            <textarea id="output-text" class="out-area" readonly
+              placeholder="Your BDFD CompV2 code will appear here…"></textarea>
+            <div style="
                   display: flex;
                   justify-content: flex-end;
                   margin-top: 0.5rem;
-                "
-              >
-                <button class="btn btn-ghost" id="save-preset">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.2"
-                  >
-                    <path
-                      d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
-                    />
-                    <polyline points="17 21 17 13 7 13 7 21" />
-                    <polyline points="7 3 7 8 15 8" />
-                  </svg>
-                  Save Preset
-                </button>
-                <button class="btn btn-ghost" id="load-preset">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.2"
-                  >
-                    <path
-                      d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 002-2v-4M17 8l-5-5-5 5M12 3v12"
-                    />
-                  </svg>
-                  Load Preset
-                </button>
-                <button class="btn btn-ghost" id="copy-output">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.2"
-                  >
-                    <rect x="9" y="9" width="13" height="13" rx="2" />
-                    <path
-                      d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"
-                    />
-                  </svg>
-                  Copy Output
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="right-panel fu fd2">
-          <div class="card">
-            <div class="card-hdr">
-              <span class="card-hdr-title">Live Preview</span>
-            </div>
-            <div class="card-body">
-              <div class="preview-wrap">
-                <div class="preview-msg">
-                  <img
-                    class="preview-avatar"
-                    src="https://scrobbler.netlify.app/assets/images/scrobbler_logo.png"
-                    onerror="this.style.display = 'none'"
-                    alt=""
-                    style="border-radius: 50%"
-                  />
-                  <div class="preview-content">
-                    <div class="preview-meta">
-                      <span class="preview-name">scrobbler</span>
-                      <span class="preview-badge">BOT</span>
-                      <span class="preview-time">Today at 12:00 PM</span>
-                    </div>
-                    <div id="embed-preview">
-                      <p class="pv-empty">Add components to see a preview…</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <p
-                style="
-                  font-size: 0.7rem;
-                  color: var(--text3);
-                  margin-top: 0.5rem;
-                  line-height: 1.4;
-                "
-              >
-                Preview updates live as you fill in fields.
-              </p>
-            </div>
-          </div>
-          <div class="card" style="margin-top: 0.875rem">
-            <div class="card-hdr">
-              <span class="card-hdr-title">Syntax Reference</span>
-            </div>
-            <div class="card-body" style="overflow-x: auto">
-              <table class="param-table">
-                <tr>
-                  <th>Function</th>
-                  <th>Parameters</th>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addContainer.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >$addContainer</a
-                    >
-                  </td>
-                  <td>name;color;spoiler?</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addTextDisplay.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >$addTextDisplay</a
-                    >
-                  </td>
-                  <td>content;container/sectionName?</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addSeparator.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >$addSeparator</a
-                    >
-                  </td>
-                  <td>divider?;spacing?;containerName?</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addSection.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >$addSection</a
-                    >
-                  </td>
-                  <td>name;containerName?</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addThumbnail.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >$addThumbnail</a
-                    >
-                  </td>
-                  <td>url;description;spoiler?;sectionName</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addMediaGallery.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >$addMediaGallery</a
-                    >
-                  </td>
-                  <td>galleryID;containerID?</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addMediaGalleryItem.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >$addMediaGalleryItem</a
-                    >
-                  </td>
-                  <td>url;description;spoiler;galleryID</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addActionRow.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >$addActionRow</a
-                    >
-                  </td>
-                  <td>ID;containerID?</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addButtonCV2.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >$addButtonCV2</a
-                    >
-                  </td>
-                  <td>id;label;style;disabled;emoji;actionRowID/sectionID</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addUserSelect.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >$addUserSelect</a
-                    >
-                  </td>
-                  <td>id;placeholder;min;max;disabled;actionRowID</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addRoleSelect.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >$addRoleSelect</a
-                    >
-                  </td>
-                  <td>id;placeholder;min;max;disabled;actionRowID</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addMentionableSelect.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >$addMentionableSelect</a
-                    >
-                  </td>
-                  <td>id;placeholder;min;max;disabled;actionRowID</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addStringSelect.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >$addStringSelect</a
-                    >
-                  </td>
-                  <td>id;placeholder;min;max;disabled;actionRowID</td>
-                </tr>
-                <tr>
-                  <td>
-                    <a
-                      href="https://wiki.botdesignerdiscord.com/bdscript/addStringSelectOption.html"
-                      target="_blank"
-                      style="color: var(--accent); text-decoration: none"
-                      onmouseover="this.style.textDecoration = 'underline'"
-                      onmouseout="this.style.textDecoration = 'none'"
-                      >$addStringSelectOption</a
-                    >
-                  </td>
-                  <td>label;value;description;emoji;default;selectMenuID</td>
-                </tr>
-              </table>
+                ">
+              <button class="btn btn-ghost" id="save-preset">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                  <polyline points="17 21 17 13 7 13 7 21" />
+                  <polyline points="7 3 7 8 15 8" />
+                </svg>
+                Save Preset
+              </button>
+              <button class="btn btn-ghost" id="load-preset">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 002-2v-4M17 8l-5-5-5 5M12 3v12" />
+                </svg>
+                Load Preset
+              </button>
+              <button class="btn btn-ghost" id="copy-output">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" />
+                  <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                </svg>
+                Copy Output
+              </button>
             </div>
           </div>
         </div>
       </div>
-    </main>
+      <div class="right-panel fu fd2">
+        <div class="card">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Live Preview</span>
+          </div>
+          <div class="card-body">
+            <div class="preview-wrap">
+              <div class="preview-msg">
+                <img class="preview-avatar" src="https://scrobbler.netlify.app/assets/images/scrobbler_logo.png"
+                  onerror="this.style.display = 'none'" alt="" style="border-radius: 50%" />
+                <div class="preview-content">
+                  <div class="preview-meta">
+                    <span class="preview-name">scrobbler</span>
+                    <span class="preview-badge">BOT</span>
+                    <span class="preview-time">Today at 12:00 PM</span>
+                  </div>
+                  <div id="embed-preview">
+                    <p class="pv-empty">Add components to see a preview…</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p style="
+                  font-size: 0.7rem;
+                  color: var(--text3);
+                  margin-top: 0.5rem;
+                  line-height: 1.4;
+                ">
+              Preview updates live as you fill in fields.
+            </p>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 0.875rem">
+          <div class="card-hdr">
+            <span class="card-hdr-title">Syntax Reference</span>
+          </div>
+          <div class="card-body" style="overflow-x: auto">
+            <table class="param-table">
+              <tr>
+                <th>Function</th>
+                <th>Parameters</th>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addContainer.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">$addContainer</a>
+                </td>
+                <td>name;color;spoiler?</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addTextDisplay.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">$addTextDisplay</a>
+                </td>
+                <td>content;container/sectionName?</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addSeparator.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">$addSeparator</a>
+                </td>
+                <td>divider?;spacing?;containerName?</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addSection.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">$addSection</a>
+                </td>
+                <td>name;containerName?</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addThumbnail.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">$addThumbnail</a>
+                </td>
+                <td>url;description;spoiler?;sectionName</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addMediaGallery.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">$addMediaGallery</a>
+                </td>
+                <td>galleryID;containerID?</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addMediaGalleryItem.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">$addMediaGalleryItem</a>
+                </td>
+                <td>url;description;spoiler;galleryID</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addActionRow.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">$addActionRow</a>
+                </td>
+                <td>ID;containerID?</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addButtonCV2.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">$addButtonCV2</a>
+                </td>
+                <td>id;label;style;disabled;emoji;actionRowID/sectionID</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addUserSelect.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">$addUserSelect</a>
+                </td>
+                <td>id;placeholder;min;max;disabled;actionRowID</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addRoleSelect.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">$addRoleSelect</a>
+                </td>
+                <td>id;placeholder;min;max;disabled;actionRowID</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addMentionableSelect.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">$addMentionableSelect</a>
+                </td>
+                <td>id;placeholder;min;max;disabled;actionRowID</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addStringSelect.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">$addStringSelect</a>
+                </td>
+                <td>id;placeholder;min;max;disabled;actionRowID</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="https://wiki.botdesignerdiscord.com/bdscript/addStringSelectOption.html" target="_blank"
+                    style="color: var(--accent); text-decoration: none"
+                    onmouseover="this.style.textDecoration = 'underline'"
+                    onmouseout="this.style.textDecoration = 'none'">$addStringSelectOption</a>
+                </td>
+                <td>label;value;description;emoji;default;selectMenuID</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 
-    <!-- Preset Modal -->
-    <div class="overlay" id="preset-modal">
-      <div class="modal" style="width: 500px; max-width: 90%">
-        <button class="modal-close" id="close-preset-modal">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-        <h3>Manage Presets</h3>
-        <div
-          id="preset-list"
-          style="max-height: 50vh; overflow-y: auto; scrollbar-width: thin"
-        ></div>
-        <p
-          id="no-presets"
-          style="
+  <!-- Preset Modal -->
+  <div class="overlay" id="preset-modal">
+    <div class="modal" style="width: 500px; max-width: 90%">
+      <button class="modal-close" id="close-preset-modal">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <h3>Manage Presets</h3>
+      <div id="preset-list" style="max-height: 50vh; overflow-y: auto; scrollbar-width: thin"></div>
+      <p id="no-presets" style="
             font-size: 0.8rem;
             color: var(--text3);
             text-align: center;
             padding: 2rem 0;
             display: none;
-          "
-        >
-          No presets saved yet.
-        </p>
-      </div>
+          ">
+        No presets saved yet.
+      </p>
     </div>
+  </div>
 
-    <!-- Save Preset Name Modal -->
-    <div class="overlay" id="save-preset-modal">
-      <div class="modal" style="width: 380px">
-        <button class="modal-close" id="close-save-preset-modal">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-        <h3>Save Preset</h3>
-        <div style="margin-bottom: 1rem">
-          <span
-            style="
+  <!-- Save Preset Name Modal -->
+  <div class="overlay" id="save-preset-modal">
+    <div class="modal" style="width: 380px">
+      <button class="modal-close" id="close-save-preset-modal">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <h3>Save Preset</h3>
+      <div style="margin-bottom: 1rem">
+        <span style="
               font-size: 0.6875rem;
               font-weight: 700;
               text-transform: uppercase;
@@ -600,31 +431,24 @@
               color: var(--text3);
               display: block;
               margin-bottom: 0.5rem;
-            "
-            >Preset Name</span
-          >
-          <input
-            type="text"
-            id="preset-name-input"
-            class="finput"
-            placeholder="Enter preset name..."
-            style="width: 100%"
-          />
-        </div>
-        <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
-          <button class="btn btn-ghost" id="cancel-save-preset">Cancel</button>
-          <button class="btn btn-primary" id="confirm-save-preset">Save</button>
-        </div>
+            ">Preset Name</span>
+        <input type="text" id="preset-name-input" class="finput" placeholder="Enter preset name..."
+          style="width: 100%" />
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem">
+        <button class="btn btn-ghost" id="cancel-save-preset">Cancel</button>
+        <button class="btn btn-primary" id="confirm-save-preset">Save</button>
       </div>
     </div>
+  </div>
 
-    <footer>
-      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
-      <div class="foot-links">
-        <a href="/tos">Terms</a><a href="/privacy">Privacy</a
-        ><a href="/contact">Contact</a>
-      </div>
-    </footer>
-    <script src="/dist/tools/ts/container-builder.js"></script>
-  </body>
+  <footer>
+    <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+    <div class="foot-links">
+      <a href="/tos">Terms</a><a href="/privacy">Privacy</a><a href="/contact">Contact</a>
+    </div>
+  </footer>
+  <script src="/dist/tools/ts/container-builder.js"></script>
+</body>
+
 </html>

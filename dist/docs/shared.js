@@ -207,7 +207,7 @@ function initScrollSpy() {
         showApp(session.user, session.apiKey);
         return;
       }
-    } catch (_) {}
+    } catch (_) { }
     localStorage.removeItem("bdtools_session");
   }
   // Initialize scroll spy after DOM is ready

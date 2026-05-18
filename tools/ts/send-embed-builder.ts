@@ -80,7 +80,7 @@ function sebSaveState() {
       state[id] = el.type === "checkbox" ? el.checked : el.value;
     });
     localStorage.setItem(SEB_LS_KEY, JSON.stringify(state));
-  } catch (e) {}
+  } catch (e) { }
 }
 function sebLoadState() {
   try {
@@ -94,7 +94,7 @@ function sebLoadState() {
       else el.value = state[id];
     });
     updatePreview();
-  } catch (e) {}
+  } catch (e) { }
 }
 
 /* EXACT original sanitize */
@@ -280,9 +280,8 @@ function updatePreview() {
           <span class="preview-badge">BOT</span>
           <span class="preview-time">${dateStr}</span>
         </div>
-        ${
-          hasContent
-            ? `
+        ${hasContent
+      ? `
         <div class="preview-embed">
           <div class="embed-pill" style="background:${color}"></div>
           <div class="embed-body" style="position:relative;padding-right:${thumbnail ? "88px" : ".75rem"}">
@@ -294,8 +293,8 @@ function updatePreview() {
             ${thumbnail ? `<img src="${thumbnail}" class="embed-thumb" onerror="this.style.display='none'">` : ""}
           </div>
         </div>`
-            : '<p style="font-size:.8rem;color:#72767d;font-style:italic">Fill in the form to see a preview…</p>'
-        }
+      : '<p style="font-size:.8rem;color:#72767d;font-style:italic">Fill in the form to see a preview…</p>'
+    }
       </div>
     </div>`;
 }

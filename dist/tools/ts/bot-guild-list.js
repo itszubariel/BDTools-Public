@@ -187,11 +187,10 @@ function buildCard(g) {
           <div class="card-spacer"></div>
 
           <div class="card-bottom">
-            ${
-              g.invite && g.invite !== "failed"
-                ? `<a href="${g.invite}" target="_blank" rel="noopener" class="join-btn">Join Server →</a>`
-                : `<span class="no-invite">No invite link</span>`
-            }
+            ${g.invite && g.invite !== "failed"
+      ? `<a href="${g.invite}" target="_blank" rel="noopener" class="join-btn">Join Server →</a>`
+      : `<span class="no-invite">No invite link</span>`
+    }
           </div>
         </div>`;
 }

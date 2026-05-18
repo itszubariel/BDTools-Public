@@ -235,14 +235,14 @@ function recalc() {
     checked.length === 0
       ? '<p style="font-size:0.75rem;color:var(--text3);font-style:italic;">No permissions selected.</p>'
       : checked
-          .map(
-            (cb) =>
-              `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg);border-radius:8px;padding:6px 12px;border:1px solid var(--border);">
+        .map(
+          (cb) =>
+            `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg);border-radius:8px;padding:6px 12px;border:1px solid var(--border);">
                 <span style="font-size:0.75rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${VAL_TO_NAME[cb.dataset.val] ?? "?"}</span>
                 <span style="font-size:10px;font-family:var(--mono);color:var(--text3);flex-shrink:0;">${cb.dataset.val}</span>
               </div>`,
-          )
-          .join("");
+        )
+        .join("");
 }
 
 function enableAll() {

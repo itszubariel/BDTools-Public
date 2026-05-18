@@ -1,55 +1,50 @@
 <!doctype html>
 <html lang="en" class="dark">
-  <head>
-    <script>
-      (function () {
-        const isDark = localStorage.getItem("darkMode") === "enabled";
-        document.documentElement.classList.toggle("dark", isDark);
-        document.documentElement.classList.toggle("light", !isDark);
-      })();
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>BDTools | Permission Calculator</title>
-    <link rel="icon" href="https://bdtools.xyz/images/bdtools_logo.png" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="/tools/css/permission-calc.css">
-  </head>
 
-  <body>
-    <div id="ldr">
-      <img src="https://bdtools.xyz/images/bdtools_logo.png" alt="" />
-      <p id="ldrtxt">Loading</p>
-    </div>
-    <div id="toasts"></div>
+<head>
+  <script>
+    (function () {
+      const isDark = localStorage.getItem("darkMode") === "enabled";
+      document.documentElement.classList.toggle("dark", isDark);
+      document.documentElement.classList.toggle("light", !isDark);
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BDTools | Permission Calculator</title>
+  <link rel="icon" href="https://bdtools.xyz/images/bdtools_logo.png" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/tools/css/permission-calc.css">
+</head>
 
-    <nav>
-      <a href="/" class="nav-logo">
-        <img
-          src="https://bdtools.xyz/images/bdtools_logo.png"
-          onerror="this.style.display = 'none'"
-          alt=""
-        />
-        <span>BDTools</span>
-      </a>
-      <div class="spacer"></div>
-      <div class="tog" onclick="toggleTheme()">
-        <span class="tog-lbl">Dark</span>
-        <div class="tog-track on" id="themeToggle">
-          <div class="tog-thumb"></div>
-        </div>
+<body>
+  <div id="ldr">
+    <img src="https://bdtools.xyz/images/bdtools_logo.png" alt="" />
+    <p id="ldrtxt">Loading</p>
+  </div>
+  <div id="toasts"></div>
+
+  <nav>
+    <a href="/" class="nav-logo">
+      <img src="https://bdtools.xyz/images/bdtools_logo.png" onerror="this.style.display = 'none'" alt="" />
+      <span>BDTools</span>
+    </a>
+    <div class="spacer"></div>
+    <div class="tog" onclick="toggleTheme()">
+      <span class="tog-lbl">Dark</span>
+      <div class="tog-track on" id="themeToggle">
+        <div class="tog-thumb"></div>
       </div>
-    </nav>
+    </div>
+  </nav>
 
-    <div class="lowerNav" style="border-bottom: 1px solid var(--border)">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
-        <div class="flex items-start gap-4">
-          <div
-            style="
+  <div class="lowerNav" style="border-bottom: 1px solid var(--border)">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 fu">
+      <div class="flex items-start gap-4">
+        <div style="
               width: 44px;
               height: 44px;
               border-radius: 12px;
@@ -59,47 +54,29 @@
               align-items: center;
               justify-content: center;
               flex-shrink: 0;
-            "
-          >
-            <svg
-              style="width: 20px; height: 20px; color: #5865f2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-              />
-            </svg>
-          </div>
-          <div>
-            <h1
-              class="dark-text"
-              style="
+            ">
+          <svg style="width: 20px; height: 20px; color: #5865f2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="dark-text" style="
                 font-size: 1.5rem;
                 font-weight: 900;
                 color: var(--text);
                 letter-spacing: -0.03em;
-              "
-            >
-              Permission Calculator
-            </h1>
-            <p
-              style="color: var(--text2); font-size: 0.875rem; margin-top: 4px"
-            >
-              Calculate Discord permission bitfield values for bot invite links
-              or
-              <code style="font-family: var(--mono); color: #818cf8"
-                >$botInvite</code
-              >
-              in BDFD. Toggle permissions to build the combined value.
-            </p>
-            <div class="flex flex-wrap gap-1.5 mt-3">
-              <span
-                style="
+              ">
+            Permission Calculator
+          </h1>
+          <p style="color: var(--text2); font-size: 0.875rem; margin-top: 4px">
+            Calculate Discord permission bitfield values for bot invite links
+            or
+            <code style="font-family: var(--mono); color: #818cf8">$botInvite</code>
+            in BDFD. Toggle permissions to build the combined value.
+          </p>
+          <div class="flex flex-wrap gap-1.5 mt-3">
+            <span style="
                   font-size: 10px;
                   font-family: var(--mono);
                   background: var(--bg4);
@@ -107,11 +84,8 @@
                   color: var(--text2);
                   padding: 2px 8px;
                   border-radius: 6px;
-                "
-                >JavaScript</span
-              >
-              <span
-                style="
+                ">JavaScript</span>
+            <span style="
                   font-size: 10px;
                   font-family: var(--mono);
                   background: var(--bg4);
@@ -119,11 +93,8 @@
                   color: var(--text2);
                   padding: 2px 8px;
                   border-radius: 6px;
-                "
-                >HTML</span
-              >
-              <span
-                style="
+                ">HTML</span>
+            <span style="
                   font-size: 10px;
                   font-family: var(--mono);
                   background: var(--bg4);
@@ -131,24 +102,20 @@
                   color: var(--text2);
                   padding: 2px 8px;
                   border-radius: 6px;
-                "
-                >Tailwind CSS</span
-              >
-            </div>
+                ">Tailwind CSS</span>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <!-- LEFT: permission groups -->
-        <div class="xl:col-span-2 space-y-4 fu scroll-fade">
-          <!-- Toolbar -->
-          <div class="flex flex-wrap items-center gap-2">
-            <button
-              onclick="enableAll()"
-              style="
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <!-- LEFT: permission groups -->
+      <div class="xl:col-span-2 space-y-4 fu scroll-fade">
+        <!-- Toolbar -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="enableAll()" style="
                 padding: 6px 16px;
                 font-size: 0.75rem;
                 font-weight: 700;
@@ -158,15 +125,11 @@
                 border: none;
                 cursor: pointer;
                 transition: background 0.15s;
-              "
-              onmouseover="this.style.background = 'var(--accent-h)'"
-              onmouseout="this.style.background = 'var(--accent)'"
-            >
-              Enable All
-            </button>
-            <button
-              onclick="disableAll()"
-              style="
+              " onmouseover="this.style.background = 'var(--accent-h)'"
+            onmouseout="this.style.background = 'var(--accent)'">
+            Enable All
+          </button>
+          <button onclick="disableAll()" style="
                 padding: 6px 16px;
                 font-size: 0.75rem;
                 font-weight: 600;
@@ -176,18 +139,10 @@
                 border-radius: 12px;
                 cursor: pointer;
                 transition: background 0.15s;
-              "
-              onmouseover="this.style.background = 'var(--bg4)'"
-              onmouseout="this.style.background = 'var(--bg3)'"
-            >
-              Disable All
-            </button>
-            <input
-              id="search"
-              type="text"
-              placeholder="Search permissions…"
-              oninput="filterPerms(this.value)"
-              style="
+              " onmouseover="this.style.background = 'var(--bg4)'" onmouseout="this.style.background = 'var(--bg3)'">
+            Disable All
+          </button>
+          <input id="search" type="text" placeholder="Search permissions…" oninput="filterPerms(this.value)" style="
                 margin-left: auto;
                 width: 208px;
                 padding: 6px 12px;
@@ -199,36 +154,30 @@
                 outline: none;
                 transition: border-color 0.15s;
                 font-family: var(--mono);
-              "
-              onfocus="this.style.borderColor = 'var(--accent)'"
-              onblur="this.style.borderColor = 'var(--border)'"
-            />
-          </div>
-
-          <!-- Sections injected by JS -->
-          <div id="sections" class="space-y-3"></div>
+              " onfocus="this.style.borderColor = 'var(--accent)'" onblur="this.style.borderColor = 'var(--border)'" />
         </div>
 
-        <!-- RIGHT: output panel -->
-        <div class="space-y-4 fu" style="animation-delay: 0.06s">
-          <!-- Value card -->
-          <div
-            style="
+        <!-- Sections injected by JS -->
+        <div id="sections" class="space-y-3"></div>
+      </div>
+
+      <!-- RIGHT: output panel -->
+      <div class="space-y-4 fu" style="animation-delay: 0.06s">
+        <!-- Value card -->
+        <div style="
               background: var(--bg2);
               border: 1px solid var(--border);
               border-radius: 16px;
               padding: 20px;
               position: sticky;
               top: 72px;
-            "
-          >
-            <p class="section-label" style="margin-bottom: 16px">
-              Current Permission Value
-            </p>
+            ">
+          <p class="section-label" style="margin-bottom: 16px">
+            Current Permission Value
+          </p>
 
-            <div style="margin-bottom: 12px">
-              <label
-                style="
+          <div style="margin-bottom: 12px">
+            <label style="
                   display: block;
                   font-size: 10px;
                   color: var(--text3);
@@ -236,14 +185,9 @@
                   letter-spacing: 0.1em;
                   margin-bottom: 6px;
                   font-weight: 600;
-                "
-                >Decimal</label
-              >
-              <div style="display: flex; gap: 8px">
-                <div
-                  id="decVal"
-                  class="val-box"
-                  style="
+                ">Decimal</label>
+            <div style="display: flex; gap: 8px">
+              <div id="decVal" class="val-box" style="
                     flex: 1;
                     background: var(--bg);
                     border: 1px solid var(--border);
@@ -254,14 +198,10 @@
                     display: flex;
                     align-items: center;
                     min-height: 40px;
-                  "
-                >
-                  0
-                </div>
-                <button
-                  onclick="copyEl('decVal')"
-                  title="Copy"
-                  style="
+                  ">
+                0
+              </div>
+              <button onclick="copyEl('decVal')" title="Copy" style="
                     padding: 8px;
                     background: var(--bg3);
                     border: 1px solid var(--border);
@@ -270,36 +210,23 @@
                     cursor: pointer;
                     transition: all 0.15s;
                     flex-shrink: 0;
-                  "
-                  onmouseover="
+                  " onmouseover="
                     this.style.background = 'var(--bg4)';
                     this.style.color = 'var(--text)';
-                  "
-                  onmouseout="
+                  " onmouseout="
                     this.style.background = 'var(--bg3)';
                     this.style.color = 'var(--text3)';
-                  "
-                >
-                  <svg
-                    style="width: 16px; height: 16px"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
-                </button>
-              </div>
+                  ">
+                <svg style="width: 16px; height: 16px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </button>
             </div>
+          </div>
 
-            <div style="margin-bottom: 16px">
-              <label
-                style="
+          <div style="margin-bottom: 16px">
+            <label style="
                   display: block;
                   font-size: 10px;
                   color: var(--text3);
@@ -307,14 +234,9 @@
                   letter-spacing: 0.1em;
                   margin-bottom: 6px;
                   font-weight: 600;
-                "
-                >Hexadecimal</label
-              >
-              <div style="display: flex; gap: 8px">
-                <div
-                  id="hexVal"
-                  class="val-box"
-                  style="
+                ">Hexadecimal</label>
+            <div style="display: flex; gap: 8px">
+              <div id="hexVal" class="val-box" style="
                     flex: 1;
                     background: var(--bg);
                     border: 1px solid var(--border);
@@ -325,14 +247,10 @@
                     display: flex;
                     align-items: center;
                     min-height: 40px;
-                  "
-                >
-                  0x0
-                </div>
-                <button
-                  onclick="copyEl('hexVal')"
-                  title="Copy"
-                  style="
+                  ">
+                0x0
+              </div>
+              <button onclick="copyEl('hexVal')" title="Copy" style="
                     padding: 8px;
                     background: var(--bg3);
                     border: 1px solid var(--border);
@@ -341,42 +259,27 @@
                     cursor: pointer;
                     transition: all 0.15s;
                     flex-shrink: 0;
-                  "
-                  onmouseover="
+                  " onmouseover="
                     this.style.background = 'var(--bg4)';
                     this.style.color = 'var(--text)';
-                  "
-                  onmouseout="
+                  " onmouseout="
                     this.style.background = 'var(--bg3)';
                     this.style.color = 'var(--text3)';
-                  "
-                >
-                  <svg
-                    style="width: 16px; height: 16px"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
-                </button>
-              </div>
+                  ">
+                <svg style="width: 16px; height: 16px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </button>
             </div>
+          </div>
 
-            <div
-              style="
+          <div style="
                 border-top: 1px solid var(--border);
                 padding-top: 16px;
                 margin-bottom: 16px;
-              "
-            >
-              <label
-                style="
+              ">
+            <label style="
                   display: block;
                   font-size: 10px;
                   color: var(--text3);
@@ -384,21 +287,12 @@
                   letter-spacing: 0.1em;
                   margin-bottom: 6px;
                   font-weight: 600;
-                "
-                >Enter Value Manually</label
-              >
-              <input
-                id="manualIn"
-                type="text"
-                placeholder="e.g. 8 or 0x8"
-                oninput="parseManual()"
-                class="field"
-              />
-            </div>
+                ">Enter Value Manually</label>
+            <input id="manualIn" type="text" placeholder="e.g. 8 or 0x8" oninput="parseManual()" class="field" />
+          </div>
 
-            <div style="border-top: 1px solid var(--border); padding-top: 16px">
-              <label
-                style="
+          <div style="border-top: 1px solid var(--border); padding-top: 16px">
+            <label style="
                   display: block;
                   font-size: 10px;
                   color: var(--text3);
@@ -406,20 +300,11 @@
                   letter-spacing: 0.1em;
                   margin-bottom: 6px;
                   font-weight: 600;
-                "
-                >Bot Invite Link</label
-              >
-              <div style="display: flex; gap: 8px">
-                <input
-                  id="clientId"
-                  type="text"
-                  placeholder="Client / App ID"
-                  class="field"
-                  style="flex: 1; min-width: 0"
-                />
-                <button
-                  onclick="copyInvite()"
-                  style="
+                ">Bot Invite Link</label>
+            <div style="display: flex; gap: 8px">
+              <input id="clientId" type="text" placeholder="Client / App ID" class="field"
+                style="flex: 1; min-width: 0" />
+              <button onclick="copyInvite()" style="
                     padding: 8px 12px;
                     font-size: 0.75rem;
                     font-weight: 700;
@@ -431,37 +316,29 @@
                     white-space: nowrap;
                     flex-shrink: 0;
                     transition: background 0.15s;
-                  "
-                  onmouseover="this.style.background = 'var(--accent-h)'"
-                  onmouseout="this.style.background = 'var(--accent)'"
-                >
-                  Copy Link
-                </button>
-              </div>
+                  " onmouseover="this.style.background = 'var(--accent-h)'"
+                onmouseout="this.style.background = 'var(--accent)'">
+                Copy Link
+              </button>
             </div>
           </div>
+        </div>
 
-          <!-- Active permissions -->
-          <div
-            style="
+        <!-- Active permissions -->
+        <div style="
               background: var(--bg2);
               border: 1px solid var(--border);
               border-radius: 16px;
               padding: 20px;
-            "
-          >
-            <div
-              style="
+            ">
+          <div style="
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 margin-bottom: 12px;
-              "
-            >
-              <p class="section-label">Active Permissions</p>
-              <span
-                id="activeCount"
-                style="
+              ">
+            <p class="section-label">Active Permissions</p>
+            <span id="activeCount" style="
                   font-size: 0.75rem;
                   font-family: var(--mono);
                   background: rgba(88, 101, 242, 0.1);
@@ -469,44 +346,37 @@
                   border: 1px solid rgba(88, 101, 242, 0.2);
                   padding: 2px 8px;
                   border-radius: 999px;
-                "
-                >0</span
-              >
-            </div>
-            <div
-              id="activeList"
-              style="
+                ">0</span>
+          </div>
+          <div id="activeList" style="
                 display: flex;
                 flex-direction: column;
                 gap: 4px;
                 max-height: 256px;
                 overflow-y: auto;
                 padding-right: 2px;
-              "
-            >
-              <p
-                style="
+              ">
+            <p style="
                   font-size: 0.75rem;
                   color: var(--text3);
                   font-style: italic;
-                "
-              >
-                No permissions selected.
-              </p>
-            </div>
+                ">
+              No permissions selected.
+            </p>
           </div>
         </div>
       </div>
-    </main>
+    </div>
+  </main>
 
-    <footer>
-      <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
-      <div class="foot-links">
-        <a href="/tos">Terms</a><a href="/privacy">Privacy</a
-        ><a href="/contact">Contact</a>
-      </div>
-    </footer>
+  <footer>
+    <p>© 2026 BDTools — not affiliated with BDFD directly.</p>
+    <div class="foot-links">
+      <a href="/tos">Terms</a><a href="/privacy">Privacy</a><a href="/contact">Contact</a>
+    </div>
+  </footer>
 
-    <script src="/dist/tools/ts/permission-calc.js"></script>
-  </body>
+  <script src="/dist/tools/ts/permission-calc.js"></script>
+</body>
+
 </html>
